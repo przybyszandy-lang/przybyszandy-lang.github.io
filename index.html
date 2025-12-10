@@ -1,1 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>One Button Joke Site</title>
+<style>
+  body { font-family: Arial, sans-serif; text-align: center; padding-top: 80px; }
+  button { padding: 15px 30px; font-size: 20px; cursor: pointer; }
+  #joke { margin-top: 40px; font-size: 26px; max-width: 600px; margin-left: auto; margin-right: auto; }
+</style>
+</head>
+<body>
+  <h1>Press the button for a joke</h1>
+  <button onclick="tellJoke()">Tell me a joke</button>
+  <div id="joke"></div>
+
+<script>
+const jokes = [
+  "Why do programmers prefer dark mode? Because light attracts bugs.",
+  "Parallel lines have so much in common. It’s a shame they never meet.",
+  "I told my computer I needed a break… it said ‘No problem, I’ll go to sleep.’",
+  "Why did the scarecrow win an award? Because he was outstanding in his field.",
+  "I tried to catch fog yesterday… Mist!",
+  "What’s orange and sounds like a parrot? A carrot.",
+  "I asked my dog what’s two minus two. He said nothing."
+];
+
+function tellJoke() {
+  const random = jokes[Math.floor(Math.random() * jokes.length)];
+  document.getElementById('joke').textContent = random;
+}
+</script>
+</body>
+</html>
 
