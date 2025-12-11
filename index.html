@@ -76,15 +76,20 @@
     </div>
   </div>
 
-  <script type="module">
-    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+  <!-- Supabase JS from CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <!-- Your app logic -->
+  <script>
+    // Get createClient from the global supabase object
+    const { createClient } = supabase;
 
     // Supabase config
     const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
     const supabaseKey =
       'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const client = createClient(supabaseUrl, supabaseKey);
 
     const mainButton = document.getElementById('mainButton');
     const contentDiv = document.getElementById('content');
@@ -107,7 +112,7 @@
     async function loadJokes() {
       jokeDiv.textContent = 'Loading joke...';
 
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('jokes')
         .select('*')
         .eq('is_visible', true)
@@ -164,7 +169,7 @@
 
       const newValue = (currentJoke[counterKey] || 0) + 1;
 
-      const { data, error } = await supabase
+      const { data, error } = await client
         .from('jokes')
         .update({ [counterKey]: newValue })
         .eq('id', currentJoke.id)
