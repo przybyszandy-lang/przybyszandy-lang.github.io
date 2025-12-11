@@ -1,1 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Add a Joke</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 40px 15px;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      text-align: left;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 20px;
+      font-size: 26px;
+    }
+
+    p.intro {
+      font-size: 14px;
+      margin-bottom: 20px;
+      text-align: center;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      margin-top: 16px;
+      margin-bottom: 4px;
+    }
+
+    textarea, input[type="email"] {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+    }
+
+    textarea {
+      min-height: 150px;
+      resize: vertical;
+    }
+
+    button {
+      margin-top: 18px;
+      padding: 10px 22px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
+    }
+
+    #message {
+      margin-top: 12px;
+      font-size: 14px;
+      min-height: 18px;
+    }
+
+    .links {
+      margin-top: 30px;
+      font-size: 13px;
+      text-align: center;
+    }
+
+    .links a {
+      color: #0000ee;
+      text-decoration: underline;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Add a Joke</h1>
+    <p class="intro">
+      Share your joke with the world. Please keep it friendly – no hate, abuse or personal data.
+    </p>
+
+    <form id="addJokeForm">
+      <label for="jokeContent">Your joke</label>
+      <textarea id="jokeContent" placeholder="Type your joke here..."></textarea>
+
+      <label for="jokeEmail">Your email (optional)</label>
+      <input
+        id="jokeEmail"
+        type="email"
+        placeholder="We might contact you if we ever curate the best jokes. Leave empty if you prefer."
+      />
+
+      <button type="submit">Submit joke</button>
+    </form>
+
+    <div id="message"></div>
+
+    <div class="links">
+      <div><a href="index.html">Back to jokes</a></div>
+      <div style="margin-top:6px;"><a href="privacy.html">Privacy Policy</a></div>
+    </div>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    // Supabase config (anon key – safe for frontend)
+    const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const form = document.getElementById('addJokeForm');
+    const jokeContentInput = document.getElementById('jokeContent');
+    const jokeEmailInput = document.getElementById('jokeEmail');
+    const messageDiv = document.getElementById('message');
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      messageDiv.textContent = '';
+
+      const content = jokeContentInput.value.trim();
+      const email = jokeEmailInput.value.trim();
+
+      if (!content) {
+        messageDiv.textContent = 'Please type a joke before submitting.';
+        return;
+      }
+
+      // Insert into jokes table
+      const { error } = await supabase.from('jokes').insert({
+        content: content,
+        added_by_email: email || null,
+        is_new: true,
+        is_visible: true,  // you can change to false later if you want manual approval
+        is_flagged: false
+      });
+
+      if (error) {
+        console.error(error);
+        messageDiv.textContent = 'Something went wrong while saving your joke. Please try again later.';
+        return;
+      }
+
+      messageDiv.textContent = 'Thank you! Your joke has been submitted.';
+      jokeContentInput.value = '';
+      jokeEmailInput.value = '';
+    });
+  </script>
+</body>
+</html>
 
