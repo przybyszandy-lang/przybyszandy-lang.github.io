@@ -2,181 +2,195 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>One Button Joke Site</title>
+  <title>Donkey App Jokes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
     body {
+      background-color: #ffffff;
       font-family: Arial, sans-serif;
       text-align: center;
+      margin: 0;
       padding: 40px 15px;
-      max-width: 800px;
-      margin: 0 auto;
     }
-    h1 {
-      margin-bottom: 24px;
-      font-size: 26px;
-    }
-    button {
-      padding: 10px 22px;
-      font-size: 16px;
+
+    #mainButton {
+      padding: 12px 24px;
+      font-size: 18px;
       cursor: pointer;
       border-radius: 4px;
       border: 1px solid #ccc;
       background: #f7f7f7;
     }
-    #joke { margin-top: 30px; font-size: 18px; line-height: 1.5; white-space: pre-line; min-height: 80px; }
-    #meta { margin-top: 8px; font-size: 12px; color: #666; }
-    #ratingSection { margin-top: 24px; font-size: 14px; }
-    #ratingButtons button { margin: 2px; font-size: 13px; padding: 6px 10px; }
-    #ratingStats { margin-top: 8px; font-size: 13px; color: #444; }
-    textarea, input[type="email"] { width: 100%; box-sizing: border-box; padding: 8px; }
+
+    #content {
+      margin-top: 30px;
+      display: none; /* hidden until first joke is loaded */
+    }
+
+    #joke {
+      font-size: 18px;
+      line-height: 1.5;
+      white-space: pre-line;
+      min-height: 80px;
+      margin-bottom: 20px;
+    }
+
+    #ratingIcons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    #ratingIcons img {
+      width: 64px;
+      height: 64px;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    #extras {
+      font-size: 13px;
+    }
+
+    #extras a {
+      color: #0000ee;
+      text-decoration: underline;
+      cursor: pointer;
+    }
   </style>
 </head>
 <body>
-  <h1>Press the button for a joke</h1>
-  <button id="jokeButton">Tell me a joke</button>
+  <!-- On load, only this button is visible -->
+  <button id="mainButton">Press me to get a joke</button>
 
-  <div id="joke"></div>
-  <div id="meta"></div>
+  <!-- Hidden area that appears after first click -->
+  <div id="content">
+    <div id="joke"></div>
 
-  <div id="ratingSection">
-    <div style="margin-bottom:4px;">Rate this joke:</div>
-    <div id="ratingButtons"></div>
-    <div id="ratingStats"></div>
+    <div id="ratingIcons">
+      <!-- icons are inserted by JS -->
+    </div>
+
+    <div id="extras">
+      <a href="addajoke.html">Want to add a joke?</a>
+    </div>
   </div>
-
-  <h2>Add a joke</h2>
-  <form id="addJokeForm">
-    <textarea id="newJokeContent" rows="5" placeholder="Your joke here..."></textarea>
-    <input id="newJokeEmail" type="email" placeholder="Your email (optional)">
-    <button type="submit">Submit</button>
-  </form>
-  <div id="addJokeMessage"></div>
 
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-    // SUPABASE CONFIG
+    // Supabase URL anon key here
     
 const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
 const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
 
+
     const supabase = createClient(supabaseUrl, supabaseKey);
 
+    const mainButton = document.getElementById('mainButton');
+    const contentDiv = document.getElementById('content');
     const jokeDiv = document.getElementById('joke');
-    const metaDiv = document.getElementById('meta');
-    const jokeButton = document.getElementById('jokeButton');
-    const ratingButtonsDiv = document.getElementById('ratingButtons');
-    const ratingStatsDiv = document.getElementById('ratingStats');
-    const addJokeForm = document.getElementById('addJokeForm');
-    const addJokeMessage = document.getElementById('addJokeMessage');
-    const newJokeContent = document.getElementById('newJokeContent');
-    const newJokeEmail = document.getElementById('newJokeEmail');
+    const ratingIconsDiv = document.getElementById('ratingIcons');
 
-    let allJokes = [];
+    let jokesCache = [];
     let currentJoke = null;
 
     const ratingOptions = [
-      { key: 'rating_dont_get_it_count', label: "I don't get it" },
-      { key: 'rating_ehh_count', label: "Ehh" },
-      { key: 'rating_good_one_count', label: "Good one" },
-      { key: 'rating_fell_off_chair_count', label: "Fell off my chair" }
+      { key: 'rating_dont_get_it_count', img: '1.png', alt: "Don't get it" },
+      { key: 'rating_ehh_count', img: '2.png', alt: 'Ehh' },
+      { key: 'rating_good_one_count', img: '3.png', alt: 'Good One' },
+      { key: 'rating_fell_off_chair_count', img: '4.png', alt: 'Epic' }
     ];
 
+    // Load visible jokes from Supabase
     async function loadJokes() {
+      jokeDiv.textContent = 'Loading joke...';
+
       const { data, error } = await supabase
         .from('jokes')
         .select('*')
         .eq('is_visible', true)
-        .eq('is_flagged', false);
+        .eq('is_flagged', false)
+        .limit(100);
 
       if (error) {
-        jokeDiv.textContent = "Error loading jokes.";
+        console.error(error);
+        jokeDiv.textContent = 'Could not load jokes.';
         return;
       }
 
-      allJokes = data;
-      showRandom();
+      jokesCache = data || [];
+
+      if (!jokesCache.length) {
+        jokeDiv.textContent = 'No jokes available yet.';
+        return;
+      }
+
+      showRandomJoke();
     }
 
-    function showRandom() {
-      if (allJokes.length === 0) {
-        jokeDiv.textContent = "No jokes yet!";
+    function showRandomJoke() {
+      if (!jokesCache.length) {
+        jokeDiv.textContent = 'No jokes available.';
         return;
       }
 
-      currentJoke = allJokes[Math.floor(Math.random() * allJokes.length)];
+      const idx = Math.floor(Math.random() * jokesCache.length);
+      currentJoke = jokesCache[idx];
       displayJoke(currentJoke);
     }
 
     function displayJoke(joke) {
       jokeDiv.textContent = joke.content;
-      metaDiv.textContent = joke.created_at ? "Added: " + new Date(joke.created_at).toLocaleString() : "";
-      ratingButtonsDiv.innerHTML = '';
+      renderRatingIcons();
+    }
+
+    function renderRatingIcons() {
+      ratingIconsDiv.innerHTML = '';
       ratingOptions.forEach(opt => {
-        const b = document.createElement('button');
-        b.textContent = opt.label;
-        b.onclick = () => vote(opt.key);
-        ratingButtonsDiv.appendChild(b);
+        const img = document.createElement('img');
+        img.src = opt.img;
+        img.alt = opt.alt;
+        img.addEventListener('click', () => rateJoke(opt.key));
+        ratingIconsDiv.appendChild(img);
       });
-      updateStats(joke);
     }
 
-    function updateStats(joke) {
-      const parts = ratingOptions.map(opt => `${opt.label}: ${joke[opt.key]}`);
-      ratingStatsDiv.textContent = parts.join(" · ");
-    }
+    async function rateJoke(counterKey) {
+      if (!currentJoke) return;
 
-    async function vote(field) {
-      const newVal = (currentJoke[field] || 0) + 1;
+      const newValue = (currentJoke[counterKey] || 0) + 1;
 
       const { data, error } = await supabase
         .from('jokes')
-        .update({ [field]: newVal })
+        .update({ [counterKey]: newValue })
         .eq('id', currentJoke.id)
         .select()
         .single();
 
-      if (error) return alert("Error saving vote.");
-
-      // Update local
-      currentJoke = data;
-      allJokes = allJokes.map(j => j.id === data.id ? data : j);
-      displayJoke(currentJoke);
-    }
-
-    addJokeForm.addEventListener('submit', async e => {
-      e.preventDefault();
-
-      const text = newJokeContent.value.trim();
-      const email = newJokeEmail.value.trim();
-
-      if (!text) {
-        addJokeMessage.textContent = "Please type a joke.";
+      if (error) {
+        console.error(error);
+        alert('Error saving your vote.');
         return;
       }
 
-      const { error } = await supabase.from('jokes').insert({
-        content: text,
-        added_by_email: email || null,
-        is_new: true,
-        is_visible: true,
-        is_flagged: false
-      });
+      // Update local copy
+      currentJoke = data;
+      jokesCache = jokesCache.map(j => (j.id === data.id ? data : j));
+    }
 
-      if (error) {
-        addJokeMessage.textContent = "Error adding joke.";
+    mainButton.addEventListener('click', async () => {
+      // First time: load jokes from DB and reveal UI
+      if (contentDiv.style.display === 'none') {
+        contentDiv.style.display = 'block';
+        mainButton.textContent = 'Another joke';
+        await loadJokes();
       } else {
-        addJokeMessage.textContent = "Thank you! Your joke was added.";
-        newJokeContent.value = "";
-        newJokeEmail.value = "";
-        loadJokes();
+        // Later clicks: just show a new random joke
+        showRandomJoke();
       }
     });
-
-    jokeButton.onclick = showRandom;
-    loadJokes();
   </script>
 </body>
 </html>
-
