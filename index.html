@@ -1,147 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>One Button Joke Site</title>
-<style>
-  body { font-family: Arial, sans-serif; text-align: center; padding-top: 80px; }
-  button { padding: 15px 30px; font-size: 20px; cursor: pointer; }
-  #joke { margin-top: 40px; font-size: 22px; max-width: 700px; margin-left: auto; margin-right: auto; white-space: pre-line; }
-</style>
+  <meta charset="UTF-8" />
+  <title>One Button Joke Site</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      text-align: center;
+      padding: 40px 15px;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    h1 {
+      margin-bottom: 24px;
+      font-size: 26px;
+    }
+    button {
+      padding: 10px 22px;
+      font-size: 16px;
+      cursor: pointer;
+      border-radius: 4px;
+      border: 1px solid #ccc;
+      background: #f7f7f7;
+    }
+    #joke { margin-top: 30px; font-size: 18px; line-height: 1.5; white-space: pre-line; min-height: 80px; }
+    #meta { margin-top: 8px; font-size: 12px; color: #666; }
+    #ratingSection { margin-top: 24px; font-size: 14px; }
+    #ratingButtons button { margin: 2px; font-size: 13px; padding: 6px 10px; }
+    #ratingStats { margin-top: 8px; font-size: 13px; color: #444; }
+    textarea, input[type="email"] { width: 100%; box-sizing: border-box; padding: 8px; }
+  </style>
 </head>
 <body>
   <h1>Press the button for a joke</h1>
-  <button onclick="tellJoke()">Tell me a joke</button>
+  <button id="jokeButton">Tell me a joke</button>
+
   <div id="joke"></div>
+  <div id="meta"></div>
 
-<script>
-const jokes = [
-  "Why do programmers prefer dark mode? Because light attracts bugs.",
-  "Parallel lines have so much in common. It’s a shame they never meet.",
-  "I told my computer I needed a break… it said ‘No problem, I’ll go to sleep.’",
-  "Why did the scarecrow win an award? Because he was outstanding in his field.",
-  "I tried to catch fog yesterday… Mist!",
-  "What’s orange and sounds like a parrot? A carrot.",
-  "I asked my dog what’s two minus two. He said nothing.",
+  <div id="ratingSection">
+    <div style="margin-bottom:4px;">Rate this joke:</div>
+    <div id="ratingButtons"></div>
+    <div id="ratingStats"></div>
+  </div>
 
-  // Long Polish joke rewritten in English storytelling style:
-  `John Smith is walking past his neighbour’s house one afternoon when he notices something unbelievable.
-Right there on the neighbour’s lawn is a full tennis court. And playing on it are Novak Djokovic and Rafael Nadal.
+  <h2>Add a joke</h2>
+  <form id="addJokeForm">
+    <textarea id="newJokeContent" rows="5" placeholder="Your joke here..."></textarea>
+    <input id="newJokeEmail" type="email" placeholder="Your email (optional)">
+    <button type="submit">Submit</button>
+  </form>
+  <div id="addJokeMessage"></div>
 
-Stunned, John asks:
-"Mate, why do you have a tennis court and two of the greatest players alive in your garden?"
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-The neighbour replies:
-"I found Aladdin’s lamp. Rubbed it, genie came out, I made a wish — and here we are."
+    // SUPABASE CONFIG
+    
+const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
+const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
 
-John is thrilled. "Can I try?"
-"Of course," says the neighbour, "but the genie is a bit hard of hearing."
+    const supabase = createClient(supabaseUrl, supabaseKey);
 
-John takes the lamp home, rubs it, the genie appears.
-"You have one wish."
+    const jokeDiv = document.getElementById('joke');
+    const metaDiv = document.getElementById('meta');
+    const jokeButton = document.getElementById('jokeButton');
+    const ratingButtonsDiv = document.getElementById('ratingButtons');
+    const ratingStatsDiv = document.getElementById('ratingStats');
+    const addJokeForm = document.getElementById('addJokeForm');
+    const addJokeMessage = document.getElementById('addJokeMessage');
+    const newJokeContent = document.getElementById('newJokeContent');
+    const newJokeEmail = document.getElementById('newJokeEmail');
 
-John proudly says:
-"I want a mountain of gold!"
+    let allJokes = [];
+    let currentJoke = null;
 
-"Your wish is granted," says the genie.
+    const ratingOptions = [
+      { key: 'rating_dont_get_it_count', label: "I don't get it" },
+      { key: 'rating_ehh_count', label: "Ehh" },
+      { key: 'rating_good_one_count', label: "Good one" },
+      { key: 'rating_fell_off_chair_count', label: "Fell off my chair" }
+    ];
 
-John runs outside and sees… a giant mountain of mould.
+    async function loadJokes() {
+      const { data, error } = await supabase
+        .from('jokes')
+        .select('*')
+        .eq('is_visible', true)
+        .eq('is_flagged', false);
 
-Furious, he goes back to the neighbour:
-"Your genie isn't just deaf — he's stupid! I asked for a mountain of gold, and he gave me a mountain of mould!"
+      if (error) {
+        jokeDiv.textContent = "Error loading jokes.";
+        return;
+      }
 
-The neighbour nods and says:
-"And do you think I asked for world-class tennis?"`,
+      allJokes = data;
+      showRandom();
+    }
 
-  // Long storytelling Trabant joke
-  `An Arabic sheikh absolutely loves cars. He owns everything — every Ferrari, every Mercedes, every exotic brand you can imagine.
+    function showRandom() {
+      if (allJokes.length === 0) {
+        jokeDiv.textContent = "No jokes yet!";
+        return;
+      }
 
-One day, he wants to buy a car he has never owned before. He looks in a catalogue and suddenly sees something surprising: the Trabant — the pride of East Germany.
+      currentJoke = allJokes[Math.floor(Math.random() * allJokes.length)];
+      displayJoke(currentJoke);
+    }
 
-Fascinated, he calls the Trabant factory.
+    function displayJoke(joke) {
+      jokeDiv.textContent = joke.content;
+      metaDiv.textContent = joke.created_at ? "Added: " + new Date(joke.created_at).toLocaleString() : "";
+      ratingButtonsDiv.innerHTML = '';
+      ratingOptions.forEach(opt => {
+        const b = document.createElement('button');
+        b.textContent = opt.label;
+        b.onclick = () => vote(opt.key);
+        ratingButtonsDiv.appendChild(b);
+      });
+      updateStats(joke);
+    }
 
-"Hello, I am Sheikh Ahmed. I want to buy your car, the Trabant."
+    function updateStats(joke) {
+      const parts = ratingOptions.map(opt => `${opt.label}: ${joke[opt.key]}`);
+      ratingStatsDiv.textContent = parts.join(" · ");
+    }
 
-The worker on the phone thinks it's a prank and says:
-"Sure… it costs 200,000 dollars, and the waiting time is ten years."
+    async function vote(field) {
+      const newVal = (currentJoke[field] || 0) + 1;
 
-The sheikh thanks him and hangs up.
+      const { data, error } = await supabase
+        .from('jokes')
+        .update({ [field]: newVal })
+        .eq('id', currentJoke.id)
+        .select()
+        .single();
 
-The worker goes to his boss:
-"Someone pretended to be Sheikh Ahmed, so I told him a ridiculous price and delivery time."
+      if (error) return alert("Error saving vote.");
 
-The boss turns white.
-"You fool! That WAS Sheikh Ahmed — the richest man in the world! Send him the Trabant for free RIGHT NOW!"
+      // Update local
+      currentJoke = data;
+      allJokes = allJokes.map(j => j.id === data.id ? data : j);
+      displayJoke(currentJoke);
+    }
 
-So they do.
+    addJokeForm.addEventListener('submit', async e => {
+      e.preventDefault();
 
-A few weeks later, the sheikh hosts a gathering of wealthy friends who are bragging about their newest cars.
+      const text = newJokeContent.value.trim();
+      const email = newJokeEmail.value.trim();
 
-One says:
-"I bought a Ferrari. I will wait five years. It cost me $100,000."
+      if (!text) {
+        addJokeMessage.textContent = "Please type a joke.";
+        return;
+      }
 
-Another says:
-"That's nothing. I bought a Lamborghini. I will wait seven years. It cost me $150,000."
+      const { error } = await supabase.from('jokes').insert({
+        content: text,
+        added_by_email: email || null,
+        is_new: true,
+        is_visible: true,
+        is_flagged: false
+      });
 
-And the sheikh proudly replies:
-"Gentlemen, you are amateurs. I bought a Trabant, the pride of East Germany. It will cost me $200,000, I will wait ten years… and they have already sent me the plastic model!"`, 
+      if (error) {
+        addJokeMessage.textContent = "Error adding joke.";
+      } else {
+        addJokeMessage.textContent = "Thank you! Your joke was added.";
+        newJokeContent.value = "";
+        newJokeEmail.value = "";
+        loadJokes();
+      }
+    });
 
-// Airplane Joke  
-  
-  `The airplane is falling out of the sky because it’s too heavy.
-The pilot shouts: “One of you has to jump, or we’re all going to die!”
-
-He goes to the German passenger first:
-“You have to jump, or we’ll all die.”
-The German says, “No way.”
-The pilot replies, “It’s an order.”
-“Oh, if it’s an order, I’ll jump.”
-He jumps.
-But the plane is still falling.
-
-Next, the pilot approaches the English passenger:
-“You have to jump, or we’ll all die.”
-The Englishman says, “No way.”
-“It’s an order!”
-“I don’t care about your orders.”
-“But it would be an honourable thing to do.”
-“Oh, if it’s honourable, I’ll do it.”
-He jumps.
-But the plane is still falling.
-
-Then the pilot goes to the French passenger:
-“You have to jump, or we’ll all die.”
-The Frenchman says, “No way.”
-“It’s an order.”
-“I don’t care about your orders.”
-“It would be an honourable thing to do.”
-“Eh, whatever.”
-“Well… it’s very fashionable.”
-“Oh! If it’s fashionable, I’ll jump.”
-He jumps.
-The plane is still falling.
-
-Finally, the pilot reaches the Polish passenger:
-“You have to jump, or we’ll all die.”
-The Pole says, “No way.”
-“It’s an order.”
-“I don’t care about your orders.”
-“It’s an honourable thing to do.”
-“I don’t care about that.”
-“It’s fashionable.”
-“Eh, who cares about fashion.”
-
-The pilot gives up:
-“Ah, forget it. He’ll never jump.”
-
-The Polish guy suddenly stands up and says:
-“What? I won’t jump?!"`  
-];
-
-function tellJoke() {
-  const random = jokes[Math.floor(Math.random() * jokes.length)];
-  document.getElementById('joke').textContent = random;
-}
-</script>
+    jokeButton.onclick = showRandom;
+    loadJokes();
+  </script>
 </body>
 </html>
+
