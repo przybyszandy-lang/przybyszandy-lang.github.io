@@ -24,7 +24,7 @@
 
     #content {
       margin-top: 30px;
-      display: none; /* hidden until first joke is loaded */
+      display: none; /* remains hidden until first click */
     }
 
     #joke {
@@ -61,16 +61,15 @@
   </style>
 </head>
 <body>
-  <!-- On load, only this button is visible -->
+
+  <!-- Main button -->
   <button id="mainButton">Press me to get a joke</button>
 
-  <!-- Hidden area that appears after first click -->
+  <!-- Joke content (hidden initially) -->
   <div id="content">
     <div id="joke"></div>
 
-    <div id="ratingIcons">
-      <!-- icons are inserted by JS -->
-    </div>
+    <div id="ratingIcons"></div>
 
     <div id="extras">
       <a href="addajoke.html">Want to add a joke?</a>
@@ -80,11 +79,10 @@
   <script type="module">
     import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 
-    // Supabase URL anon key here
-    
-const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
-const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
-
+    // Supabase config
+    const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
+    const supabaseKey =
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
@@ -95,7 +93,9 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 
     let jokesCache = [];
     let currentJoke = null;
+    let initialised = false;
 
+    // 4 rating icons
     const ratingOptions = [
       { key: 'rating_dont_get_it_count', img: '1.png', alt: "Don't get it" },
       { key: 'rating_ehh_count', img: '2.png', alt: 'Ehh' },
@@ -103,7 +103,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
       { key: 'rating_fell_off_chair_count', img: '4.png', alt: 'Epic' }
     ];
 
-    // Load visible jokes from Supabase
+    // Load jokes from Supabase
     async function loadJokes() {
       jokeDiv.textContent = 'Loading joke...';
 
@@ -130,6 +130,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
       showRandomJoke();
     }
 
+    // Display a random joke
     function showRandomJoke() {
       if (!jokesCache.length) {
         jokeDiv.textContent = 'No jokes available.';
@@ -157,6 +158,7 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
       });
     }
 
+    // Rate joke
     async function rateJoke(counterKey) {
       if (!currentJoke) return;
 
@@ -175,19 +177,18 @@ const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
         return;
       }
 
-      // Update local copy
       currentJoke = data;
       jokesCache = jokesCache.map(j => (j.id === data.id ? data : j));
     }
 
+    // Main button behavior
     mainButton.addEventListener('click', async () => {
-      // First time: load jokes from DB and reveal UI
-      if (contentDiv.style.display === 'none') {
+      if (!initialised) {
+        initialised = true;
         contentDiv.style.display = 'block';
         mainButton.textContent = 'Another joke';
         await loadJokes();
       } else {
-        // Later clicks: just show a new random joke
         showRandomJoke();
       }
     });
