@@ -1,370 +1,171 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8" />
-    <title>VOID DOMINION - OGame Alliance</title>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
-        body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-            background: radial-gradient(circle at top, #1f3b68 0, #050711 55%, #020309 100%);
-            color: #d7e7ff;
-            line-height: 1.6;
-            min-height: 100vh;
-        }
-
-        a {
-            color: #4fd6ff;
-            text-decoration: none;
-        }
-        a:hover {
-            text-decoration: underline;
-        }
-
-        header {
-            position: relative;
-            text-align: center;
-            padding: 4rem 1rem 3rem;
-            overflow: hidden;
-        }
-
-        header::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background:
-                radial-gradient(circle at 50% -20%, rgba(101, 199, 255, 0.35), transparent 60%),
-                radial-gradient(circle at 10% 120%, rgba(58, 109, 255, 0.3), transparent 60%),
-                radial-gradient(circle at 90% 120%, rgba(0, 255, 255, 0.1), transparent 55%);
-            opacity: 0.7;
-            z-index: -1;
-        }
-
-        .logo {
-            max-width: 520px;
-            margin: 0 auto 1.5rem;
-            filter: drop-shadow(0 0 15px rgba(0, 255, 255, 0.5));
-        }
-
-        .title-text {
-            text-transform: uppercase;
-            letter-spacing: 0.35em;
-            font-size: 0.85rem;
-            color: #7fb7ff;
-            margin-bottom: 0.7rem;
-        }
-
-        h1 {
-            font-size: clamp(2.3rem, 4vw, 3rem);
-            letter-spacing: 0.12em;
-            margin-bottom: 0.4rem;
-        }
-
-        .subtitle {
-            font-style: italic;
-            color: #a8c7ff;
-            font-size: 0.95rem;
-        }
-
-        main {
-            max-width: 960px;
-            margin: 0 auto;
-            padding: 1rem 1rem 4rem;
-        }
-
-        section {
-            background: linear-gradient(135deg, rgba(9, 15, 35, 0.95), rgba(6, 14, 30, 0.98));
-            border-radius: 14px;
-            border: 1px solid rgba(123, 214, 255, 0.2);
-            box-shadow:
-                0 0 25px rgba(0, 0, 0, 0.8),
-                0 0 18px rgba(0, 180, 255, 0.05);
-            padding: 1.8rem 1.6rem;
-            margin-bottom: 1.5rem;
-            position: relative;
-            overflow: hidden;
-        }
-
-        section::before {
-            content: "";
-            position: absolute;
-            inset: 0;
-            background: radial-gradient(circle at top left, rgba(0, 255, 255, 0.05), transparent 60%);
-            opacity: 0.7;
-            pointer-events: none;
-        }
-
-        section h2 {
-            font-size: 1.25rem;
-            text-transform: uppercase;
-            letter-spacing: 0.2em;
-            margin-bottom: 0.9rem;
-            color: #9fdfff;
-        }
-
-        section p,
-        section li {
-            font-size: 0.98rem;
-            color: #d7e7ff;
-        }
-
-        .highlight {
-            color: #59d8ff;
-        }
-
-        ul {
-            list-style: none;
-            margin-top: 0.5rem;
-        }
-        ul li {
-            padding-left: 1.5rem;
-            position: relative;
-            margin-bottom: 0.4rem;
-        }
-        ul li::before {
-            content: "✦";
-            position: absolute;
-            left: 0;
-            top: 0.1rem;
-            font-size: 0.8rem;
-            color: #59d8ff;
-        }
-
-        .columns {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
-            gap: 1.2rem;
-        }
-
-        .tagline {
-            margin-top: 0.6rem;
-            font-size: 0.95rem;
-            color: #a3c5ff;
-        }
-
-        .cta-box {
-            text-align: center;
-        }
-
-        .cta-button {
-            display: inline-block;
-            margin-top: 1rem;
-            padding: 0.85rem 1.7rem;
-            border-radius: 999px;
-            border: 1px solid rgba(102, 225, 255, 0.7);
-            background: radial-gradient(circle at 50% 0, rgba(88, 208, 255, 0.5), rgba(5, 13, 31, 0.95));
-            color: #e9f6ff;
-            letter-spacing: 0.12em;
-            text-transform: uppercase;
-            font-size: 0.8rem;
-            cursor: pointer;
-            box-shadow:
-                0 0 18px rgba(0, 200, 255, 0.45),
-                0 0 3px rgba(255, 255, 255, 0.5) inset;
-        }
-
-        .cta-button:hover {
-            filter: brightness(1.1);
-            transform: translateY(-1px);
-        }
-
-        footer {
-            text-align: center;
-            padding: 1.5rem 1rem 2.5rem;
-            font-size: 0.8rem;
-            color: #6f84a9;
-        }
-
-        .divider {
-            margin: 1rem 0 1.1rem;
-            height: 1px;
-            border-radius: 999px;
-            background:
-                linear-gradient(90deg,
-                    transparent,
-                    rgba(119, 210, 255, 0.8),
-                    transparent);
-            opacity: 0.7;
-        }
-
-        @media (max-width: 600px) {
-            header {
-                padding-top: 3rem;
-            }
-            section {
-                padding: 1.5rem 1.2rem;
-            }
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Outlaws &amp; Bandits Alliance</title>
+  <style>
+    body {
+      background: #05060a;
+      color: #e0e0e0;
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+    }
+    header {
+      background: #111522;
+      padding: 20px;
+      text-align: center;
+      border-bottom: 2px solid #444;
+    }
+    header h1 {
+      margin: 0;
+      font-size: 2.4em;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+    }
+    header p {
+      margin: 8px 0 0;
+      font-style: italic;
+      color: #b0b0b0;
+    }
+    main {
+      max-width: 900px;
+      margin: 20px auto 40px;
+      padding: 0 15px;
+    }
+    section {
+      margin-bottom: 25px;
+      background: #10121a;
+      padding: 15px 18px;
+      border-radius: 6px;
+      border: 1px solid #333;
+    }
+    h2 {
+      margin-top: 0;
+      border-bottom: 1px solid #333;
+      padding-bottom: 6px;
+      text-transform: uppercase;
+      font-size: 1.1em;
+      letter-spacing: 1px;
+    }
+    ul {
+      margin: 8px 0 0 20px;
+    }
+    .highlight {
+      color: #ffd54a;
+      font-weight: bold;
+    }
+    footer {
+      text-align: center;
+      padding: 15px;
+      font-size: 0.85em;
+      color: #777;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <h1>Outlaws &amp; Bandits</h1>
+    <p>We respect no rules. We choose our own targets.</p>
+  </header>
 
-<header>
-    <!-- Replace src with the path to your generated logo file, e.g. "void-dominion-logo.png" -->
-    <img src="logo.png" alt="VOID DOMINION Logo" class="logo" />
-    <div class="title-text">OGame Alliance</div>
-    <h1>VOID DOMINION</h1>
-    <p class="subtitle">Control the void. Command the galaxy.</p>
-</header>
-
-<main>
-    <!-- INTRO -->
-    <section id="intro">
-        <h2>Alliance Overview</h2>
-        <p>
-            Across the stars there are miners, traders and wanderers. Then there are those who rule.
-            VOID DOMINION is not a shelter and not a farm. It is an
-            <span class="highlight">aggressive war pact</span> built on dominance, discipline
-            and coordinated destruction.
-        </p>
-        <p>
-            We are not interested in hiding or begging for mercy. We are here to project power,
-            protect our own and reshape the universe through calculated violence and smart strategy.
-        </p>
-        <p class="tagline">
-            We do not ask the universe for permission. We shape it.
-        </p>
+  <main>
+    <section>
+      <h2>About the Alliance</h2>
+      <p>
+        Outlaws &amp; Bandits is an alliance for players who make their own luck.
+        We don’t play by anyone else’s rules &mdash; we attack anyone, anywhere,
+        any time, as long as there is a good reason to strike. Strength, courage
+        and initiative are what matter here.
+      </p>
+      <p>
+        We are a <span class="highlight">WarriorAlliance class</span> alliance.
+        Every member benefits from WarriorAlliance-class bonuses and plays with a
+        clear purpose: grow stronger, strike smart and never apologise for winning.
+      </p>
     </section>
 
-    <!-- VALUES -->
-    <section id="values">
-        <h2>What We Stand For</h2>
-        <div class="columns">
-            <div>
-                <ul>
-                    <li>Aggression with purpose – calculated raids and strategic warfare, not random suicide attacks.</li>
-                    <li>Loyalty and unity – we stand together when it matters, and we do not abandon allies.</li>
-                    <li>Respect inside the alliance – no ego wars, no pointless drama, no internal politics.</li>
-                </ul>
-            </div>
-            <div>
-                <ul>
-                    <li>Knowledge sharing – we help each other grow stronger in fleet use, fleet saving and strategy.</li>
-                    <li>Dominion through strength – we are not passive farms and we will not accept being treated as such.</li>
-                    <li>Real teamwork – protection, revenge hits and coordinated firepower when our members are attacked.</li>
-                </ul>
-            </div>
-        </div>
-        <p class="tagline">
-            We are not here to survive. We are here to control the void.
-        </p>
+    <section>
+      <h2>Membership Requirements</h2>
+      <ul>
+        <li>You must be within the <span class="highlight">Top 300</span> players in the universe to join.</li>
+        <li>
+          Exception: if you are marked as an <span class="highlight">Outlaw</span> and
+          have attacked someone stronger than you, you are also eligible.
+        </li>
+        <li>We value bold moves and intelligent aggression above everything else.</li>
+      </ul>
     </section>
 
-    <!-- RULES -->
-    <section id="rules">
-        <h2>Alliance Rules</h2>
-        <div class="divider"></div>
-        <div class="columns">
-            <div>
-                <p><span class="highlight">1) Be active</span></p>
-                <p>Ghost accounts and silent members do not last. You do not need to be online 24/7, but if you disappear for long periods with no word, you will be removed.</p>
-
-                <p><span class="highlight">2) Respect your team</span></p>
-                <p>Inside VOID DOMINION we operate as one unit. Insults, constant drama and internal conflict are not tolerated.</p>
-
-                <p><span class="highlight">3) Hit hard, hit smart</span></p>
-                <p>We play to win, not to throw fleets away. Scout, plan and coordinate. Use ACS, share intel and talk before large moves.</p>
-            </div>
-
-            <div>
-                <p><span class="highlight">4) No begging</span></p>
-                <p>Ask for advice, not constant handouts. We help each other grow, but we do not carry players who refuse to help themselves.</p>
-
-                <p><span class="highlight">5) Zero farm mentality</span></p>
-                <p>We build fleets and we hunt fleets. If you want to sit as a silent farm, you will not fit into VOID DOMINION.</p>
-
-                <p><span class="highlight">6) War means war</span></p>
-                <p>When we are at war, everyone participates: attacks, support, recycling, intel. This is not a spectator alliance.</p>
-            </div>
-        </div>
+    <section>
+      <h2>Ranks Within the Alliance</h2>
+      <p>We use military-style ranks for structure and coordination:</p>
+      <ul>
+        <li><span class="highlight">General</span> &mdash; senior strategic command.</li>
+        <li><span class="highlight">Colonel</span> &mdash; leads major operations and coordinates squads.</li>
+        <li><span class="highlight">Major</span> &mdash; supports Colonels in planning and execution.</li>
+        <li><span class="highlight">Lieutenant</span> &mdash; frontline coordination and scouting.</li>
+        <li><span class="highlight">Sergeant</span> &mdash; experienced fighters and unit leaders.</li>
+      </ul>
+      <p>
+        Ranks exist to organise attacks and defence, not to control the fate of the alliance.
+        <span class="highlight">No rank has the power to delete, disband or remove the alliance.</span>
+      </p>
+      <p>
+        The <span class="highlight">Alliance Founder</span> (me) is the only person who can
+        remove or fully control the alliance at structural level. All strategic changes,
+        including deletion or reformation of the alliance, are under my sole authority.
+      </p>
     </section>
 
-    <!-- PLAYSTYLE -->
-    <section id="playstyle">
-        <h2>Playstyle</h2>
-        <p>
-            VOID DOMINION is an <span class="highlight">aggressive PvP / war-focused alliance</span>.
-            Raiding, crashing, ACS strikes and tactical planning are our standard operations.
-        </p>
-        <p>
-            If your idea of OGame is quietly hiding fleets and hoping not to be noticed, this is not the place for you.
-            If you enjoy debris fields, calculated hits and reminding the universe who runs the galaxy, then you will feel at home.
-        </p>
+    <section>
+      <h2>Rules of Communication</h2>
+      <p>
+        We may be Outlaws &amp; Bandits, but we are not chaotic. Our communication rules
+        are simple and effective:
+      </p>
+      <ul>
+        <li>
+          <span class="highlight">Target Spotting:</span> we actively help each other
+          find good targets. If you see a possible victim with weak defences or bad
+          fleet timing, share the intel.
+        </li>
+        <li>
+          <span class="highlight">Resource Sharing:</span> if you find resources that
+          you cannot take yourself, or a target that would be wasted on you, pass it
+          on to another member. No profitable planet should be missed if one of us
+          can reach it.
+        </li>
+        <li>
+          <span class="highlight">Recycling Opportunities:</span> if someone in the alliance
+          makes a big hit and cannot recycle everything, others should step in to help
+          recycle and share reports where appropriate.
+        </li>
+        <li>
+          <span class="highlight">Politeness:</span> we are polite to everyone &mdash;
+          allies, neutrals and even enemies. You do not need insults or negative language
+          to destroy planets. Our strength speaks for itself.
+        </li>
+        <li>
+          <span class="highlight">No Internal Drama:</span> disagreements are handled in
+          private chats, calmly and directly. We don’t waste time on drama when we could
+          be farming resources instead.
+        </li>
+      </ul>
     </section>
 
-    <!-- REQUIREMENTS -->
-    <section id="requirements">
-        <h2>Requirements To Join</h2>
-        <ul>
-            <li>Active player willing to log in regularly.</li>
-            <li>Team-player mindset – you act with the alliance, not just for yourself.</li>
-            <li>Interest in raiding, growing and coordinating attacks.</li>
-            <li>Ability to fleet-save, or willingness to learn quickly and listen to advice.</li>
-        </ul>
-        <p class="tagline">
-            Points and rank can be built. Attitude and commitment decide whether you belong in the Dominion.
-        </p>
+    <section>
+      <h2>Our Philosophy</h2>
+      <p>
+        We attack when we have a reason. We hit hard, we hit smart, and we stand by
+        our members. If you like to live on the edge, strike above your weight, and
+        respect strength more than titles, Outlaws &amp; Bandits is your home.
+      </p>
     </section>
+  </main>
 
-    <!-- HOW TO JOIN -->
-    <section id="join">
-        <h2>How To Join VOID DOMINION</h2>
-        <p>
-            If you want to fly under our banner and take part in coordinated dominance of the galaxy,
-            contact our leadership in-game and send a short message introducing yourself.
-        </p>
-        <p>
-            Please include the following information in your application message:
-        </p>
-        <ul>
-            <li>
-                Who you are as a player – tell us a little about your playstyle.
-                Are you a fleeter, miner-raider, hybrid, or still learning the ropes?
-            </li>
-            <li>
-                Your current progress – share your current rank, points and rough activity level
-                so we know where you are right now.
-            </li>
-            <li>
-                Your OGame goals – explain what you want to achieve.
-                Are you here for coordinated ACS attacks, long-term growth, or total domination of your local area?
-            </li>
-            <li>
-                Your experience – if you have past alliance or universe experience, tell us about it.
-                If not, that is fine; motivation matters more than history.
-            </li>
-            <li>
-                Why VOID DOMINION – what made you choose us and why do you want to be part
-                of an aggressive pact built on dominion of space, not a silly sissy farm?
-            </li>
-        </ul>
-
-        <div class="cta-box">
-            <p class="tagline">
-                We are looking for active, disciplined players who want teamwork, strategy and coordinated power.
-                Points can be built. Loyalty and mindset cannot be faked.
-            </p>
-            <p class="tagline">
-                Send your message in-game to: <span class="highlight">VOID DOMINION leadership (me)</span>.
-                If you fit our style, we will welcome you into the Dominion and help you grow stronger –
-                so together we can remind the universe who really controls the void.
-            </p>
-            <button class="cta-button">
-                Apply In-Game – Message VOID DOMINION
-            </button>
-        </div>
-    </section>
-</main>
-
-<footer>
-    VOID DOMINION – OGame Alliance. Control the void. Command the galaxy.
-</footer>
-
+  <footer>
+    Outlaws &amp; Bandits &mdash; WarriorAlliance Class &mdash; We choose our own rules.
+  </footer>
 </body>
 </html>
