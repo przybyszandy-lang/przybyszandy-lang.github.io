@@ -4,6 +4,7 @@
   <meta charset="UTF-8" />
   <title>Donkey App Jokes</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+
   <style>
     body {
       background-color: #ffffff;
@@ -15,7 +16,7 @@
 
     /* Language switch bar */
     #languageBar {
-      display: none; /* shown after first joke */
+      display: none;
       margin: 0 auto 18px auto;
       font-size: 14px;
       color: #111;
@@ -42,16 +43,21 @@
       user-select: none;
     }
 
+    /* FORCE flag size: exactly 50x25 px */
     #languageBar img.flag {
       width: 50px;
       height: 25px;
+      min-width: 50px;
+      min-height: 25px;
+      max-width: 50px;
+      max-height: 25px;
       object-fit: cover;
       border: 1px solid #ddd;
       border-radius: 4px;
       display: inline-block;
     }
 
-    /* Main button – make it feel clickable */
+    /* Main button */
     #mainButton {
       padding: 12px 24px;
       font-size: 18px;
@@ -59,28 +65,19 @@
       border-radius: 10px;
       border: 1px solid #cfcfcf;
       background: #f7f7f7;
-      transition: transform 0.05s ease, box-shadow 0.15s ease, background 0.15s ease, border-color 0.15s ease;
+      transition: transform 0.05s ease, box-shadow 0.15s ease;
       box-shadow: 0 6px 14px rgba(0,0,0,0.08);
       user-select: none;
     }
 
     #mainButton:hover {
       background: #f0f0f0;
-      border-color: #bdbdbd;
       box-shadow: 0 8px 18px rgba(0,0,0,0.10);
     }
 
-    /* “Pressed” feel */
     #mainButton:active {
       transform: translateY(2px) scale(0.99);
       box-shadow: 0 3px 10px rgba(0,0,0,0.10);
-      background: #e9e9e9;
-    }
-
-    /* Keyboard focus – makes it obvious it was clicked/tabbed */
-    #mainButton:focus-visible {
-      outline: 3px solid rgba(0, 120, 255, 0.35);
-      outline-offset: 3px;
     }
 
     #content {
@@ -101,7 +98,7 @@
       justify-content: center;
       gap: 12px;
       margin-bottom: 14px;
-      min-height: 72px; /* keeps layout stable */
+      min-height: 72px;
       align-items: center;
     }
 
@@ -110,24 +107,19 @@
       height: 64px;
       cursor: pointer;
       user-select: none;
-      transition: transform 0.08s ease, filter 0.12s ease;
+      transition: transform 0.08s ease;
     }
 
     #ratingIcons img:hover {
       transform: scale(1.06);
-      filter: brightness(1.03);
     }
 
-    /* “Pressed” feel on icons too */
     #ratingIcons img:active {
       transform: scale(0.96);
-      filter: brightness(0.95);
     }
 
-    /* Vote acknowledgement message */
     #voteMessage {
       font-size: 14px;
-      color: #1a1a1a;
       padding: 10px 12px;
       border: 1px solid #e1e1e1;
       border-radius: 10px;
@@ -148,38 +140,29 @@
     }
   </style>
 </head>
+
 <body>
 
-  <!-- Language switch (hidden until first joke is shown) -->
+  <!-- Language switch -->
   <div id="languageBar">
     Show jokes in:
     <span class="langs">
-      <a href="english.html" title="English">
-        EN <img class="flag" src="language/en.png" alt="English flag" />
-      </a>
+      <a href="index.html">EN <img class="flag" src="language/english.png" alt="English"></a>
       <span class="sep">|</span>
-      <a href="polish.html" title="Polish">
-        PL <img class="flag" src="language/pl.png" alt="Polish flag" />
-      </a>
+      <a href="polish.html">PL <img class="flag" src="language/polish.png" alt="Polish"></a>
       <span class="sep">|</span>
-      <a href="german.html" title="German">
-        DE <img class="flag" src="language/de.png" alt="German flag" />
-      </a>
+      <a href="german.html">DE <img class="flag" src="language/german.png" alt="German"></a>
       <span class="sep">|</span>
-      <a href="spanish.html" title="Spanish">
-        ES <img class="flag" src="language/es.png" alt="Spanish flag" />
-      </a>
+      <a href="spanish.html">ES <img class="flag" src="language/spanish.png" alt="Spanish"></a>
       <span class="sep">|</span>
-      <a href="french.html" title="French">
-        FR <img class="flag" src="language/fr.png" alt="French flag" />
-      </a>
+      <a href="french.html">FR <img class="flag" src="language/french.png" alt="French"></a>
     </span>
   </div>
 
   <!-- Main button -->
-  <button id="mainButton" type="button">Press me to get a joke</button>
+  <button id="mainButton">Press me to get a joke</button>
 
-  <!-- Joke content (hidden initially) -->
+  <!-- Joke area -->
   <div id="content">
     <div id="joke"></div>
 
@@ -191,17 +174,16 @@
     </div>
   </div>
 
-  <!-- Supabase JS from CDN -->
+  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
     const { createClient } = supabase;
 
-    const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
-    const supabaseKey =
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
-
-    const client = createClient(supabaseUrl, supabaseKey);
+    const client = createClient(
+      'https://mknsvxajrvdlwqywvlrf.supabase.co',
+      'YOUR_PUBLIC_ANON_KEY'
+    );
 
     const mainButton = document.getElementById('mainButton');
     const contentDiv = document.getElementById('content');
@@ -213,125 +195,70 @@
     let jokesCache = [];
     let currentJoke = null;
     let initialised = false;
-    let voteLocked = false; // prevents multiple votes per shown joke
+    let voteLocked = false;
 
     const ratingOptions = [
-      { key: 'rating_dont_get_it_count', img: '1.png', alt: "Don't get it" },
-      { key: 'rating_ehh_count', img: '2.png', alt: 'Ehh' },
-      { key: 'rating_good_one_count', img: '3.png', alt: 'Good One' },
-      { key: 'rating_fell_off_chair_count', img: '4.png', alt: 'Epic' }
+      { key: 'rating_dont_get_it_count', img: '1.png' },
+      { key: 'rating_ehh_count', img: '2.png' },
+      { key: 'rating_good_one_count', img: '3.png' },
+      { key: 'rating_fell_off_chair_count', img: '4.png' }
     ];
-
-    function showVoteThanks() {
-      ratingIconsDiv.innerHTML = '';
-      voteMessageDiv.style.display = 'inline-block';
-      voteMessageDiv.textContent = 'Thanks for your vote.';
-    }
-
-    function resetVotingUI() {
-      voteLocked = false;
-      voteMessageDiv.style.display = 'none';
-      renderRatingIcons();
-    }
-
-    async function loadJokes() {
-      jokeDiv.textContent = 'Loading joke...';
-
-      const { data, error } = await client
-        .from('jokes')
-        .select('*')
-        .eq('is_visible', true)
-        .eq('is_flagged', false)
-        .limit(100);
-
-      if (error) {
-        console.error(error);
-        jokeDiv.textContent = 'Could not load jokes.';
-        return;
-      }
-
-      jokesCache = data || [];
-
-      if (!jokesCache.length) {
-        jokeDiv.textContent = 'No jokes available yet.';
-        ratingIconsDiv.innerHTML = '';
-        voteMessageDiv.style.display = 'none';
-        return;
-      }
-
-      showRandomJoke();
-    }
-
-    function showRandomJoke() {
-      if (!jokesCache.length) {
-        jokeDiv.textContent = 'No jokes available.';
-        ratingIconsDiv.innerHTML = '';
-        voteMessageDiv.style.display = 'none';
-        return;
-      }
-
-      const idx = Math.floor(Math.random() * jokesCache.length);
-      currentJoke = jokesCache[idx];
-      displayJoke(currentJoke);
-    }
-
-    function displayJoke(joke) {
-      jokeDiv.textContent = joke.content;
-      resetVotingUI();
-    }
 
     function renderRatingIcons() {
       ratingIconsDiv.innerHTML = '';
       ratingOptions.forEach(opt => {
         const img = document.createElement('img');
         img.src = opt.img;
-        img.alt = opt.alt;
-        img.title = opt.alt;
-        img.addEventListener('click', () => rateJoke(opt.key));
+        img.onclick = () => rateJoke(opt.key);
         ratingIconsDiv.appendChild(img);
       });
     }
 
-    async function rateJoke(counterKey) {
-      if (!currentJoke || voteLocked) return;
-
-      voteLocked = true;
-      showVoteThanks();
-
-      const newValue = (currentJoke[counterKey] || 0) + 1;
-
-      const { data, error } = await client
-        .from('jokes')
-        .update({ [counterKey]: newValue })
-        .eq('id', currentJoke.id)
-        .select()
-        .single();
-
-      if (error) {
-        console.error(error);
-        voteLocked = false;
-        voteMessageDiv.textContent = 'Sorry — error saving your vote.';
-        voteMessageDiv.style.display = 'inline-block';
-        return;
-      }
-
-      currentJoke = data;
-      jokesCache = jokesCache.map(j => (j.id === data.id ? data : j));
+    function showRandomJoke() {
+      const idx = Math.floor(Math.random() * jokesCache.length);
+      currentJoke = jokesCache[idx];
+      jokeDiv.textContent = currentJoke.content;
+      voteLocked = false;
+      voteMessageDiv.style.display = 'none';
+      renderRatingIcons();
     }
 
-    mainButton.addEventListener('click', async () => {
-      mainButton.blur();
+    async function loadJokes() {
+      const { data } = await client
+        .from('jokes')
+        .select('*')
+        .eq('is_visible', true)
+        .eq('is_flagged', false)
+        .limit(100);
 
+      jokesCache = data || [];
+      if (jokesCache.length) showRandomJoke();
+      else jokeDiv.textContent = 'No jokes available.';
+    }
+
+    async function rateJoke(key) {
+      if (voteLocked || !currentJoke) return;
+      voteLocked = true;
+      voteMessageDiv.style.display = 'inline-block';
+
+      await client
+        .from('jokes')
+        .update({ [key]: (currentJoke[key] || 0) + 1 })
+        .eq('id', currentJoke.id);
+    }
+
+    mainButton.onclick = async () => {
       if (!initialised) {
         initialised = true;
         contentDiv.style.display = 'block';
-        languageBar.style.display = 'block'; // show language options after first click
+        languageBar.style.display = 'block';
         mainButton.textContent = 'Another joke';
         await loadJokes();
       } else {
         showRandomJoke();
       }
-    });
+    };
   </script>
+
 </body>
 </html>
