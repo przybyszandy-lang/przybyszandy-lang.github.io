@@ -37,7 +37,7 @@
       margin-bottom: 4px;
     }
 
-    textarea, input[type="email"] {
+    textarea, input[type="email"], select {
       width: 100%;
       box-sizing: border-box;
       font-family: inherit;
@@ -45,6 +45,7 @@
       padding: 8px;
       border: 1px solid #ccc;
       border-radius: 4px;
+      background: #fff;
     }
 
     textarea {
@@ -91,6 +92,16 @@
       <label for="jokeContent">Your joke</label>
       <textarea id="jokeContent" placeholder="Type your joke here..."></textarea>
 
+      <label for="jokeLanguage">Language</label>
+      <select id="jokeLanguage" aria-label="Select joke language">
+        <option value="English" selected>English</option>
+        <option value="Polish">Polish</option>
+        <option value="German">German</option>
+        <option value="French">French</option>
+        <option value="Spanish">Spanish</option>
+        <option value="Other">Other</option>
+      </select>
+
       <label for="jokeEmail">Your email (optional)</label>
       <input
         id="jokeEmail"
@@ -114,13 +125,14 @@
 
     // Supabase config (anon key – safe for frontend)
     const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
-    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbmN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo';
 
     const supabase = createClient(supabaseUrl, supabaseKey);
 
     const form = document.getElementById('addJokeForm');
     const jokeContentInput = document.getElementById('jokeContent');
     const jokeEmailInput = document.getElementById('jokeEmail');
+    const jokeLanguageSelect = document.getElementById('jokeLanguage');
     const messageDiv = document.getElementById('message');
 
     form.addEventListener('submit', async (event) => {
@@ -129,15 +141,17 @@
 
       const content = jokeContentInput.value.trim();
       const email = jokeEmailInput.value.trim();
+      const language = jokeLanguageSelect.value;
 
       if (!content) {
         messageDiv.textContent = 'Please type a joke before submitting.';
         return;
       }
 
-      // Insert into jokes table
+      // Insert into jokes table (includes new language column)
       const { error } = await supabase.from('jokes').insert({
         content: content,
+        language: language,
         added_by_email: email || null,
         is_new: true,
         is_visible: true,  // you can change to false later if you want manual approval
@@ -153,8 +167,8 @@
       messageDiv.textContent = 'Thank you! Your joke has been submitted.';
       jokeContentInput.value = '';
       jokeEmailInput.value = '';
+      jokeLanguageSelect.value = 'English';
     });
   </script>
 </body>
 </html>
-
