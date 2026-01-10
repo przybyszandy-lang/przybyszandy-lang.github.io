@@ -13,6 +13,44 @@
       padding: 40px 15px;
     }
 
+    /* Language switch bar */
+    #languageBar {
+      display: none; /* shown after first joke */
+      margin: 0 auto 18px auto;
+      font-size: 14px;
+      color: #111;
+    }
+
+    #languageBar .langs {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 8px;
+    }
+
+    #languageBar a {
+      color: #0000ee;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #languageBar .sep {
+      color: #999;
+      user-select: none;
+    }
+
+    #languageBar img.flag {
+      width: 50px;
+      height: 25px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
     /* Main button – make it feel clickable */
     #mainButton {
       padding: 12px 24px;
@@ -112,6 +150,32 @@
 </head>
 <body>
 
+  <!-- Language switch (hidden until first joke is shown) -->
+  <div id="languageBar">
+    Show jokes in:
+    <span class="langs">
+      <a href="english.html" title="English">
+        EN <img class="flag" src="language/en.png" alt="English flag" />
+      </a>
+      <span class="sep">|</span>
+      <a href="polish.html" title="Polish">
+        PL <img class="flag" src="language/pl.png" alt="Polish flag" />
+      </a>
+      <span class="sep">|</span>
+      <a href="german.html" title="German">
+        DE <img class="flag" src="language/de.png" alt="German flag" />
+      </a>
+      <span class="sep">|</span>
+      <a href="spanish.html" title="Spanish">
+        ES <img class="flag" src="language/es.png" alt="Spanish flag" />
+      </a>
+      <span class="sep">|</span>
+      <a href="french.html" title="French">
+        FR <img class="flag" src="language/fr.png" alt="French flag" />
+      </a>
+    </span>
+  </div>
+
   <!-- Main button -->
   <button id="mainButton" type="button">Press me to get a joke</button>
 
@@ -144,6 +208,7 @@
     const jokeDiv = document.getElementById('joke');
     const ratingIconsDiv = document.getElementById('ratingIcons');
     const voteMessageDiv = document.getElementById('voteMessage');
+    const languageBar = document.getElementById('languageBar');
 
     let jokesCache = [];
     let currentJoke = null;
@@ -160,6 +225,7 @@
     function showVoteThanks() {
       ratingIconsDiv.innerHTML = '';
       voteMessageDiv.style.display = 'inline-block';
+      voteMessageDiv.textContent = 'Thanks for your vote.';
     }
 
     function resetVotingUI() {
@@ -211,7 +277,7 @@
 
     function displayJoke(joke) {
       jokeDiv.textContent = joke.content;
-      resetVotingUI(); // new joke => allow voting again + show icons
+      resetVotingUI();
     }
 
     function renderRatingIcons() {
@@ -220,7 +286,7 @@
         const img = document.createElement('img');
         img.src = opt.img;
         img.alt = opt.alt;
-        img.title = opt.alt; // small usability boost
+        img.title = opt.alt;
         img.addEventListener('click', () => rateJoke(opt.key));
         ratingIconsDiv.appendChild(img);
       });
@@ -229,8 +295,8 @@
     async function rateJoke(counterKey) {
       if (!currentJoke || voteLocked) return;
 
-      voteLocked = true;           // lock immediately (prevents double clicks)
-      showVoteThanks();            // instant feedback in the UI
+      voteLocked = true;
+      showVoteThanks();
 
       const newValue = (currentJoke[counterKey] || 0) + 1;
 
@@ -254,12 +320,12 @@
     }
 
     mainButton.addEventListener('click', async () => {
-      // brief “pressed” confirmation beyond CSS (optional but helps)
       mainButton.blur();
 
       if (!initialised) {
         initialised = true;
         contentDiv.style.display = 'block';
+        languageBar.style.display = 'block'; // show language options after first click
         mainButton.textContent = 'Another joke';
         await loadJokes();
       } else {
