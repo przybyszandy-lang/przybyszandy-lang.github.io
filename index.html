@@ -224,12 +224,14 @@
     }
 
     async function loadJokes() {
-      const { data } = await client
-        .from('jokes')
-        .select('*')
-        .eq('is_visible', true)
-        .eq('is_flagged', false)
-        .limit(100);
+const { data, error } = await client
+  .from('jokes')
+  .select('*')
+  .eq('is_visible', true)
+  .eq('is_flagged', false)
+  .eq('language', 'English')
+  .limit(100);
+
 
       jokesCache = data || [];
       if (jokesCache.length) showRandomJoke();
