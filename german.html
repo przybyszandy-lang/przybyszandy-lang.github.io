@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <title>Donkey App Witze</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 40px 15px;
+    }
+
+    /* Language switch bar */
+    #languageBar {
+      display: none;
+      margin: 0 auto 18px auto;
+      font-size: 14px;
+      color: #111;
+    }
+
+    #languageBar .langs {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 8px;
+    }
+
+    #languageBar a {
+      color: #0000ee;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    #languageBar .sep {
+      color: #999;
+      user-select: none;
+    }
+
+    /* FORCE flag size: exactly 50x25 px */
+    #languageBar img.flag {
+      width: 50px;
+      height: 25px;
+      min-width: 50px;
+      min-height: 25px;
+      max-width: 50px;
+      max-height: 25px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: inline-block;
+    }
+
+    /* Main button */
+    #mainButton {
+      padding: 12px 24px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 10px;
+      border: 1px solid #cfcfcf;
+      background: #f7f7f7;
+      transition: transform 0.05s ease, box-shadow 0.15s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      user-select: none;
+    }
+
+    #mainButton:hover {
+      background: #f0f0f0;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+    }
+
+    #mainButton:active {
+      transform: translateY(2px) scale(0.99);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+    }
+
+    #content {
+      margin-top: 30px;
+      display: none;
+    }
+
+    #joke {
+      font-size: 18px;
+      line-height: 1.5;
+      white-space: pre-line;
+      min-height: 80px;
+      margin-bottom: 18px;
+    }
+
+    #ratingIcons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      min-height: 72px;
+      align-items: center;
+    }
+
+    #ratingIcons img {
+      width: 64px;
+      height: 64px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.08s ease;
+    }
+
+    #ratingIcons img:hover {
+      transform: scale(1.06);
+    }
+
+    #ratingIcons img:active {
+      transform: scale(0.96);
+    }
+
+    #voteMessage {
+      font-size: 14px;
+      padding: 10px 12px;
+      border: 1px solid #e1e1e1;
+      border-radius: 10px;
+      background: #fafafa;
+      display: none;
+      width: fit-content;
+      margin: 0 auto 14px auto;
+    }
+
+    #extras {
+      font-size: 13px;
+    }
+
+    #extras a {
+      color: #0000ee;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Language switch -->
+  <div id="languageBar">
+    Witze anzeigen in:
+    <span class="langs">
+      <a href="index.html">EN <img class="flag" src="english.png" alt="English"></a>
+      <span class="sep">|</span>
+      <a href="polish.html">PL <img class="flag" src="polish.png" alt="Polski"></a>
+      <span class="sep">|</span>
+      <a href="german.html">DE <img class="flag" src="german.png" alt="Deutsch"></a>
+      <span class="sep">|</span>
+      <a href="spanish.html">ES <img class="flag" src="spanish.png" alt="Español"></a>
+      <span class="sep">|</span>
+      <a href="french.html">FR <img class="flag" src="french.png" alt="Français"></a>
+    </span>
+  </div>
+
+  <!-- Main button -->
+  <button id="mainButton">Drück mich für einen Witz</button>
+
+  <!-- Joke area -->
+  <div id="content">
+    <div id="joke"></div>
+
+    <div id="ratingIcons"></div>
+    <div id="voteMessage">Danke für deine Stimme.</div>
+
+    <div id="extras">
+      <a href="addajoke.html">Willst du einen Witz hinzufügen?</a>
+    </div>
+  </div>
+
+  <!-- Supabase -->
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    const { createClient } = supabase;
+
+    const client = createClient(
+      'https://mknsvxajrvdlwqywvlrf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo'
+    );
+
+    const mainButton = document.getElementById('mainButton');
+    const contentDiv = document.getElementById('content');
+    const jokeDiv = document.getElementById('joke');
+    const ratingIconsDiv = document.getElementById('ratingIcons');
+    const voteMessageDiv = document.getElementById('voteMessage');
+    const languageBar = document.getElementById('languageBar');
+
+    let jokesCache = [];
+    let currentJoke = null;
+    let initialised = false;
+    let voteLocked = false;
+
+    const ratingOptions = [
+      { key: 'rating_dont_get_it_count', img: '1.png' },
+      { key: 'rating_ehh_count', img: '2.png' },
+      { key: 'rating_good_one_count', img: '3.png' },
+      { key: 'rating_fell_off_chair_count', img: '4.png' }
+    ];
+
+    function renderRatingIcons() {
+      ratingIconsDiv.innerHTML = '';
+      ratingOptions.forEach(opt => {
+        const img = document.createElement('img');
+        img.src = opt.img;
+        img.onclick = () => rateJoke(opt.key);
+        ratingIconsDiv.appendChild(img);
+      });
+    }
+
+    function showRandomJoke() {
+      const idx = Math.floor(Math.random() * jokesCache.length);
+      currentJoke = jokesCache[idx];
+      jokeDiv.textContent = currentJoke.content;
+      voteLocked = false;
+      voteMessageDiv.style.display = 'none';
+      renderRatingIcons();
+    }
+
+    async function loadJokes() {
+      const { data, error } = await client
+        .from('jokes')
+        .select('*')
+        .eq('is_visible', true)
+        .eq('is_flagged', false)
+        .eq('language', 'German')
+        .limit(100);
+
+      jokesCache = data || [];
+      if (jokesCache.length) showRandomJoke();
+      else jokeDiv.textContent = 'Keine Witze verfügbar.';
+    }
+
+    async function rateJoke(key) {
+      if (voteLocked || !currentJoke) return;
+      voteLocked = true;
+      voteMessageDiv.style.display = 'inline-block';
+
+      await client
+        .from('jokes')
+        .update({ [key]: (currentJoke[key] || 0) + 1 })
+        .eq('id', currentJoke.id);
+    }
+
+    mainButton.onclick = async () => {
+      if (!initialised) {
+        initialised = true;
+        contentDiv.style.display = 'block';
+        languageBar.style.display = 'block';
+        mainButton.textContent = 'Noch ein Witz';
+        await loadJokes();
+      } else {
+        showRandomJoke();
+      }
+    };
+  </script>
+
+</body>
+</html>
