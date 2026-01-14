@@ -63,10 +63,16 @@
       background: #f7f7f7;
     }
 
+    button:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
     #message {
       margin-top: 12px;
       font-size: 14px;
       min-height: 18px;
+      white-space: pre-wrap;
     }
 
     .links {
@@ -90,7 +96,7 @@
 
     <form id="addJokeForm">
       <label for="jokeContent">Your joke</label>
-      <textarea id="jokeContent" placeholder="Type your joke here..."></textarea>
+      <textarea id="jokeContent" placeholder="Type your joke here..." required></textarea>
 
       <label for="jokeLanguage">Language</label>
       <select id="jokeLanguage" aria-label="Select joke language">
@@ -107,9 +113,10 @@
         id="jokeEmail"
         type="email"
         placeholder="We might contact you if we ever curate the best jokes. Leave empty if you prefer."
+        autocomplete="email"
       />
 
-      <button type="submit">Submit joke</button>
+      <button id="submitBtn" type="submit">Submit joke</button>
     </form>
 
     <div id="message"></div>
@@ -134,37 +141,61 @@
     const jokeEmailInput = document.getElementById('jokeEmail');
     const jokeLanguageSelect = document.getElementById('jokeLanguage');
     const messageDiv = document.getElementById('message');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function setMessage(text, isError = false) {
+      messageDiv.textContent = text;
+      messageDiv.style.color = isError ? 'crimson' : 'green';
+    }
 
     form.addEventListener('submit', async (event) => {
       event.preventDefault();
-      messageDiv.textContent = '';
+      setMessage('');
 
       const content = jokeContentInput.value.trim();
-      const email = jokeEmailInput.value.trim();
+      const emailRaw = jokeEmailInput.value.trim();
       const language = jokeLanguageSelect.value;
 
       if (!content) {
-        messageDiv.textContent = 'Please type a joke before submitting.';
+        setMessage('Please type a joke before submitting.', true);
         return;
       }
 
-      // Insert into jokes table (includes new language column)
-      const { error } = await supabase.from('jokes').insert({
+      // basic sanity on email (browser already validates type="email", but keep it safe)
+      const email = emailRaw.length ? emailRaw : null;
+
+      submitBtn.disabled = true;
+      setMessage('Submitting...');
+
+      // Use array form for insert (most robust)
+      const payload = [{
         content: content,
-        language: language,
-        added_by_email: email || null,
+        language: language,            // column is "language"
+        added_by_email: email,
         is_new: true,
-        is_visible: true,  // you can change to false later if you want manual approval
+        is_visible: false,             // safer default (moderation-friendly)
         is_flagged: false
-      });
+      }];
+
+      const { data, error } = await supabase
+        .from('jokes')
+        .insert(payload)
+        .select('id'); // optional: confirms insert + returns id if allowed by RLS
+
+      submitBtn.disabled = false;
 
       if (error) {
-        console.error(error);
-        messageDiv.textContent = 'Something went wrong while saving your joke. Please try again later.';
+        console.error('Supabase insert error:', error);
+        // Show the real reason (this is what you need for debugging)
+        setMessage(
+          `Error saving joke:\n${error.message}\n${error.details ?? ''}`.trim(),
+          true
+        );
         return;
       }
 
-      messageDiv.textContent = 'Thank you! Your joke has been submitted.';
+      setMessage(`Thank you! Your joke has been submitted.${data?.[0]?.id ? ` (id: ${data[0].id})` : ''}`);
+
       jokeContentInput.value = '';
       jokeEmailInput.value = '';
       jokeLanguageSelect.value = 'English';
