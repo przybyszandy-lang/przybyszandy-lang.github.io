@@ -144,7 +144,7 @@
       display: none;
       margin: 18px auto 0 auto;
       padding: 12px 14px;
-      max-width: 720px;
+      max-width: 820px;
       text-align: left;
       border: 1px solid #ffb3b3;
       background: #fff5f5;
@@ -154,11 +154,12 @@
       white-space: pre-wrap;
     }
 
+    /* Debug box */
     #debugBox {
       display: none;
       margin: 10px auto 0 auto;
       padding: 12px 14px;
-      max-width: 720px;
+      max-width: 820px;
       text-align: left;
       border: 1px solid #e1e1e1;
       background: #fafafa;
@@ -202,10 +203,8 @@
       <a href="addajoke.html">Vous voulez ajouter une blague ?</a>
     </div>
 
-    <!-- Error output -->
+    <!-- Error + Debug -->
     <div id="errorBox"></div>
-
-    <!-- Debug output -->
     <div id="debugBox"></div>
   </div>
 
@@ -306,7 +305,28 @@
       clearError();
       clearDebug();
 
-      const { data, error } = await client
+      // ==========================
+      // DIAGNOSTIC MODE (IMPORTANT)
+      // This will show you what languages exist in your database
+      // ==========================
+      const all = await client
+        .from('jokes')
+        .select('id,language,is_visible,is_flagged', { count: 'exact' })
+        .eq('is_visible', true)
+        .eq('is_flagged', false)
+        .limit(500);
+
+      if (all.error) {
+        showError(all.error, "Diagnostic: fetch visible + not flagged");
+        jokeDiv.textContent = "Impossible de charger les blagues.";
+        return;
+      }
+
+      const rows = all.data || [];
+      const langs = [...new Set(rows.map(r => r.language))].sort();
+
+      // Now try your current French filter
+      const fr = await client
         .from('jokes')
         .select('*')
         .eq('is_visible', true)
@@ -314,18 +334,20 @@
         .eq('language', 'French')
         .limit(100);
 
-      if (error) {
-        showError(error, "Loading jokes (language = French)");
+      if (fr.error) {
+        showError(fr.error, "Loading jokes (language = French)");
         jokeDiv.textContent = "Impossible de charger les blagues.";
         return;
       }
 
-      jokesCache = data || [];
+      jokesCache = fr.data || [];
 
       showDebug({
-        fetchedCount: jokesCache.length,
-        firstRowPreview: jokesCache[0] || null,
-        languagesFoundInResult: [...new Set(jokesCache.map(j => j.language))]
+        totalVisibleNotFlagged: rows.length,
+        distinctLanguagesAmongVisible: langs,
+        frenchQueryReturned: jokesCache.length,
+        frenchQueryLanguageFilterUsed: "French",
+        firstFrenchRowPreview: jokesCache[0] || null
       });
 
       if (jokesCache.length) showRandomJoke();
@@ -353,7 +375,6 @@
         return;
       }
 
-      // update local cache so user can vote again on next joke without stale values
       currentJoke[key] = newValue;
     }
 
