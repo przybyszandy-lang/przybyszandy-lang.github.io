@@ -138,36 +138,6 @@
       text-decoration: underline;
       cursor: pointer;
     }
-
-    /* Error box */
-    #errorBox {
-      display: none;
-      margin: 18px auto 0 auto;
-      padding: 12px 14px;
-      max-width: 820px;
-      text-align: left;
-      border: 1px solid #ffb3b3;
-      background: #fff5f5;
-      border-radius: 10px;
-      font-size: 13px;
-      line-height: 1.4;
-      white-space: pre-wrap;
-    }
-
-    /* Debug box */
-    #debugBox {
-      display: none;
-      margin: 10px auto 0 auto;
-      padding: 12px 14px;
-      max-width: 820px;
-      text-align: left;
-      border: 1px solid #e1e1e1;
-      background: #fafafa;
-      border-radius: 10px;
-      font-size: 13px;
-      line-height: 1.4;
-      white-space: pre-wrap;
-    }
   </style>
 </head>
 
@@ -202,10 +172,6 @@
     <div id="extras">
       <a href="addajoke.html">Vous voulez ajouter une blague ?</a>
     </div>
-
-    <!-- Error + Debug -->
-    <div id="errorBox"></div>
-    <div id="debugBox"></div>
   </div>
 
   <!-- Supabase -->
@@ -226,9 +192,6 @@
     const voteMessageDiv = document.getElementById('voteMessage');
     const languageBar = document.getElementById('languageBar');
 
-    const errorBox = document.getElementById('errorBox');
-    const debugBox = document.getElementById('debugBox');
-
     let jokesCache = [];
     let currentJoke = null;
     let initialised = false;
@@ -241,41 +204,6 @@
       { key: 'rating_fell_off_chair_count', img: '4.png' }
     ];
 
-    function showError(err, contextText) {
-      console.error("Supabase error:", err);
-
-      const payload = {
-        context: contextText || "Unknown context",
-        message: err?.message || null,
-        details: err?.details || null,
-        hint: err?.hint || null,
-        code: err?.code || null,
-        status: err?.status || null,
-        statusText: err?.statusText || null
-      };
-
-      errorBox.style.display = 'block';
-      errorBox.textContent =
-        "ERREUR SUPABASE\n\n" +
-        JSON.stringify(payload, null, 2);
-    }
-
-    function clearError() {
-      errorBox.style.display = 'none';
-      errorBox.textContent = '';
-    }
-
-    function showDebug(obj) {
-      debugBox.style.display = 'block';
-      debugBox.textContent =
-        "DEBUG\n\n" + JSON.stringify(obj, null, 2);
-    }
-
-    function clearDebug() {
-      debugBox.style.display = 'none';
-      debugBox.textContent = '';
-    }
-
     function renderRatingIcons() {
       ratingIconsDiv.innerHTML = '';
       ratingOptions.forEach(opt => {
@@ -287,14 +215,8 @@
     }
 
     function showRandomJoke() {
-      if (!jokesCache.length) {
-        jokeDiv.textContent = 'Aucune blague disponible.';
-        return;
-      }
-
       const idx = Math.floor(Math.random() * jokesCache.length);
       currentJoke = jokesCache[idx];
-
       jokeDiv.textContent = currentJoke.content;
       voteLocked = false;
       voteMessageDiv.style.display = 'none';
@@ -302,31 +224,7 @@
     }
 
     async function loadJokes() {
-      clearError();
-      clearDebug();
-
-      // ==========================
-      // DIAGNOSTIC MODE (IMPORTANT)
-      // This will show you what languages exist in your database
-      // ==========================
-      const all = await client
-        .from('jokes')
-        .select('id,language,is_visible,is_flagged', { count: 'exact' })
-        .eq('is_visible', true)
-        .eq('is_flagged', false)
-        .limit(500);
-
-      if (all.error) {
-        showError(all.error, "Diagnostic: fetch visible + not flagged");
-        jokeDiv.textContent = "Impossible de charger les blagues.";
-        return;
-      }
-
-      const rows = all.data || [];
-      const langs = [...new Set(rows.map(r => r.language))].sort();
-
-      // Now try your current French filter
-      const fr = await client
+      const { data, error } = await client
         .from('jokes')
         .select('*')
         .eq('is_visible', true)
@@ -334,22 +232,7 @@
         .eq('language', 'French')
         .limit(100);
 
-      if (fr.error) {
-        showError(fr.error, "Loading jokes (language = French)");
-        jokeDiv.textContent = "Impossible de charger les blagues.";
-        return;
-      }
-
-      jokesCache = fr.data || [];
-
-      showDebug({
-        totalVisibleNotFlagged: rows.length,
-        distinctLanguagesAmongVisible: langs,
-        frenchQueryReturned: jokesCache.length,
-        frenchQueryLanguageFilterUsed: "French",
-        firstFrenchRowPreview: jokesCache[0] || null
-      });
-
+      jokesCache = data || [];
       if (jokesCache.length) showRandomJoke();
       else jokeDiv.textContent = 'Aucune blague disponible.';
     }
@@ -357,25 +240,12 @@
     async function rateJoke(key) {
       if (voteLocked || !currentJoke) return;
       voteLocked = true;
-
       voteMessageDiv.style.display = 'inline-block';
-      clearError();
 
-      const newValue = (currentJoke[key] || 0) + 1;
-
-      const { error } = await client
+      await client
         .from('jokes')
-        .update({ [key]: newValue })
+        .update({ [key]: (currentJoke[key] || 0) + 1 })
         .eq('id', currentJoke.id);
-
-      if (error) {
-        showError(error, "Rating joke update");
-        voteMessageDiv.style.display = 'none';
-        voteLocked = false;
-        return;
-      }
-
-      currentJoke[key] = newValue;
     }
 
     mainButton.onclick = async () => {
