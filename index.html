@@ -1,275 +1,448 @@
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Donkey App Jokes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-<script>
-  // ---------- SUPABASE ----------
-  const { createClient } = supabase;
-  const client = createClient(
-    'https://mknsvxajrvdlwqywvlrf.supabase.co',
-    'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo'
-  );
-
-  // ---------- DOM ----------
-  const mainButton = document.getElementById('mainButton');
-  const contentDiv = document.getElementById('content');
-  const jokeDiv = document.getElementById('joke');
-  const ratingIconsDiv = document.getElementById('ratingIcons');
-  const voteMessageDiv = document.getElementById('voteMessage');
-  const languageBar = document.getElementById('languageBar');
-
-  // ---------- STATE ----------
-  let jokesCache = [];
-  let currentJoke = null;
-
-  let initialised = false;
-  let voteLocked = false;
-
-  // For "no repeats recently"
-  let recentJokeIds = [];
-  const RECENT_LIMIT = 20;
-
-  // For "back" navigation
-  // history = list of jokes in the order they were shown
-  // historyIndex = pointer to the currently displayed joke in that list
-  let history = [];
-  let historyIndex = -1;
-
-  // ---------- RATING CONFIG ----------
-  const ratingOptions = [
-    { key: 'rating_dont_get_it_count', img: '1.png' },
-    { key: 'rating_ehh_count', img: '2.png' },
-    { key: 'rating_good_one_count', img: '3.png' },
-    { key: 'rating_fell_off_chair_count', img: '4.png' }
-  ];
-
-  function renderRatingIcons() {
-    ratingIconsDiv.innerHTML = '';
-
-    ratingOptions.forEach(opt => {
-      const img = document.createElement('img');
-      img.src = opt.img;
-      img.alt = opt.key;
-      img.onclick = () => rateJoke(opt.key);
-      ratingIconsDiv.appendChild(img);
-    });
-  }
-
-  // ---------- WEIGHTED RANDOM (PREFER HIGHER "average") ----------
-  // If your average scale is 0..2, change MAX_AVG to 2
-  const MAX_AVG = 4;
-
-  function weightFromAverage(j) {
-    const avg = Number(j && j.average);
-    const safeAvg = Number.isFinite(avg) ? avg : 0;
-    const clamped = Math.max(0, Math.min(MAX_AVG, safeAvg));
-
-    const baseline = 1;   // everyone gets at least some chance
-    const strength = 2;   // 1 = mild, 2 = stronger, 3 = very strong
-
-    return baseline + Math.pow(clamped, strength);
-  }
-
-  function pickWeighted(arr, weightFn) {
-    if (!arr || arr.length === 0) return null;
-
-    let total = 0;
-    const weights = new Array(arr.length);
-
-    for (let i = 0; i < arr.length; i++) {
-      const w = Math.max(0, Number(weightFn(arr[i])) || 0);
-      weights[i] = w;
-      total += w;
+  <style>
+    body {
+      background-color: #ffffff;
+      font-family: Arial, sans-serif;
+      text-align: center;
+      margin: 0;
+      padding: 40px 15px;
     }
 
-    if (total <= 0) {
-      return arr[Math.floor(Math.random() * arr.length)];
+    #languageBar {
+      display: none;
+      margin: 0 auto 18px auto;
+      font-size: 14px;
+      color: #111;
     }
 
-    let r = Math.random() * total;
-    for (let i = 0; i < arr.length; i++) {
-      r -= weights[i];
-      if (r <= 0) return arr[i];
+    #languageBar .langs {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: 8px;
     }
-    return arr[arr.length - 1];
-  }
 
-  // ---------- DISPLAY / HISTORY ----------
-  function renderJoke(joke, { addToHistory = true } = {}) {
-    if (!joke) return;
+    #languageBar a {
+      color: #0000ee;
+      text-decoration: underline;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
 
-    currentJoke = joke;
-    jokeDiv.textContent = currentJoke.content;
+    #languageBar .sep {
+      color: #999;
+      user-select: none;
+    }
 
-    voteLocked = false;
-    voteMessageDiv.style.display = 'none';
-    voteMessageDiv.textContent = 'Thanks for your vote.';
+    #languageBar img.flag {
+      width: 30px;
+      height: 15px;
+      min-width: 30px;
+      min-height: 15px;
+      max-width: 30px;
+      max-height: 15px;
+      object-fit: cover;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      display: inline-block;
+    }
 
-    renderRatingIcons();
+    .btnRow {
+      display: inline-flex;
+      gap: 10px;
+      align-items: center;
+      justify-content: center;
+    }
 
-    if (addToHistory) {
-      // If user went back and then presses "Another joke",
-      // we drop any "forward" history and start a new branch
-      if (historyIndex < history.length - 1) {
-        history = history.slice(0, historyIndex + 1);
+    button {
+      padding: 12px 24px;
+      font-size: 18px;
+      cursor: pointer;
+      border-radius: 10px;
+      border: 1px solid #cfcfcf;
+      background: #f7f7f7;
+      transition: transform 0.05s ease, box-shadow 0.15s ease;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+      user-select: none;
+    }
+
+    button:hover {
+      background: #f0f0f0;
+      box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+    }
+
+    button:active {
+      transform: translateY(2px) scale(0.99);
+      box-shadow: 0 3px 10px rgba(0,0,0,0.10);
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    #content {
+      margin-top: 30px;
+      display: none;
+    }
+
+    #joke {
+      font-size: 18px;
+      line-height: 1.5;
+      white-space: pre-line;
+      min-height: 80px;
+      margin-bottom: 18px;
+    }
+
+    #ratingIcons {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 14px;
+      min-height: 72px;
+      align-items: center;
+    }
+
+    #ratingIcons img {
+      width: 64px;
+      height: 64px;
+      cursor: pointer;
+      user-select: none;
+      transition: transform 0.08s ease;
+    }
+
+    #ratingIcons img:hover {
+      transform: scale(1.06);
+    }
+
+    #ratingIcons img:active {
+      transform: scale(0.96);
+    }
+
+    #voteMessage {
+      font-size: 14px;
+      padding: 10px 12px;
+      border: 1px solid #e1e1e1;
+      border-radius: 10px;
+      background: #fafafa;
+      display: none;
+      width: fit-content;
+      margin: 0 auto 14px auto;
+    }
+
+    #extras {
+      font-size: 13px;
+    }
+
+    #extras a {
+      color: #0000ee;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+
+    #errorBox {
+      display: none;
+      margin: 18px auto 0 auto;
+      padding: 12px 14px;
+      border: 1px solid #f3c2c2;
+      border-radius: 10px;
+      background: #fff2f2;
+      color: #7a1b1b;
+      width: fit-content;
+      max-width: 90%;
+      text-align: left;
+      white-space: pre-wrap;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div id="languageBar">
+    Show jokes in:
+    <span class="langs">
+      <a href="index.html">EN <img class="flag" src="english.png" alt="English"></a>
+      <span class="sep">|</span>
+      <a href="polish.html">PL <img class="flag" src="polish.png" alt="Polish"></a>
+      <span class="sep">|</span>
+      <a href="german.html">DE <img class="flag" src="german.png" alt="German"></a>
+      <span class="sep">|</span>
+      <a href="spanish.html">ES <img class="flag" src="spanish.png" alt="Spanish"></a>
+      <span class="sep">|</span>
+      <a href="french.html">FR <img class="flag" src="french.png" alt="French"></a>
+    </span>
+  </div>
+
+  <div class="btnRow">
+    <button id="prevButton" disabled style="display:none;">Previous</button>
+    <button id="mainButton">Press me to get a joke</button>
+  </div>
+
+  <div id="errorBox"></div>
+
+  <div id="content">
+    <div id="joke"></div>
+    <div id="ratingIcons"></div>
+    <div id="voteMessage">Thanks for your vote.</div>
+
+    <div id="extras">
+      <a href="addajoke.html">Want to add a joke?</a>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      // ---------- DOM ----------
+      const mainButton = document.getElementById('mainButton');
+      const prevButton = document.getElementById('prevButton');
+      const contentDiv = document.getElementById('content');
+      const jokeDiv = document.getElementById('joke');
+      const ratingIconsDiv = document.getElementById('ratingIcons');
+      const voteMessageDiv = document.getElementById('voteMessage');
+      const languageBar = document.getElementById('languageBar');
+      const errorBox = document.getElementById('errorBox');
+
+      function showError(msg) {
+        console.error(msg);
+        errorBox.style.display = 'block';
+        errorBox.textContent = String(msg);
       }
 
-      history.push(currentJoke);
-      historyIndex = history.length - 1;
-    }
+      function clearError() {
+        errorBox.style.display = 'none';
+        errorBox.textContent = '';
+      }
 
-    updateButtonsUI();
-  }
+      // ---------- SUPABASE ----------
+      if (!window.supabase || !window.supabase.createClient) {
+        showError('Supabase library did not load. Check your internet connection or the CDN link.');
+        return;
+      }
 
-  function updateButtonsUI() {
-    const prevBtn = document.getElementById('prevButton');
-    if (prevBtn) {
-      prevBtn.disabled = historyIndex <= 0;
-      prevBtn.style.opacity = prevBtn.disabled ? '0.5' : '1';
-      prevBtn.style.cursor = prevBtn.disabled ? 'not-allowed' : 'pointer';
-    }
-  }
+      const { createClient } = window.supabase;
+      const client = createClient(
+        'https://mknsvxajrvdlwqywvlrf.supabase.co',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo'
+      );
 
-  function showNextWeightedJoke() {
-    if (!jokesCache.length) return;
+      // ---------- STATE ----------
+      let jokesCache = [];
+      let currentJoke = null;
+      let initialised = false;
+      let voteLocked = false;
 
-    // If we've "recented" almost everything, reset recents
-    if (recentJokeIds.length >= jokesCache.length - 1) {
-      recentJokeIds = [];
-    }
+      // No repeats for last N
+      let recentJokeIds = [];
+      const RECENT_LIMIT = 20;
 
-    // Exclude recently shown (also excludes current)
-    const candidates = jokesCache.filter(j => !recentJokeIds.includes(j.id));
-    const picked = pickWeighted(candidates.length ? candidates : jokesCache, weightFromAverage);
-    if (!picked) return;
+      // Back navigation
+      let history = [];
+      let historyIndex = -1;
 
-    // Record in recent list
-    recentJokeIds.push(picked.id);
-    if (recentJokeIds.length > RECENT_LIMIT) recentJokeIds.shift();
+      // ---------- RATING ----------
+      const ratingOptions = [
+        { key: 'rating_dont_get_it_count', img: '1.png' },
+        { key: 'rating_ehh_count', img: '2.png' },
+        { key: 'rating_good_one_count', img: '3.png' },
+        { key: 'rating_fell_off_chair_count', img: '4.png' }
+      ];
 
-    renderJoke(picked, { addToHistory: true });
-  }
+      function renderRatingIcons() {
+        ratingIconsDiv.innerHTML = '';
+        ratingOptions.forEach(opt => {
+          const img = document.createElement('img');
+          img.src = opt.img;
+          img.alt = opt.key;
+          img.onclick = () => rateJoke(opt.key);
+          ratingIconsDiv.appendChild(img);
+        });
+      }
 
-  function showPreviousJoke() {
-    if (historyIndex <= 0) return;
+      // ---------- WEIGHTED RANDOM ----------
+      // If your average is 0..2, change this to 2
+      const MAX_AVG = 4;
 
-    historyIndex -= 1;
-    const prev = history[historyIndex];
-    renderJoke(prev, { addToHistory: false });
-  }
+      function weightFromAverage(j) {
+        const avg = Number(j && j.average);
+        const safeAvg = Number.isFinite(avg) ? avg : 0;
+        const clamped = Math.max(0, Math.min(MAX_AVG, safeAvg));
+        const baseline = 1;
+        const strength = 2;
+        return baseline + Math.pow(clamped, strength);
+      }
 
-  // ---------- DATA LOADING ----------
-  async function loadJokes() {
-    jokeDiv.textContent = 'Loading jokes...';
+      function pickWeighted(arr, weightFn) {
+        if (!arr || arr.length === 0) return null;
 
-    const { data, error } = await client
-      .from('jokes')
-      .select('*')
-      .eq('is_visible', true)
-      .eq('is_flagged', false)
-      .eq('language', 'English')
-      .limit(1000);
+        let total = 0;
+        const weights = new Array(arr.length);
 
-    if (error) {
-      console.error(error);
-      jokeDiv.textContent = 'Error loading jokes.';
-      return;
-    }
+        for (let i = 0; i < arr.length; i++) {
+          const w = Math.max(0, Number(weightFn(arr[i])) || 0);
+          weights[i] = w;
+          total += w;
+        }
 
-    jokesCache = data || [];
-    if (!jokesCache.length) {
-      jokeDiv.textContent = 'No jokes available.';
-      return;
-    }
+        if (total <= 0) return arr[Math.floor(Math.random() * arr.length)];
 
-    // First joke
-    showNextWeightedJoke();
-  }
+        let r = Math.random() * total;
+        for (let i = 0; i < arr.length; i++) {
+          r -= weights[i];
+          if (r <= 0) return arr[i];
+        }
+        return arr[arr.length - 1];
+      }
 
-  // ---------- VOTING ----------
-  // Optional: update local cache counts + average so weighting can evolve without refresh
-  function incrementLocalCountAndAverage(jokeObj, ratingKey) {
-    jokeObj[ratingKey] = (jokeObj[ratingKey] || 0) + 1;
+      // ---------- RENDER / HISTORY ----------
+      function updatePrevButton() {
+        prevButton.disabled = historyIndex <= 0;
+      }
 
-    const c1 = Number(jokeObj.rating_dont_get_it_count) || 0;
-    const c2 = Number(jokeObj.rating_ehh_count) || 0;
-    const c3 = Number(jokeObj.rating_good_one_count) || 0;
-    const c4 = Number(jokeObj.rating_fell_off_chair_count) || 0;
+      function renderJoke(joke, addToHistory) {
+        if (!joke) return;
 
-    const total = c1 + c2 + c3 + c4;
-    if (total <= 0) {
-      jokeObj.average = 0;
-      return;
-    }
+        currentJoke = joke;
+        jokeDiv.textContent = currentJoke.content;
 
-    // assumes rating scale 1..4
-    jokeObj.average = (1 * c1 + 2 * c2 + 3 * c3 + 4 * c4) / total;
-  }
+        voteLocked = false;
+        voteMessageDiv.style.display = 'none';
+        voteMessageDiv.textContent = 'Thanks for your vote.';
 
-  async function rateJoke(ratingKey) {
-    if (voteLocked || !currentJoke) return;
-    voteLocked = true;
+        renderRatingIcons();
 
-    voteMessageDiv.style.display = 'inline-block';
-    voteMessageDiv.textContent = 'Thanks for your vote.';
+        if (addToHistory) {
+          // If user went back then requests another joke: cut forward history
+          if (historyIndex < history.length - 1) {
+            history = history.slice(0, historyIndex + 1);
+          }
+          history.push(currentJoke);
+          historyIndex = history.length - 1;
+        }
 
-    // Optimistic local update
-    incrementLocalCountAndAverage(currentJoke, ratingKey);
+        updatePrevButton();
+      }
 
-    // Send update to DB
-    const newValue = currentJoke[ratingKey] || 0;
+      function showNextWeightedJoke() {
+        if (!jokesCache.length) return;
 
-    const { error } = await client
-      .from('jokes')
-      .update({ [ratingKey]: newValue })
-      .eq('id', currentJoke.id);
+        // Reset recents if it's blocking almost everything
+        if (recentJokeIds.length >= jokesCache.length - 1) recentJokeIds = [];
 
-    if (error) {
-      console.error(error);
-      voteMessageDiv.textContent = 'Vote failed (try again).';
-      voteLocked = false;
-      return;
-    }
-  }
+        const candidates = jokesCache.filter(j => !recentJokeIds.includes(j.id));
+        const picked = pickWeighted(candidates.length ? candidates : jokesCache, weightFromAverage);
+        if (!picked) return;
 
-  // ---------- UI: ADD "PREVIOUS" BUTTON ----------
-  function ensurePrevButton() {
-    // Create a "Previous" button next to mainButton (once)
-    if (document.getElementById('prevButton')) return;
+        recentJokeIds.push(picked.id);
+        if (recentJokeIds.length > RECENT_LIMIT) recentJokeIds.shift();
 
-    const prevBtn = document.createElement('button');
-    prevBtn.id = 'prevButton';
-    prevBtn.textContent = 'Previous';
-    prevBtn.style.marginRight = '10px';
-    prevBtn.style.padding = '12px 24px';
-    prevBtn.style.fontSize = '18px';
-    prevBtn.style.borderRadius = '10px';
-    prevBtn.style.border = '1px solid #cfcfcf';
-    prevBtn.style.background = '#f7f7f7';
-    prevBtn.style.boxShadow = '0 6px 14px rgba(0,0,0,0.08)';
-    prevBtn.style.userSelect = 'none';
+        renderJoke(picked, true);
+      }
 
-    prevBtn.onclick = () => {
-      if (!initialised) return;
-      showPreviousJoke();
-    };
+      function showPreviousJoke() {
+        if (historyIndex <= 0) return;
+        historyIndex -= 1;
+        renderJoke(history[historyIndex], false);
+      }
 
-    // Insert before the main button
-    mainButton.parentNode.insertBefore(prevBtn, mainButton);
-    updateButtonsUI();
-  }
+      // ---------- LOAD ----------
+      async function loadJokes() {
+        clearError();
+        jokeDiv.textContent = 'Loading jokes...';
 
-  // ---------- MAIN BUTTON ----------
-  mainButton.onclick = async () => {
-    if (!initialised) {
-      initialised = true;
+        const { data, error } = await client
+          .from('jokes')
+          .select('*')
+          .eq('is_visible', true)
+          .eq('is_flagged', false)
+          .eq('language', 'English')
+          .limit(1000);
 
-      ensurePrevButton();
-      contentDiv.style.display = 'block';
-      languageBar.style.display = 'block';
-      mainButton.textContent = 'Another joke';
+        if (error) {
+          showError('Error loading jokes:\n' + (error.message || JSON.stringify(error)));
+          jokeDiv.textContent = 'Error loading jokes.';
+          return;
+        }
 
-      await loadJokes();
-    } else {
-      showNextWeightedJoke();
-    }
-  };
-</script>
+        jokesCache = data || [];
+        if (!jokesCache.length) {
+          jokeDiv.textContent = 'No jokes available.';
+          return;
+        }
+
+        showNextWeightedJoke();
+      }
+
+      // ---------- VOTE ----------
+      function incrementLocalCountAndAverage(jokeObj, ratingKey) {
+        jokeObj[ratingKey] = (jokeObj[ratingKey] || 0) + 1;
+
+        const c1 = Number(jokeObj.rating_dont_get_it_count) || 0;
+        const c2 = Number(jokeObj.rating_ehh_count) || 0;
+        const c3 = Number(jokeObj.rating_good_one_count) || 0;
+        const c4 = Number(jokeObj.rating_fell_off_chair_count) || 0;
+
+        const total = c1 + c2 + c3 + c4;
+        if (total <= 0) {
+          jokeObj.average = 0;
+          return;
+        }
+
+        // average on 1..4 scale
+        jokeObj.average = (1*c1 + 2*c2 + 3*c3 + 4*c4) / total;
+      }
+
+      async function rateJoke(ratingKey) {
+        if (voteLocked || !currentJoke) return;
+        voteLocked = true;
+
+        voteMessageDiv.style.display = 'inline-block';
+        voteMessageDiv.textContent = 'Thanks for your vote.';
+
+        incrementLocalCountAndAverage(currentJoke, ratingKey);
+        const newValue = currentJoke[ratingKey] || 0;
+
+        const { error } = await client
+          .from('jokes')
+          .update({ [ratingKey]: newValue })
+          .eq('id', currentJoke.id);
+
+        if (error) {
+          showError('Vote failed:\n' + (error.message || JSON.stringify(error)));
+          voteMessageDiv.textContent = 'Vote failed (try again).';
+          voteLocked = false;
+          return;
+        }
+      }
+
+      // ---------- BUTTONS ----------
+      prevButton.onclick = () => {
+        if (!initialised) return;
+        showPreviousJoke();
+      };
+
+      mainButton.onclick = async () => {
+        if (!initialised) {
+          initialised = true;
+          contentDiv.style.display = 'block';
+          languageBar.style.display = 'block';
+          prevButton.style.display = 'inline-block';
+          mainButton.textContent = 'Another joke';
+          await loadJokes();
+        } else {
+          showNextWeightedJoke();
+        }
+      };
+    });
+  </script>
+</body>
+</html>
