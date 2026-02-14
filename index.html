@@ -177,51 +177,55 @@
   <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-  <script>
-    const { createClient } = supabase;
+<script>
+  // ... keep your existing code above ...
 
-    const client = createClient(
-      'https://mknsvxajrvdlwqywvlrf.supabase.co',
-      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo'
-    );
+  // Clamp and convert average score into a weight.
+  // Baseline ensures every joke can still appear.
+  function jokeWeight(j) {
+    const avgRaw = Number(j?.average);
+    const avg = Number.isFinite(avgRaw) ? avgRaw : 0;
 
-    const mainButton = document.getElementById('mainButton');
-    const contentDiv = document.getElementById('content');
-    const jokeDiv = document.getElementById('joke');
-    const ratingIconsDiv = document.getElementById('ratingIcons');
-    const voteMessageDiv = document.getElementById('voteMessage');
-    const languageBar = document.getElementById('languageBar');
+    // Adjust these if your scale differs (e.g., 0..4).
+    const clamped = Math.max(0, Math.min(4, avg));
 
-    let jokesCache = [];
-    let currentJoke = null;
-    let initialised = false;
-    let voteLocked = false;
+    const baseline = 1;              // everyone gets at least weight 1
+    const boost = Math.pow(clamped, 2); // stronger preference for higher averages
 
-    const ratingOptions = [
-      { key: 'rating_dont_get_it_count', img: '1.png' },
-      { key: 'rating_ehh_count', img: '2.png' },
-      { key: 'rating_good_one_count', img: '3.png' },
-      { key: 'rating_fell_off_chair_count', img: '4.png' }
-    ];
+    return baseline + boost;
+  }
 
-    function renderRatingIcons() {
-      ratingIconsDiv.innerHTML = '';
-      ratingOptions.forEach(opt => {
-        const img = document.createElement('img');
-        img.src = opt.img;
-        img.onclick = () => rateJoke(opt.key);
-        ratingIconsDiv.appendChild(img);
-      });
+  // Weighted random pick from an array.
+  function pickWeighted(arr, weightFn) {
+    let total = 0;
+    const weights = arr.map(x => {
+      const w = Math.max(0, Number(weightFn(x)) || 0);
+      total += w;
+      return w;
+    });
+
+    if (total <= 0) {
+      // Fallback to uniform random
+      return arr[Math.floor(Math.random() * arr.length)];
     }
 
-    function showRandomJoke() {
-      const idx = Math.floor(Math.random() * jokesCache.length);
-      currentJoke = jokesCache[idx];
-      jokeDiv.textContent = currentJoke.content;
-      voteLocked = false;
-      voteMessageDiv.style.display = 'none';
-      renderRatingIcons();
+    let r = Math.random() * total;
+    for (let i = 0; i < arr.length; i++) {
+      r -= weights[i];
+      if (r <= 0) return arr[i];
     }
+    return arr[arr.length - 1];
+  }
+
+  function showRandomJoke() {
+    // Now "random" but weighted by average score
+    currentJoke = pickWeighted(jokesCache, jokeWeight);
+
+    jokeDiv.textContent = currentJoke.content;
+    voteLocked = false;
+    voteMessageDiv.style.display = 'none';
+    renderRatingIcons();
+  }
 
     async function loadJokes() {
 const { data, error } = await client
