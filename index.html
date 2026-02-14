@@ -6,144 +6,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
-    body {
-      background-color: #ffffff;
-      font-family: Arial, sans-serif;
-      text-align: center;
-      margin: 0;
-      padding: 40px 15px;
-    }
+    body { background-color:#fff; font-family:Arial,sans-serif; text-align:center; margin:0; padding:40px 15px; }
+    #languageBar { display:none; margin:0 auto 18px auto; font-size:14px; color:#111; }
+    #languageBar .langs { display:inline-flex; align-items:center; gap:10px; margin-left:8px; }
+    #languageBar a { color:#0000ee; text-decoration:underline; cursor:pointer; display:inline-flex; align-items:center; gap:6px; }
+    #languageBar .sep { color:#999; user-select:none; }
+    #languageBar img.flag { width:30px; height:15px; min-width:30px; min-height:15px; max-width:30px; max-height:15px; object-fit:cover; border:1px solid #ddd; border-radius:4px; display:inline-block; }
 
-    /* Language switch bar */
-    #languageBar {
-      display: none;
-      margin: 0 auto 18px auto;
-      font-size: 14px;
-      color: #111;
-    }
+    #mainButton { padding:12px 24px; font-size:18px; cursor:pointer; border-radius:10px; border:1px solid #cfcfcf; background:#f7f7f7; transition:transform .05s ease, box-shadow .15s ease; box-shadow:0 6px 14px rgba(0,0,0,.08); user-select:none; }
+    #mainButton:hover { background:#f0f0f0; box-shadow:0 8px 18px rgba(0,0,0,.10); }
+    #mainButton:active { transform:translateY(2px) scale(.99); box-shadow:0 3px 10px rgba(0,0,0,.10); }
 
-    #languageBar .langs {
-      display: inline-flex;
-      align-items: center;
-      gap: 10px;
-      margin-left: 8px;
-    }
+    #content { margin-top:30px; display:none; }
+    #joke { font-size:18px; line-height:1.5; white-space:pre-line; min-height:80px; margin-bottom:18px; }
 
-    #languageBar a {
-      color: #0000ee;
-      text-decoration: underline;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-    }
+    #ratingIcons { display:flex; justify-content:center; gap:12px; margin-bottom:14px; min-height:72px; align-items:center; }
+    #ratingIcons img { width:64px; height:64px; cursor:pointer; user-select:none; transition:transform .08s ease; }
+    #ratingIcons img:hover { transform:scale(1.06); }
+    #ratingIcons img:active { transform:scale(.96); }
 
-    #languageBar .sep {
-      color: #999;
-      user-select: none;
-    }
-
-    /* FORCE flag size: exactly 30x15 px */
-    #languageBar img.flag {
-      width: 30px;
-      height: 15px;
-      min-width: 30px;
-      min-height: 15px;
-      max-width: 30px;
-      max-height: 15px;
-      object-fit: cover;
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      display: inline-block;
-    }
-
-    /* Main button */
-    #mainButton {
-      padding: 12px 24px;
-      font-size: 18px;
-      cursor: pointer;
-      border-radius: 10px;
-      border: 1px solid #cfcfcf;
-      background: #f7f7f7;
-      transition: transform 0.05s ease, box-shadow 0.15s ease;
-      box-shadow: 0 6px 14px rgba(0,0,0,0.08);
-      user-select: none;
-    }
-
-    #mainButton:hover {
-      background: #f0f0f0;
-      box-shadow: 0 8px 18px rgba(0,0,0,0.10);
-    }
-
-    #mainButton:active {
-      transform: translateY(2px) scale(0.99);
-      box-shadow: 0 3px 10px rgba(0,0,0,0.10);
-    }
-
-    #content {
-      margin-top: 30px;
-      display: none;
-    }
-
-    #joke {
-      font-size: 18px;
-      line-height: 1.5;
-      white-space: pre-line;
-      min-height: 80px;
-      margin-bottom: 18px;
-    }
-
-    #ratingIcons {
-      display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 14px;
-      min-height: 72px;
-      align-items: center;
-    }
-
-    #ratingIcons img {
-      width: 64px;
-      height: 64px;
-      cursor: pointer;
-      user-select: none;
-      transition: transform 0.08s ease;
-    }
-
-    #ratingIcons img:hover {
-      transform: scale(1.06);
-    }
-
-    #ratingIcons img:active {
-      transform: scale(0.96);
-    }
-
-    #voteMessage {
-      font-size: 14px;
-      padding: 10px 12px;
-      border: 1px solid #e1e1e1;
-      border-radius: 10px;
-      background: #fafafa;
-      display: none;
-      width: fit-content;
-      margin: 0 auto 14px auto;
-    }
-
-    #extras {
-      font-size: 13px;
-    }
-
-    #extras a {
-      color: #0000ee;
-      text-decoration: underline;
-      cursor: pointer;
-    }
+    #voteMessage { font-size:14px; padding:10px 12px; border:1px solid #e1e1e1; border-radius:10px; background:#fafafa; display:none; width:fit-content; margin:0 auto 14px auto; }
+    #extras { font-size:13px; }
+    #extras a { color:#0000ee; text-decoration:underline; cursor:pointer; }
   </style>
 </head>
 
 <body>
 
-  <!-- Language switch -->
   <div id="languageBar">
     Show jokes in:
     <span class="langs">
@@ -159,98 +48,185 @@
     </span>
   </div>
 
-  <!-- Main button -->
   <button id="mainButton">Press me to get a joke</button>
 
-  <!-- Joke area -->
   <div id="content">
     <div id="joke"></div>
-
     <div id="ratingIcons"></div>
     <div id="voteMessage">Thanks for your vote.</div>
-
     <div id="extras">
       <a href="addajoke.html">Want to add a joke?</a>
     </div>
   </div>
 
-  <!-- Supabase -->
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-<script>
-  // ... keep your existing code above ...
+  <script>
+    // Supabase client
+    const { createClient } = supabase;
+    const client = createClient(
+      'https://mknsvxajrvdlwqywvlrf.supabase.co',
+      'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo'
+    );
 
-  // Clamp and convert average score into a weight.
-  // Baseline ensures every joke can still appear.
-  function jokeWeight(j) {
-    const avgRaw = Number(j?.average);
-    const avg = Number.isFinite(avgRaw) ? avgRaw : 0;
+    // DOM
+    const mainButton = document.getElementById('mainButton');
+    const contentDiv = document.getElementById('content');
+    const jokeDiv = document.getElementById('joke');
+    const ratingIconsDiv = document.getElementById('ratingIcons');
+    const voteMessageDiv = document.getElementById('voteMessage');
+    const languageBar = document.getElementById('languageBar');
 
-    // Adjust these if your scale differs (e.g., 0..4).
-    const clamped = Math.max(0, Math.min(4, avg));
+    // State
+    let jokesCache = [];
+    let currentJoke = null;
+    let initialised = false;
+    let voteLocked = false;
 
-    const baseline = 1;              // everyone gets at least weight 1
-    const boost = Math.pow(clamped, 2); // stronger preference for higher averages
+    // Ratings
+    const ratingOptions = [
+      { key: 'rating_dont_get_it_count', img: '1.png' },
+      { key: 'rating_ehh_count', img: '2.png' },
+      { key: 'rating_good_one_count', img: '3.png' },
+      { key: 'rating_fell_off_chair_count', img: '4.png' }
+    ];
 
-    return baseline + boost;
-  }
-
-  // Weighted random pick from an array.
-  function pickWeighted(arr, weightFn) {
-    let total = 0;
-    const weights = arr.map(x => {
-      const w = Math.max(0, Number(weightFn(x)) || 0);
-      total += w;
-      return w;
-    });
-
-    if (total <= 0) {
-      // Fallback to uniform random
-      return arr[Math.floor(Math.random() * arr.length)];
+    function renderRatingIcons() {
+      ratingIconsDiv.innerHTML = '';
+      ratingOptions.forEach(opt => {
+        const img = document.createElement('img');
+        img.src = opt.img;
+        img.alt = opt.key;
+        img.onclick = () => rateJoke(opt.key);
+        ratingIconsDiv.appendChild(img);
+      });
     }
 
-    let r = Math.random() * total;
-    for (let i = 0; i < arr.length; i++) {
-      r -= weights[i];
-      if (r <= 0) return arr[i];
+    // --- Weighted random using "average" ---
+    // Assumes average is roughly 0..4. If yours is 0..2, change MAX_AVG to 2.
+    const MAX_AVG = 4;
+
+    function weightFromAverage(j) {
+      const avg = Number(j && j.average);
+      const safeAvg = Number.isFinite(avg) ? avg : 0;
+      const clamped = Math.max(0, Math.min(MAX_AVG, safeAvg));
+
+      // baseline keeps low/unrated jokes in the mix
+      const baseline = 1;
+
+      // bias strength: 1 = mild, 2 = stronger, 3 = very strong
+      const strength = 2;
+
+      return baseline + Math.pow(clamped, strength);
     }
-    return arr[arr.length - 1];
-  }
 
-  function showRandomJoke() {
-    // Now "random" but weighted by average score
-    currentJoke = pickWeighted(jokesCache, jokeWeight);
+    function pickWeighted(arr, weightFn) {
+      if (!arr || arr.length === 0) return null;
 
-    jokeDiv.textContent = currentJoke.content;
-    voteLocked = false;
-    voteMessageDiv.style.display = 'none';
-    renderRatingIcons();
-  }
+      let total = 0;
+      const weights = new Array(arr.length);
+
+      for (let i = 0; i < arr.length; i++) {
+        const w = Math.max(0, Number(weightFn(arr[i])) || 0);
+        weights[i] = w;
+        total += w;
+      }
+
+      // if all weights are 0, fall back to uniform
+      if (total <= 0) return arr[Math.floor(Math.random() * arr.length)];
+
+      let r = Math.random() * total;
+      for (let i = 0; i < arr.length; i++) {
+        r -= weights[i];
+        if (r <= 0) return arr[i];
+      }
+      return arr[arr.length - 1];
+    }
+
+    function showWeightedRandomJoke() {
+      const picked = pickWeighted(jokesCache, weightFromAverage);
+      if (!picked) {
+        jokeDiv.textContent = 'No jokes available.';
+        ratingIconsDiv.innerHTML = '';
+        return;
+      }
+
+      currentJoke = picked;
+      jokeDiv.textContent = currentJoke.content;
+
+      voteLocked = false;
+      voteMessageDiv.style.display = 'none';
+      renderRatingIcons();
+    }
 
     async function loadJokes() {
-const { data, error } = await client
-  .from('jokes')
-  .select('*')
-  .eq('is_visible', true)
-  .eq('is_flagged', false)
-  .eq('language', 'English')
-  .limit(100);
+      jokeDiv.textContent = 'Loading jokes...';
 
+      const { data, error } = await client
+        .from('jokes')
+        .select('*')
+        .eq('is_visible', true)
+        .eq('is_flagged', false)
+        .eq('language', 'English')
+        .limit(1000);
+
+      if (error) {
+        console.error(error);
+        jokeDiv.textContent = 'Error loading jokes.';
+        return;
+      }
 
       jokesCache = data || [];
-      if (jokesCache.length) showRandomJoke();
-      else jokeDiv.textContent = 'No jokes available.';
+      showWeightedRandomJoke();
     }
 
-    async function rateJoke(key) {
+    function incrementLocalCountAndAverage(jokeObj, ratingKey) {
+      // Update local counts so weighting evolves without refresh.
+      // This assumes you have the 4 count columns + average column.
+      jokeObj[ratingKey] = (jokeObj[ratingKey] || 0) + 1;
+
+      const c1 = Number(jokeObj.rating_dont_get_it_count) || 0;
+      const c2 = Number(jokeObj.rating_ehh_count) || 0;
+      const c3 = Number(jokeObj.rating_good_one_count) || 0;
+      const c4 = Number(jokeObj.rating_fell_off_chair_count) || 0;
+
+      const total = c1 + c2 + c3 + c4;
+      if (total <= 0) {
+        jokeObj.average = 0;
+        return;
+      }
+
+      // If your scoring is 1..4 stars:
+      const avg = (1*c1 + 2*c2 + 3*c3 + 4*c4) / total;
+
+      // If your "average" is meant to be 0..2, change formula accordingly.
+      jokeObj.average = avg;
+    }
+
+    async function rateJoke(ratingKey) {
       if (voteLocked || !currentJoke) return;
       voteLocked = true;
       voteMessageDiv.style.display = 'inline-block';
 
-      await client
+      // optimistic local update (optional)
+      incrementLocalCountAndAverage(currentJoke, ratingKey);
+
+      const newValue = (currentJoke[ratingKey] || 0);
+
+      const { error } = await client
         .from('jokes')
-        .update({ [key]: (currentJoke[key] || 0) + 1 })
+        .update({ [ratingKey]: newValue })
         .eq('id', currentJoke.id);
+
+      if (error) {
+        console.error(error);
+        // rollback message if you want; keeping simple:
+        voteMessageDiv.textContent = 'Vote failed (try again).';
+        voteLocked = false;
+        return;
+      }
+
+      voteMessageDiv.textContent = 'Thanks for your vote.';
     }
 
     mainButton.onclick = async () => {
@@ -261,7 +237,7 @@ const { data, error } = await client
         mainButton.textContent = 'Another joke';
         await loadJokes();
       } else {
-        showRandomJoke();
+        showWeightedRandomJoke();
       }
     };
   </script>
