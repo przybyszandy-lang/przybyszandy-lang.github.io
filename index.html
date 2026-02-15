@@ -60,6 +60,7 @@
       gap: 10px;
       align-items: center;
       justify-content: center;
+      flex-wrap: wrap;
     }
 
     button {
@@ -161,6 +162,22 @@
       text-align: left;
       white-space: pre-wrap;
     }
+
+    /* Copy feedback toast */
+    #copyToast {
+      display: none;
+      position: fixed;
+      left: 50%;
+      bottom: 18px;
+      transform: translateX(-50%);
+      background: rgba(20,20,20,0.92);
+      color: #fff;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 14px;
+      max-width: 92%;
+      z-index: 9999;
+    }
   </style>
 </head>
 
@@ -184,9 +201,11 @@
   <div class="btnRow">
     <button id="prevButton" disabled style="display:none;">Previous</button>
     <button id="mainButton">Press me to get a joke</button>
+    <button id="copyButton" disabled style="display:none;">Copy text</button>
   </div>
 
   <div id="errorBox"></div>
+  <div id="copyToast"></div>
 
   <div id="content">
     <div id="joke"></div>
@@ -205,12 +224,14 @@
       // ---------- DOM ----------
       const mainButton = document.getElementById('mainButton');
       const prevButton = document.getElementById('prevButton');
+      const copyButton = document.getElementById('copyButton');
       const contentDiv = document.getElementById('content');
       const jokeDiv = document.getElementById('joke');
       const ratingIconsDiv = document.getElementById('ratingIcons');
       const voteMessageDiv = document.getElementById('voteMessage');
       const languageBar = document.getElementById('languageBar');
       const errorBox = document.getElementById('errorBox');
+      const copyToast = document.getElementById('copyToast');
 
       function showError(msg) {
         console.error(msg);
@@ -221,6 +242,15 @@
       function clearError() {
         errorBox.style.display = 'none';
         errorBox.textContent = '';
+      }
+
+      function showToast(msg) {
+        copyToast.textContent = msg;
+        copyToast.style.display = 'block';
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => {
+          copyToast.style.display = 'none';
+        }, 1600);
       }
 
       // ---------- SUPABASE ----------
@@ -269,7 +299,6 @@
       }
 
       // ---------- WEIGHTED RANDOM ----------
-      // If your average is 0..2, change this to 2
       const MAX_AVG = 4;
 
       function weightFromAverage(j) {
@@ -303,9 +332,51 @@
         return arr[arr.length - 1];
       }
 
+      // ---------- COPY FEATURE ----------
+      async function copyCurrentJoke() {
+        if (!currentJoke || !currentJoke.content) return;
+
+        const textToCopy = `${currentJoke.content}\n\nfound at donkeyapp.com`;
+
+        // Prefer modern clipboard API (works on HTTPS / localhost)
+        if (navigator.clipboard && window.isSecureContext) {
+          try {
+            await navigator.clipboard.writeText(textToCopy);
+            showToast('Copied!');
+            return;
+          } catch (e) {
+            // fall through to legacy
+          }
+        }
+
+        // Legacy fallback (works on many browsers, including some non-secure contexts)
+        try {
+          const ta = document.createElement('textarea');
+          ta.value = textToCopy;
+          ta.setAttribute('readonly', '');
+          ta.style.position = 'fixed';
+          ta.style.left = '-9999px';
+          ta.style.top = '0';
+          document.body.appendChild(ta);
+          ta.select();
+          ta.setSelectionRange(0, ta.value.length);
+          const ok = document.execCommand('copy');
+          document.body.removeChild(ta);
+
+          if (ok) showToast('Copied!');
+          else showToast('Copy failed (browser blocked it).');
+        } catch (e) {
+          showToast('Copy failed (browser blocked it).');
+        }
+      }
+
       // ---------- RENDER / HISTORY ----------
       function updatePrevButton() {
         prevButton.disabled = historyIndex <= 0;
+      }
+
+      function updateCopyButton() {
+        copyButton.disabled = !currentJoke || !currentJoke.content;
       }
 
       function renderJoke(joke, addToHistory) {
@@ -321,7 +392,6 @@
         renderRatingIcons();
 
         if (addToHistory) {
-          // If user went back then requests another joke: cut forward history
           if (historyIndex < history.length - 1) {
             history = history.slice(0, historyIndex + 1);
           }
@@ -330,12 +400,12 @@
         }
 
         updatePrevButton();
+        updateCopyButton();
       }
 
       function showNextWeightedJoke() {
         if (!jokesCache.length) return;
 
-        // Reset recents if it's blocking almost everything
         if (recentJokeIds.length >= jokesCache.length - 1) recentJokeIds = [];
 
         const candidates = jokesCache.filter(j => !recentJokeIds.includes(j.id));
@@ -397,7 +467,6 @@
           return;
         }
 
-        // average on 1..4 scale
         jokeObj.average = (1*c1 + 2*c2 + 3*c3 + 4*c4) / total;
       }
 
@@ -430,12 +499,18 @@
         showPreviousJoke();
       };
 
+      copyButton.onclick = () => {
+        if (!initialised) return;
+        copyCurrentJoke();
+      };
+
       mainButton.onclick = async () => {
         if (!initialised) {
           initialised = true;
           contentDiv.style.display = 'block';
           languageBar.style.display = 'block';
           prevButton.style.display = 'inline-block';
+          copyButton.style.display = 'inline-block';
           mainButton.textContent = 'Another joke';
           await loadJokes();
         } else {
