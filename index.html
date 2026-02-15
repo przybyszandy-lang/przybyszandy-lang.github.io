@@ -206,15 +206,15 @@
   <div id="languageBar">
     Show jokes in:
     <span class="langs">
-      <a href="index.html">EN <img class="flag" src="english.png" alt="English"></a>
-      <span class="sep">|</span>
-      <a href="polish.html">PL <img class="flag" src="polish.png" alt="Polish"></a>
-      <span class="sep">|</span>
-      <a href="german.html">DE <img class="flag" src="german.png" alt="German"></a>
-      <span class="sep">|</span>
-      <a href="spanish.html">ES <img class="flag" src="spanish.png" alt="Spanish"></a>
-      <span class="sep">|</span>
-      <a href="french.html">FR <img class="flag" src="french.png" alt="French"></a>
+<a href="#" data-lang="English">EN <img class="flag" src="english.png" alt="English"></a>
+<span class="sep">|</span>
+<a href="#" data-lang="Polish">PL <img class="flag" src="polish.png" alt="Polish"></a>
+<span class="sep">|</span>
+<a href="#" data-lang="German">DE <img class="flag" src="german.png" alt="German"></a>
+<span class="sep">|</span>
+<a href="#" data-lang="Spanish">ES <img class="flag" src="spanish.png" alt="Spanish"></a>
+<span class="sep">|</span>
+<a href="#" data-lang="French">FR <img class="flag" src="french.png" alt="French"></a>
     </span>
   </div>
 
@@ -252,8 +252,20 @@
 
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      // ---------- DOM ----------
+document.addEventListener('DOMContentLoaded', () => {
+
+  const { t, getLang, setLang } = window.DonkeyI18n;
+  let currentLang = getLang();
+  
+   function applyHtmlLang() {
+  document.documentElement.lang =
+    currentLang === 'Polish' ? 'pl' :
+    currentLang === 'German' ? 'de' :
+    currentLang === 'Spanish' ? 'es' :
+    currentLang === 'French' ? 'fr' : 'en';
+}
+  // ---------- DOM ----------
+
       const mainButton = document.getElementById('mainButton');
       const prevButton = document.getElementById('prevButton');
       const copyButton = document.getElementById('copyButton');
@@ -266,6 +278,10 @@
       const errorBox = document.getElementById('errorBox');
       const copyToast = document.getElementById('copyToast');
       const termsNote = document.getElementById('termsNote');
+      mainButton.textContent = t('press_first', currentLang);
+      document.querySelector('#extras a').textContent = t('add_joke', currentLang);
+      applyHtmlLang();
+
 
       function showError(msg) {
         console.error(msg);
@@ -286,7 +302,39 @@
           copyToast.style.display = 'none';
         }, 1600);
       }
+document.querySelectorAll('#languageBar a[data-lang]').forEach(a => {
+  a.addEventListener('click', (e) => {
+    e.preventDefault();
+    setLang(a.dataset.lang);
+  });
+});
+window.addEventListener("donkey:langchange", async (e) => {
+  currentLang = e.detail.lang;
+  applyHtmlLang();
+  document.querySelector('#extras a').textContent = t('add_joke', currentLang);
 
+
+  // update button label
+  if (!initialised) {
+    mainButton.textContent = t('press_first', currentLang);
+  } else {
+    mainButton.textContent = t('press_next', currentLang);
+  }
+
+  // reset history so Previous doesn’t mix languages
+  recentJokeIds = [];
+  history = [];
+  historyIndex = -1;
+  updatePrevButton();
+  updateCopyButtons();
+
+  // reload jokes if already started
+  if (initialised) {
+    await loadJokes();
+  }
+});
+
+  
       // ---------- SUPABASE ----------
       if (!window.supabase || !window.supabase.createClient) {
         showError('Supabase library did not load. Check your internet connection or the CDN link.');
@@ -373,7 +421,8 @@
         if (navigator.clipboard && window.isSecureContext) {
           try {
             await navigator.clipboard.writeText(textToCopy);
-            showToast('Joke copied!');
+            showToast(t('copied', currentLang));
+
             return;
           } catch (e) {}
         }
@@ -391,10 +440,10 @@
           const ok = document.execCommand('copy');
           document.body.removeChild(ta);
 
-          if (ok) showToast('Joke copied!');
-          else showToast('Copy failed (browser blocked it).');
+          if (ok) showToast(t('copied', currentLang));
+          else showToast(t('copy_failed', currentLang));
         } catch (e) {
-          showToast('Copy failed (browser blocked it).');
+          showToast(t('copy_failed', currentLang));
         }
       }
 
@@ -417,7 +466,7 @@
 
         voteLocked = false;
         voteMessageDiv.style.display = 'none';
-        voteMessageDiv.textContent = 'Thanks for your vote.';
+        voteMessageDiv.textContent = t('thanks_vote', currentLang);
 
         renderRatingIcons();
 
@@ -457,25 +506,25 @@
       // ---------- LOAD ----------
       async function loadJokes() {
         clearError();
-        jokeDiv.textContent = 'Loading jokes...';
+        jokeDiv.textContent = t('loading', currentLang);
 
         const { data, error } = await client
           .from('jokes')
           .select('*')
           .eq('is_visible', true)
           .eq('is_flagged', false)
-          .eq('language', 'English')
+          .eq('language', currentLang)
           .limit(1000);
 
         if (error) {
           showError('Error loading jokes:\n' + (error.message || JSON.stringify(error)));
-          jokeDiv.textContent = 'Error loading jokes.';
+          jokeDiv.textContent = t('error_loading', currentLang);
           return;
         }
 
         jokesCache = data || [];
         if (!jokesCache.length) {
-          jokeDiv.textContent = 'No jokes available.';
+          jokeDiv.textContent = t('no_jokes', currentLang);
           return;
         }
 
@@ -505,7 +554,7 @@
         voteLocked = true;
 
         voteMessageDiv.style.display = 'inline-block';
-        voteMessageDiv.textContent = 'Thanks for your vote.';
+        voteMessageDiv.textContent = t('thanks_vote', currentLang);
 
         incrementLocalCountAndAverage(currentJoke, ratingKey);
         const newValue = currentJoke[ratingKey] || 0;
@@ -517,7 +566,7 @@
 
         if (error) {
           showError('Vote failed:\n' + (error.message || JSON.stringify(error)));
-          voteMessageDiv.textContent = 'Vote failed (try again).';
+          voteMessageDiv.textContent = t('vote_failed', currentLang);
           voteLocked = false;
           return;
         }
@@ -551,7 +600,7 @@
           prevButton.style.display = 'inline-block';
           copyButton.style.display = 'inline-block';
           copyButtonBottom.style.display = 'inline-block';
-          mainButton.textContent = 'Another joke';
+          mainButton.textContent = t('press_next', currentLang);
           await loadJokes();
         } else {
           showNextWeightedJoke();
