@@ -163,7 +163,6 @@
       white-space: pre-wrap;
     }
 
-    /* Copy feedback toast */
     #copyToast {
       display: none;
       position: fixed;
@@ -185,7 +184,6 @@
       justify-content: center;
     }
 
-    /* NEW: terms note shown only on the starting page */
     #termsNote {
       margin: 14px auto 18px auto;
       font-size: 12px;
@@ -204,24 +202,26 @@
 <body>
 
   <div id="languageBar">
-    Show jokes in:
+    <span id="showLangLabel">Show jokes in:</span>
     <span class="langs">
-<a href="#" data-lang="English">EN <img class="flag" src="english.png" alt="English"></a>
-<span class="sep">|</span>
-<a href="#" data-lang="Polish">PL <img class="flag" src="polish.png" alt="Polish"></a>
-<span class="sep">|</span>
-<a href="#" data-lang="German">DE <img class="flag" src="german.png" alt="German"></a>
-<span class="sep">|</span>
-<a href="#" data-lang="Spanish">ES <img class="flag" src="spanish.png" alt="Spanish"></a>
-<span class="sep">|</span>
-<a href="#" data-lang="French">FR <img class="flag" src="french.png" alt="French"></a>
+      <a href="#" data-lang="English">EN <img class="flag" src="english.png" alt="English"></a>
+      <span class="sep">|</span>
+      <a href="#" data-lang="Polish">PL <img class="flag" src="polish.png" alt="Polish"></a>
+      <span class="sep">|</span>
+      <a href="#" data-lang="German">DE <img class="flag" src="german.png" alt="German"></a>
+      <span class="sep">|</span>
+      <a href="#" data-lang="Spanish">ES <img class="flag" src="spanish.png" alt="Spanish"></a>
+      <span class="sep">|</span>
+      <a href="#" data-lang="French">FR <img class="flag" src="french.png" alt="French"></a>
     </span>
   </div>
 
-  <!-- NEW: shown only before first click -->
   <div id="termsNote">
-    By clicking 'Press me to get a joke' you agree to these
-    <a href="conditions.html">Terms and Coditions</a>, <a href="cookies.html">Use of Cookies</a> and <a href="privacy.html">Privacy Policy</a>.
+    <span id="termsText">By clicking 'Press me to get a joke' you agree to these</span>
+    <a id="termsLinkConditions" href="conditions.html">Terms and Conditions</a>,
+    <a id="termsLinkCookies" href="cookies.html">Use of Cookies</a>
+    <span id="termsAnd">and</span>
+    <a id="termsLinkPrivacy" href="privacy.html">Privacy Policy</a>.
   </div>
 
   <div class="btnRow">
@@ -243,29 +243,31 @@
     </div>
 
     <div id="extras">
-      <a href="addajoke.html">Want to add a joke?</a>
+      <a id="addJokeLink" href="addajoke.html">Want to add a joke?</a>
     </div>
   </div>
 
-<script src="i18n.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
+  <script src="i18n.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
+      const { t, getLang, setLang } = window.DonkeyI18n;
 
-  const { t, getLang, setLang } = window.DonkeyI18n;
-  let currentLang = getLang();
-  
-   function applyHtmlLang() {
-  document.documentElement.lang =
-    currentLang === 'Polish' ? 'pl' :
-    currentLang === 'German' ? 'de' :
-    currentLang === 'Spanish' ? 'es' :
-    currentLang === 'French' ? 'fr' : 'en';
-}
-  // ---------- DOM ----------
+      // ---------- STATE ----------
+      let currentLang = getLang();
+      let jokesCache = [];
+      let currentJoke = null;
+      let initialised = false;
+      let voteLocked = false;
 
+      let recentJokeIds = [];
+      const RECENT_LIMIT = 20;
+
+      let history = [];
+      let historyIndex = -1;
+
+      // ---------- DOM ----------
       const mainButton = document.getElementById('mainButton');
       const prevButton = document.getElementById('prevButton');
       const copyButton = document.getElementById('copyButton');
@@ -278,10 +280,24 @@ document.addEventListener('DOMContentLoaded', () => {
       const errorBox = document.getElementById('errorBox');
       const copyToast = document.getElementById('copyToast');
       const termsNote = document.getElementById('termsNote');
-      mainButton.textContent = t('press_first', currentLang);
-      document.querySelector('#extras a').textContent = t('add_joke', currentLang);
-      applyHtmlLang();
 
+      const showLangLabel = document.getElementById('showLangLabel');
+      const addJokeLink = document.getElementById('addJokeLink');
+
+      const termsText = document.getElementById('termsText');
+      const termsLinkConditions = document.getElementById('termsLinkConditions');
+      const termsLinkCookies = document.getElementById('termsLinkCookies');
+      const termsLinkPrivacy = document.getElementById('termsLinkPrivacy');
+      const termsAnd = document.getElementById('termsAnd');
+
+      // ---------- HELPERS ----------
+      function applyHtmlLang() {
+        document.documentElement.lang =
+          currentLang === 'Polish' ? 'pl' :
+          currentLang === 'German' ? 'de' :
+          currentLang === 'Spanish' ? 'es' :
+          currentLang === 'French' ? 'fr' : 'en';
+      }
 
       function showError(msg) {
         console.error(msg);
@@ -302,39 +318,72 @@ document.addEventListener('DOMContentLoaded', () => {
           copyToast.style.display = 'none';
         }, 1600);
       }
-document.querySelectorAll('#languageBar a[data-lang]').forEach(a => {
-  a.addEventListener('click', (e) => {
-    e.preventDefault();
-    setLang(a.dataset.lang);
-  });
-});
-window.addEventListener("donkey:langchange", async (e) => {
-  currentLang = e.detail.lang;
-  applyHtmlLang();
-  document.querySelector('#extras a').textContent = t('add_joke', currentLang);
 
+      function updatePrevButton() {
+        prevButton.disabled = historyIndex <= 0;
+      }
 
-  // update button label
-  if (!initialised) {
-    mainButton.textContent = t('press_first', currentLang);
-  } else {
-    mainButton.textContent = t('press_next', currentLang);
-  }
+      function updateCopyButtons() {
+        const enabled = !!(currentJoke && currentJoke.content);
+        copyButton.disabled = !enabled;
+        copyButtonBottom.disabled = !enabled;
+      }
 
-  // reset history so Previous doesn’t mix languages
-  recentJokeIds = [];
-  history = [];
-  historyIndex = -1;
-  updatePrevButton();
-  updateCopyButtons();
+      function applyStaticTranslations() {
+        applyHtmlLang();
 
-  // reload jokes if already started
-  if (initialised) {
-    await loadJokes();
-  }
-});
+        showLangLabel.textContent = t('show_lang', currentLang);
 
-  
+        prevButton.textContent = t('previous', currentLang);
+        copyButton.textContent = t('copy_joke', currentLang);
+        copyButtonBottom.textContent = t('copy_joke', currentLang);
+
+        addJokeLink.textContent = t('add_joke', currentLang);
+
+        termsText.textContent = t('terms_note', currentLang);
+        termsLinkConditions.textContent = t('terms_link_conditions', currentLang);
+        termsLinkCookies.textContent = t('terms_link_cookies', currentLang);
+        termsLinkPrivacy.textContent = t('terms_link_privacy', currentLang);
+
+        // optional: translate "and" nicely (fallback to "and")
+        termsAnd.textContent =
+          currentLang === 'Polish' ? 'i' :
+          currentLang === 'German' ? 'und' :
+          currentLang === 'Spanish' ? 'y' :
+          currentLang === 'French' ? 'et' : 'and';
+
+        // main button label depends on state
+        mainButton.textContent = initialised
+          ? t('press_next', currentLang)
+          : t('press_first', currentLang);
+      }
+
+      // ---------- LANGUAGE SWITCH ----------
+      document.querySelectorAll('#languageBar a[data-lang]').forEach(a => {
+        a.addEventListener('click', (e) => {
+          e.preventDefault();
+          setLang(a.dataset.lang);
+        });
+      });
+
+      window.addEventListener('donkey:langchange', async (e) => {
+        currentLang = e.detail.lang;
+
+        // reset history so Previous doesn’t mix languages
+        recentJokeIds = [];
+        history = [];
+        historyIndex = -1;
+        updatePrevButton();
+        updateCopyButtons();
+
+        applyStaticTranslations();
+
+        // reload jokes if already started
+        if (initialised) {
+          await loadJokes();
+        }
+      });
+
       // ---------- SUPABASE ----------
       if (!window.supabase || !window.supabase.createClient) {
         showError('Supabase library did not load. Check your internet connection or the CDN link.');
@@ -346,18 +395,6 @@ window.addEventListener("donkey:langchange", async (e) => {
         'https://mknsvxajrvdlwqywvlrf.supabase.co',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo'
       );
-
-      // ---------- STATE ----------
-      let jokesCache = [];
-      let currentJoke = null;
-      let initialised = false;
-      let voteLocked = false;
-
-      let recentJokeIds = [];
-      const RECENT_LIMIT = 20;
-
-      let history = [];
-      let historyIndex = -1;
 
       // ---------- RATING ----------
       const ratingOptions = [
@@ -412,7 +449,7 @@ window.addEventListener("donkey:langchange", async (e) => {
         return arr[arr.length - 1];
       }
 
-      // ---------- COPY FEATURE ----------
+      // ---------- COPY ----------
       async function copyCurrentJoke() {
         if (!currentJoke || !currentJoke.content) return;
 
@@ -422,7 +459,6 @@ window.addEventListener("donkey:langchange", async (e) => {
           try {
             await navigator.clipboard.writeText(textToCopy);
             showToast(t('copied', currentLang));
-
             return;
           } catch (e) {}
         }
@@ -448,16 +484,6 @@ window.addEventListener("donkey:langchange", async (e) => {
       }
 
       // ---------- RENDER / HISTORY ----------
-      function updatePrevButton() {
-        prevButton.disabled = historyIndex <= 0;
-      }
-
-      function updateCopyButtons() {
-        const enabled = !!(currentJoke && currentJoke.content);
-        copyButton.disabled = !enabled;
-        copyButtonBottom.disabled = !enabled;
-      }
-
       function renderJoke(joke, addToHistory) {
         if (!joke) return;
 
@@ -592,7 +618,7 @@ window.addEventListener("donkey:langchange", async (e) => {
         if (!initialised) {
           initialised = true;
 
-          // hide the terms note after first click (as you requested: starting page only)
+          // hide the terms note after first click (start page only)
           termsNote.style.display = 'none';
 
           contentDiv.style.display = 'block';
@@ -600,12 +626,16 @@ window.addEventListener("donkey:langchange", async (e) => {
           prevButton.style.display = 'inline-block';
           copyButton.style.display = 'inline-block';
           copyButtonBottom.style.display = 'inline-block';
-          mainButton.textContent = t('press_next', currentLang);
+
+          applyStaticTranslations(); // sets press_next + other labels
           await loadJokes();
         } else {
           showNextWeightedJoke();
         }
       };
+
+      // ---------- INIT ----------
+      applyStaticTranslations();
     });
   </script>
 </body>
