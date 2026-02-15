@@ -178,6 +178,13 @@
       max-width: 92%;
       z-index: 9999;
     }
+
+    /* Bottom copy button wrapper */
+    .bottomRow {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+    }
   </style>
 </head>
 
@@ -212,6 +219,11 @@
     <div id="ratingIcons"></div>
     <div id="voteMessage">Thanks for your vote.</div>
 
+    <!-- NEW: copy button at the bottom as well -->
+    <div class="bottomRow">
+      <button id="copyButtonBottom" disabled style="display:none;">Copy Joke</button>
+    </div>
+
     <div id="extras">
       <a href="addajoke.html">Want to add a joke?</a>
     </div>
@@ -225,6 +237,7 @@
       const mainButton = document.getElementById('mainButton');
       const prevButton = document.getElementById('prevButton');
       const copyButton = document.getElementById('copyButton');
+      const copyButtonBottom = document.getElementById('copyButtonBottom');
       const contentDiv = document.getElementById('content');
       const jokeDiv = document.getElementById('joke');
       const ratingIconsDiv = document.getElementById('ratingIcons');
@@ -338,18 +351,14 @@
 
         const textToCopy = `${currentJoke.content}\n\nfound at donkeyapp.com`;
 
-        // Prefer modern clipboard API (works on HTTPS / localhost)
         if (navigator.clipboard && window.isSecureContext) {
           try {
             await navigator.clipboard.writeText(textToCopy);
             showToast('Joke copied!');
             return;
-          } catch (e) {
-            // fall through to legacy
-          }
+          } catch (e) {}
         }
 
-        // Legacy fallback (works on many browsers, including some non-secure contexts)
         try {
           const ta = document.createElement('textarea');
           ta.value = textToCopy;
@@ -363,7 +372,7 @@
           const ok = document.execCommand('copy');
           document.body.removeChild(ta);
 
-          if (ok) showToast('Copied!');
+          if (ok) showToast('Joke copied!');
           else showToast('Copy failed (browser blocked it).');
         } catch (e) {
           showToast('Copy failed (browser blocked it).');
@@ -375,8 +384,10 @@
         prevButton.disabled = historyIndex <= 0;
       }
 
-      function updateCopyButton() {
-        copyButton.disabled = !currentJoke || !currentJoke.content;
+      function updateCopyButtons() {
+        const enabled = !!(currentJoke && currentJoke.content);
+        copyButton.disabled = !enabled;
+        copyButtonBottom.disabled = !enabled;
       }
 
       function renderJoke(joke, addToHistory) {
@@ -400,7 +411,7 @@
         }
 
         updatePrevButton();
-        updateCopyButton();
+        updateCopyButtons();
       }
 
       function showNextWeightedJoke() {
@@ -504,6 +515,11 @@
         copyCurrentJoke();
       };
 
+      copyButtonBottom.onclick = () => {
+        if (!initialised) return;
+        copyCurrentJoke();
+      };
+
       mainButton.onclick = async () => {
         if (!initialised) {
           initialised = true;
@@ -511,6 +527,7 @@
           languageBar.style.display = 'block';
           prevButton.style.display = 'inline-block';
           copyButton.style.display = 'inline-block';
+          copyButtonBottom.style.display = 'inline-block';
           mainButton.textContent = 'Another joke';
           await loadJokes();
         } else {
