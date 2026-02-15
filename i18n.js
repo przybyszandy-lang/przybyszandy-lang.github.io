@@ -25,7 +25,7 @@
       press_first: "Kliknij, aby dostać dowcip",
       press_next: "Kolejny dowcip",
       previous: "Poprzedni",
-      copy_joke: "Skopiuj dowcip",
+      copy_joke: "Kopiuj dowcip",
       loading: "Wczytywanie dowcipów...",
       error_loading: "Błąd wczytywania dowcipów.",
       no_jokes: "Brak dowcipów.",
