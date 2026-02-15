@@ -342,7 +342,7 @@
         if (navigator.clipboard && window.isSecureContext) {
           try {
             await navigator.clipboard.writeText(textToCopy);
-            showToast('Copied!');
+            showToast('Joke copied!');
             return;
           } catch (e) {
             // fall through to legacy
