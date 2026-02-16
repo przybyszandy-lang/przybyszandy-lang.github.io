@@ -457,6 +457,9 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
 
       mainButton.onclick = async () => {
         if (!initialised) {
+
+          document.getElementById("appLogo").classList.add("small");
+
           initialised = true;
 
           // hide the terms note after first click (start page only)
