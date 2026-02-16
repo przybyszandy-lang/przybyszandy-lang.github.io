@@ -112,6 +112,10 @@
       const errorBox = document.getElementById('errorBox');
       const copyToast = document.getElementById('copyToast');
       const termsNote = document.getElementById('termsNote');
+      
+if (window.matchMedia("(display-mode: standalone)").matches) {
+  termsNote.style.display = "none";
+}
 
       const showLangLabel = document.getElementById('showLangLabel');
       const addJokeLink = document.getElementById('addJokeLink');
