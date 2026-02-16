@@ -458,8 +458,9 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
       mainButton.onclick = async () => {
         if (!initialised) {
 
-          const logo = document.getElementById("appLogo");
-          logo.style.width = "90px";
+const logo = document.getElementById("appLogo");
+logo.style.width = "90px";
+document.getElementById("logoContainer").style.marginTop = "10px";
 
           initialised = true;
 
