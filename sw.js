@@ -1,4 +1,4 @@
-const CACHE_NAME = "donkeya-v1";
+const CACHE_NAME = "donkeyapp-v1";
 
 const STATIC_ASSETS = [
   "/",
