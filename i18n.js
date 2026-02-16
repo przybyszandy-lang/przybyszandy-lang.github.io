@@ -1,7 +1,7 @@
 (() => {
   const DICTS = {
     English: {
-      show_lang: "Show jokes in:",
+      show_lang: " ",
       press_first: "Press me to get a joke",
       press_next: "Another joke",
       previous: "Previous",
@@ -21,7 +21,7 @@
     },
 
     Polish: {
-      show_lang: "Pokaż dowcipy w:",
+      show_lang: " ",
       press_first: "Kliknij, aby dostać dowcip",
       press_next: "Kolejny dowcip",
       previous: "Poprzedni",
@@ -41,7 +41,7 @@
     },
 
     German: {
-      show_lang: "Witze anzeigen auf:",
+      show_lang: " ",
       press_first: "Drück mich für einen Witz",
       press_next: "Noch ein Witz",
       previous: "Zurück",
@@ -61,7 +61,7 @@
     },
 
     Spanish: {
-      show_lang: "Mostrar chistes en:",
+      show_lang: " ",
       press_first: "Pulsa para ver un chiste",
       press_next: "Otro chiste",
       previous: "Anterior",
@@ -81,7 +81,7 @@
     },
 
     French: {
-      show_lang: "Afficher les blagues en :",
+      show_lang: " ",
       press_first: "Clique pour une blague",
       press_next: "Une autre blague",
       previous: "Précédent",
