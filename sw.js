@@ -1,12 +1,31 @@
-const CACHE_NAME = "donkeyapp-v1";
+const CACHE_NAME = "donkeyapp-v2";
 
 const STATIC_ASSETS = [
   "/",
   "/index.html",
   "/styles.css",
+  "/i18n.js",
+
+  "/english.png",
+  "/polish.png",
+  "/german.png",
+  "/spanish.png",
+  "/french.png",
+
+  "/1.png",
+  "/2.png",
+  "/3.png",
+  "/4.png",
+
+  "/conditions.html",
+  "/cookies.html",
+  "/privacy.html",
+  "/addajoke.html",
+
   "/icon-192.png",
   "/icon-512.png"
 ];
+
 
 // Install event
 self.addEventListener("install", event => {
