@@ -206,3 +206,8 @@ button:disabled {
   margin-top: 10px;
 }
 
+#showLangLabel {
+  display: none;
+}
+
+
