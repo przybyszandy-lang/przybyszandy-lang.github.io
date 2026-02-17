@@ -18,6 +18,8 @@
       terms_link_conditions: "Terms and Conditions",
       terms_link_cookies: "Use of Cookies",
       terms_link_privacy: "Privacy Policy",
+      update_available: "Update available.",
+      update_refresh: "Refresh",
       offline: "You are offline. Reconnect to load jokes."
     },
 
@@ -39,6 +41,8 @@
       terms_link_conditions: "Warunki korzystania",
       terms_link_cookies: "Politykę cookies",
       offline: "Brak połączenia z internetem. Połącz się, aby wczytać dowcipy.",
+      update_available: "Dostępna jest aktualizacja.",
+      update_refresh: "Odśwież",
       terms_link_privacy: "Politykę prywatności"
     },
 
@@ -60,6 +64,8 @@
       terms_link_conditions: "Nutzungsbedingungen",
       terms_link_cookies: "Cookie-Richtlinie",
       offline: "Du bist offline. Stelle die Verbindung wieder her, um Witze zu laden.",
+      update_available: "Aktualisierung verfügbar.",
+      update_refresh: "Aktualisieren",
       terms_link_privacy: "Datenschutzrichtlinie"
     },
 
@@ -81,6 +87,8 @@
       terms_link_conditions: "Términos y condiciones",
       terms_link_cookies: "Uso de cookies",
       offline: "Estás sin conexión. Conéctate para cargar chistes.",
+      update_available: "Actualización disponible.",
+      update_refresh: "Actualizar",
       terms_link_privacy: "Política de privacidad"
     },
 
@@ -102,6 +110,8 @@
       terms_link_conditions: "Conditions d’utilisation",
       terms_link_cookies: "Utilisation des cookies",
       offline: "Vous êtes hors ligne. Reconnectez-vous pour charger des blagues.",
+      update_available: "Mise à jour disponible.",
+      update_refresh: "Actualiser",
       terms_link_privacy: "Politique de confidentialité"
     }
   };
