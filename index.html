@@ -521,9 +521,12 @@ document.getElementById("logoContainer").style.marginTop = "10px";
 function showUpdateBanner() {
 
   // Only show banner if running as installed app
-  if (!window.matchMedia("(display-mode: standalone)").matches) {
-    return;
-  }
+const isStandalone =
+  window.matchMedia("(display-mode: standalone)").matches ||
+  window.navigator.standalone === true;
+
+if (!isStandalone) return;
+
 
   if (!banner) return;
 
