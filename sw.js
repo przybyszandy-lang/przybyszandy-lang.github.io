@@ -1,6 +1,6 @@
 // sw.js (place in repo root, same level as index.html)
 
-const CACHE_NAME = "donkeyapp-v5";
+const CACHE_NAME = "donkeyapp-v6";
 
 const STATIC_ASSETS = [
   "/",
@@ -41,14 +41,16 @@ self.addEventListener("install", event => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(cache => cache.addAll(STATIC_ASSETS))
   );
-  self.skipWaiting();
+  // DO NOT call skipWaiting() here
 });
 
 // Activate: remove old caches
 self.addEventListener("activate", event => {
   event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k)))
+      Promise.all(
+        keys.filter(k => k !== CACHE_NAME).map(k => caches.delete(k))
+      )
     )
   );
   self.clients.claim();
@@ -58,6 +60,7 @@ self.addEventListener("activate", event => {
 // - Network-first for HTML navigations (so updates appear quickly)
 // - Cache-first for everything else (fast assets, works offline)
 self.addEventListener("fetch", event => {
+
   // HTML page navigations
   if (event.request.mode === "navigate") {
     event.respondWith(
@@ -72,19 +75,26 @@ self.addEventListener("fetch", event => {
     return;
   }
 
-  // Static assets, images, etc.
+  // Static assets
   event.respondWith(
     caches.match(event.request).then(cached => {
       if (cached) return cached;
+
       return fetch(event.request).then(response => {
-        // Optionally cache same-origin GET requests for faster future loads
         try {
           const url = new URL(event.request.url);
-          if (event.request.method === "GET" && url.origin === self.location.origin) {
+
+          if (
+            event.request.method === "GET" &&
+            url.origin === self.location.origin
+          ) {
             const copy = response.clone();
-            caches.open(CACHE_NAME).then(cache => cache.put(event.request, copy));
+            caches.open(CACHE_NAME).then(cache =>
+              cache.put(event.request, copy)
+            );
           }
         } catch (e) {}
+
         return response;
       });
     })
