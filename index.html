@@ -97,20 +97,25 @@
     document.addEventListener('DOMContentLoaded', () => {
       const { t, getLang, setLang } = window.DonkeyI18n;
 
-      // ---------- STATE ----------
-      let currentLang = getLang();
-      let jokesCache = [];
-      let currentJoke = null;
-      let initialised = false;
-      let voteLocked = false;
+  // ---------- STATE ----------
+  let currentLang = getLang();
 
-      let recentJokeIds = [];
-      const RECENT_LIMIT = 20;
+  const APP_VERSION = "1.0.0"; // change this every deploy
+  const appVersionDiv = document.getElementById("appVersion");
+  if (appVersionDiv) appVersionDiv.textContent = "v" + APP_VERSION;
 
-      let history = [];
-      let historyIndex = -1;
+  let jokesCache = [];
+  let currentJoke = null;
+  let initialised = false;
+  let voteLocked = false;
 
-      // ---------- DOM ----------
+  let recentJokeIds = [];
+  const RECENT_LIMIT = 20;
+
+  let history = [];
+  let historyIndex = -1;
+
+  // ---------- DOM ----------
       const mainButton = document.getElementById('mainButton');
       const prevButton = document.getElementById('prevButton');
       const copyButton = document.getElementById('copyButton');
@@ -554,7 +559,8 @@ document.getElementById("logoContainer").style.marginTop = "10px";
     });
   }
 </script>
-
+  
+<div id="appVersion" style="position:fixed; right:10px; bottom:8px; font-size:12px; opacity:0.35; z-index:9999;"></div>
   
 </body>
 </html>
