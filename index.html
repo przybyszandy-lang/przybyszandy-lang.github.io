@@ -518,18 +518,26 @@ document.getElementById("logoContainer").style.marginTop = "10px";
         const banner = document.getElementById("updateBanner");
         const btn = document.getElementById("updateBtn");
 
-        function showUpdateBanner() {
-          if (!banner) return;
-          banner.style.display = "block";
+function showUpdateBanner() {
 
-          if (btn) {
-            btn.onclick = () => {
-              if (reg.waiting) {
-                reg.waiting.postMessage({ type: "SKIP_WAITING" });
-              }
-            };
-          }
-        }
+  // Only show banner if running as installed app
+  if (!window.matchMedia("(display-mode: standalone)").matches) {
+    return;
+  }
+
+  if (!banner) return;
+
+  banner.style.display = "block";
+
+  if (btn) {
+    btn.onclick = () => {
+      if (reg.waiting) {
+        reg.waiting.postMessage({ type: "SKIP_WAITING" });
+      }
+    };
+  }
+}
+
 
         // If an update is already waiting
         if (reg.waiting && navigator.serviceWorker.controller) {
