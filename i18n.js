@@ -17,7 +17,8 @@
       terms_note: "By clicking 'Press me to get a joke' you agree to these",
       terms_link_conditions: "Terms and Conditions",
       terms_link_cookies: "Use of Cookies",
-      terms_link_privacy: "Privacy Policy"
+      terms_link_privacy: "Privacy Policy",
+      offline: "You are offline. Reconnect to load jokes."
     },
 
     Polish: {
@@ -37,6 +38,7 @@
       terms_note: "Klikając „Kliknij, aby dostać dowcip” zgadzasz się na",
       terms_link_conditions: "Warunki korzystania",
       terms_link_cookies: "Politykę cookies",
+      offline: "Brak połączenia z internetem. Połącz się, aby wczytać dowcipy.",
       terms_link_privacy: "Politykę prywatności"
     },
 
@@ -57,6 +59,7 @@
       terms_note: "Durch Klicken auf „Drück mich für einen Witz“ stimmst du zu",
       terms_link_conditions: "Nutzungsbedingungen",
       terms_link_cookies: "Cookie-Richtlinie",
+      offline: "Du bist offline. Stelle die Verbindung wieder her, um Witze zu laden.",
       terms_link_privacy: "Datenschutzrichtlinie"
     },
 
@@ -77,6 +80,7 @@
       terms_note: "Al pulsar «Pulsa para ver un chiste» aceptas",
       terms_link_conditions: "Términos y condiciones",
       terms_link_cookies: "Uso de cookies",
+      offline: "Estás sin conexión. Conéctate para cargar chistes.",
       terms_link_privacy: "Política de privacidad"
     },
 
@@ -97,6 +101,7 @@
       terms_note: "En cliquant sur « Clique pour une blague » tu acceptes",
       terms_link_conditions: "Conditions d’utilisation",
       terms_link_cookies: "Utilisation des cookies",
+      offline: "Vous êtes hors ligne. Reconnectez-vous pour charger des blagues.",
       terms_link_privacy: "Politique de confidentialité"
     }
   };
