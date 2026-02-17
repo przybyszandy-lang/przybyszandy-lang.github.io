@@ -1,6 +1,6 @@
 // sw.js (place in repo root, same level as index.html)
 
-const CACHE_NAME = "donkeyapp-v7";
+const CACHE_NAME = "donkeyapp-v8";
 
 const STATIC_ASSETS = [
   "/",
