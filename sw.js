@@ -1,6 +1,6 @@
 // sw.js (place in repo root, same level as index.html)
 
-const CACHE_NAME = "donkeyapp-v3";
+const CACHE_NAME = "donkeyapp-v4";
 
 const STATIC_ASSETS = [
   "/",
@@ -28,6 +28,13 @@ const STATIC_ASSETS = [
   "/icon-512.png",
   "/manifest.json"
 ];
+
+// Allow the page to tell SW to activate immediately
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
+    self.skipWaiting();
+  }
+});
 
 // Install: pre-cache core assets
 self.addEventListener("install", event => {
