@@ -372,6 +372,11 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
 
       // ---------- LOAD ----------
       async function loadJokes() {
+
+          if (!navigator.onLine) {
+    jokeDiv.textContent = t('offline', currentLang);
+    return;
+  }
         clearError();
         jokeDiv.textContent = t('loading', currentLang);
 
