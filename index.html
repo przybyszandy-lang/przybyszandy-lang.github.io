@@ -40,6 +40,15 @@
   </div>
 </div>
 
+<div id="installBanner" style="display:none; margin: 12px auto 0 auto; max-width: 520px;">
+  <div style="border:1px solid #e1e1e1; background:#fafafa; padding:10px 12px; border-radius:10px; font-size:13px;">
+    <span id="installText"></span>
+    <button id="installBtn" style="margin-left:10px; padding:8px 12px; font-size:13px;"></button>
+    <button id="installDismiss" style="margin-left:8px; padding:8px 12px; font-size:13px;"></button>
+  </div>
+</div>
+
+  
   <div id="languageBar">
     <span id="showLangLabel"> </span>
     <span class="langs">
@@ -570,6 +579,122 @@ if (!isStandalone) return;
     });
   }
 </script>
+
+<script>
+(function () {
+
+  const banner = document.getElementById("installBanner");
+  const installBtn = document.getElementById("installBtn");
+  const dismissBtn = document.getElementById("installDismiss");
+  const installText = document.getElementById("installText");
+
+  if (!banner || !installBtn || !dismissBtn || !installText) return;
+
+  // 🚫 NEVER show inside installed app
+  const isStandalone =
+    window.matchMedia("(display-mode: standalone)").matches ||
+    window.navigator.standalone === true;
+
+  if (isStandalone) return;
+
+  // i18n helpers
+  const i18n = window.DonkeyI18n;
+  const t = (key, lang) => (i18n && i18n.t) ? i18n.t(key, lang) : "";
+  const getLang = () => (i18n && i18n.getLang) ? i18n.getLang() : "English";
+  let currentLang = getLang();
+
+  // 🚫 Don’t show if user dismissed before
+  if (localStorage.getItem("donkey_install_dismissed") === "1") return;
+
+  let deferredPrompt = null;
+
+  const ua = navigator.userAgent || "";
+  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+
+  function showBanner() {
+    banner.style.display = "block";
+  }
+
+  function hideBanner() {
+    banner.style.display = "none";
+  }
+
+  function applyInstallTexts(mode) {
+    // mode: "android" or "ios"
+    if (mode === "ios") {
+      installText.textContent = t("install_ios_msg", currentLang);
+      installBtn.style.display = "none";
+      installBtn.textContent = "";
+      dismissBtn.textContent = t("install_ok", currentLang);
+    } else {
+      installText.textContent = t("install_msg", currentLang);
+      installBtn.style.display = "inline-block";
+      installBtn.textContent = t("install_btn", currentLang);
+      dismissBtn.textContent = t("install_not_now", currentLang);
+    }
+  }
+
+  dismissBtn.onclick = function () {
+    localStorage.setItem("donkey_install_dismissed", "1");
+    hideBanner();
+  };
+
+  // ANDROID / CHROME
+  window.addEventListener("beforeinstallprompt", function (e) {
+    e.preventDefault();
+    deferredPrompt = e;
+
+    applyInstallTexts("android");
+    showBanner();
+  });
+
+  installBtn.onclick = async function () {
+
+    // iOS — no native install prompt
+    if (isIOS) {
+      applyInstallTexts("ios");
+      showBanner();
+      return;
+    }
+
+    if (!deferredPrompt) return;
+
+    deferredPrompt.prompt();
+    const choice = await deferredPrompt.userChoice;
+    deferredPrompt = null;
+
+    if (choice && choice.outcome === "accepted") {
+      hideBanner();
+    } else {
+      showBanner();
+    }
+  };
+
+  // iOS delayed hint
+  if (isIOS) {
+    setTimeout(function () {
+      if (localStorage.getItem("donkey_install_dismissed") === "1") return;
+
+      applyInstallTexts("ios");
+      showBanner();
+    }, 1500);
+  }
+
+  // When user changes language, update banner text immediately (if visible)
+  window.addEventListener("donkey:langchange", function (e) {
+    currentLang = (e && e.detail && e.detail.lang) ? e.detail.lang : getLang();
+
+    if (banner.style.display === "block") {
+      // If iOS banner is being shown, keep iOS mode; otherwise assume android mode
+      const mode = (isIOS && installBtn.style.display === "none") ? "ios" : "android";
+      applyInstallTexts(mode);
+    }
+  });
+
+})();
+</script>
+
+
   
 <div id="appVersion" style="position:fixed; right:10px; bottom:8px; font-size:12px; opacity:0.35; z-index:9999;"></div>
   
