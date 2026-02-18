@@ -645,42 +645,33 @@ function showBanner() {
   });
   
 // Google badge click (Android)
-googleBadge.onclick = async function () {
+googleBadge.onclick = function () {
   if (!isAndroid) return;
 
-  // If browser did NOT give us install prompt (Brave often does this)
-  if (!deferredPrompt) {
-    alert("To install: open browser menu → Add to Home screen (or Install app).");
+  banner.innerHTML = "<div style='font-size:15px;padding:12px;'>Thank you for trying to download the app.<br><br>It is currently being developed. Please try again in 2–3 days.</div>";
+
+  setTimeout(() => {
     localStorage.setItem("donkey_install_dismissed", "1");
     banner.style.display = "none";
     document.body.classList.remove("has-install-banner");
-    return;
-  }
-
-  // Normal Chrome behaviour
-  deferredPrompt.prompt();
-  const choice = await deferredPrompt.userChoice;
-  deferredPrompt = null;
-
-  if (choice && choice.outcome === "accepted") {
-    localStorage.setItem("donkey_install_dismissed", "1");
-    banner.style.display = "none";
-    document.body.classList.remove("has-install-banner");
-  }
+  }, 10000);
 };
+
 
 
   // Apple badge click (iOS)
 appleBadge.onclick = function () {
   if (!isIOS) return;
 
-  alert("On iPhone: Tap Share → Add to Home Screen.");
+  banner.innerHTML = "<div style='font-size:15px;padding:12px;'>Thank you for trying to download the app.<br><br>It is currently being developed. Please try again in 2–3 days.</div>";
 
-  // dismiss after showing instructions
-  localStorage.setItem("donkey_install_dismissed", "1");
-  banner.style.display = "none";
-  document.body.classList.remove("has-install-banner");
+  setTimeout(() => {
+    localStorage.setItem("donkey_install_dismissed", "1");
+    banner.style.display = "none";
+    document.body.classList.remove("has-install-banner");
+  }, 10000);
 };
+
 
 
   // Auto show for iOS (since no native event exists)
