@@ -40,13 +40,22 @@
   </div>
 </div>
 
-<div id="installBanner" style="display:none; margin: 12px auto 0 auto; max-width: 520px;">
-  <div style="border:1px solid #e1e1e1; background:#fafafa; padding:10px 12px; border-radius:10px; font-size:13px;">
-    <span id="installText"></span>
-    <button id="installBtn" style="margin-left:10px; padding:8px 12px; font-size:13px;"></button>
-    <button id="installDismiss" style="margin-left:8px; padding:8px 12px; font-size:13px;"></button>
-  </div>
+<div id="installBanner" style="display:none; text-align:center; margin:16px 0;">
+  
+  <!-- Apple Badge -->
+  <img id="appleBadge"
+       src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+       alt="Download on the App Store"
+       style="height:50px; margin:6px; cursor:pointer;">
+
+  <!-- Google Play Badge -->
+  <img id="googleBadge"
+       src="https://upload.wikimedia.org/wikipedia/commons/7/78/Google_Play_Store_badge_EN.svg"
+       alt="Get it on Google Play"
+       style="height:50px; margin:6px; cursor:pointer;">
+
 </div>
+
 
   
   <div id="languageBar">
@@ -584,115 +593,71 @@ if (!isStandalone) return;
 (function () {
 
   const banner = document.getElementById("installBanner");
-  const installBtn = document.getElementById("installBtn");
-  const dismissBtn = document.getElementById("installDismiss");
-  const installText = document.getElementById("installText");
+  const appleBadge = document.getElementById("appleBadge");
+  const googleBadge = document.getElementById("googleBadge");
 
-  if (!banner || !installBtn || !dismissBtn || !installText) return;
+  if (!banner || !appleBadge || !googleBadge) return;
 
-  // 🚫 NEVER show inside installed app
+  // Never show inside installed app
   const isStandalone =
     window.matchMedia("(display-mode: standalone)").matches ||
     window.navigator.standalone === true;
 
   if (isStandalone) return;
 
-  // i18n helpers
-  const i18n = window.DonkeyI18n;
-  const t = (key, lang) => (i18n && i18n.t) ? i18n.t(key, lang) : "";
-  const getLang = () => (i18n && i18n.getLang) ? i18n.getLang() : "English";
-  let currentLang = getLang();
-
-  // 🚫 Don’t show if user dismissed before
+  // Don’t show if dismissed
   if (localStorage.getItem("donkey_install_dismissed") === "1") return;
 
   let deferredPrompt = null;
 
   const ua = navigator.userAgent || "";
   const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+  const isAndroid = /Android/.test(ua);
 
   function showBanner() {
     banner.style.display = "block";
   }
 
-  function hideBanner() {
-    banner.style.display = "none";
-  }
-
-  function applyInstallTexts(mode) {
-    // mode: "android" or "ios"
-    if (mode === "ios") {
-      installText.textContent = t("install_ios_msg", currentLang);
-      installBtn.style.display = "none";
-      installBtn.textContent = "";
-      dismissBtn.textContent = t("install_ok", currentLang);
-    } else {
-      installText.textContent = t("install_msg", currentLang);
-      installBtn.style.display = "inline-block";
-      installBtn.textContent = t("install_btn", currentLang);
-      dismissBtn.textContent = t("install_not_now", currentLang);
-    }
-  }
-
-  dismissBtn.onclick = function () {
-    localStorage.setItem("donkey_install_dismissed", "1");
-    hideBanner();
-  };
-
-  // ANDROID / CHROME
-  window.addEventListener("beforeinstallprompt", function (e) {
+  // Android install capture
+  window.addEventListener("beforeinstallprompt", (e) => {
     e.preventDefault();
     deferredPrompt = e;
 
-    applyInstallTexts("android");
-    showBanner();
+    if (isAndroid) {
+      showBanner();
+    }
   });
 
-  installBtn.onclick = async function () {
+  // Google badge click (Android)
+  googleBadge.onclick = async function () {
+    if (!isAndroid) return;
 
-    // iOS — no native install prompt
-    if (isIOS) {
-      applyInstallTexts("ios");
-      showBanner();
-      return;
-    }
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const choice = await deferredPrompt.userChoice;
+      deferredPrompt = null;
 
-    if (!deferredPrompt) return;
-
-    deferredPrompt.prompt();
-    const choice = await deferredPrompt.userChoice;
-    deferredPrompt = null;
-
-    if (choice && choice.outcome === "accepted") {
-      hideBanner();
-    } else {
-      showBanner();
+      if (choice.outcome === "accepted") {
+        banner.style.display = "none";
+      }
     }
   };
 
-  // iOS delayed hint
+  // Apple badge click (iOS)
+  appleBadge.onclick = function () {
+    if (!isIOS) return;
+
+    alert("On iPhone: Tap Share → Add to Home Screen.");
+  };
+
+  // Auto show for iOS (since no native event exists)
   if (isIOS) {
-    setTimeout(function () {
-      if (localStorage.getItem("donkey_install_dismissed") === "1") return;
-
-      applyInstallTexts("ios");
-      showBanner();
-    }, 1500);
+    setTimeout(showBanner, 1200);
   }
-
-  // When user changes language, update banner text immediately (if visible)
-  window.addEventListener("donkey:langchange", function (e) {
-    currentLang = (e && e.detail && e.detail.lang) ? e.detail.lang : getLang();
-
-    if (banner.style.display === "block") {
-      // If iOS banner is being shown, keep iOS mode; otherwise assume android mode
-      const mode = (isIOS && installBtn.style.display === "none") ? "ios" : "android";
-      applyInstallTexts(mode);
-    }
-  });
 
 })();
 </script>
+
 
 
   
