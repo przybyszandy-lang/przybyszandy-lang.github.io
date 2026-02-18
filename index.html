@@ -626,6 +626,9 @@ if (!isStandalone) return;
   const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
   const isAndroid = /Android/.test(ua);
 
+  if (isIOS) googleBadge.style.display = "none";
+if (isAndroid) appleBadge.style.display = "none";
+
 function showBanner() {
   banner.style.display = "block";
   document.body.classList.add("has-install-banner");
@@ -640,35 +643,57 @@ function showBanner() {
       showBanner();
     }
   });
+  
+// Google badge click (Android)
+googleBadge.onclick = async function () {
+  if (!isAndroid) return;
 
-  // Google badge click (Android)
-  googleBadge.onclick = async function () {
-    if (!isAndroid) return;
+  // If browser did NOT give us install prompt (Brave often does this)
+  if (!deferredPrompt) {
+    alert("To install: open browser menu → Add to Home screen (or Install app).");
+    localStorage.setItem("donkey_install_dismissed", "1");
+    banner.style.display = "none";
+    document.body.classList.remove("has-install-banner");
+    return;
+  }
 
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const choice = await deferredPrompt.userChoice;
-      deferredPrompt = null;
+  // Normal Chrome behaviour
+  deferredPrompt.prompt();
+  const choice = await deferredPrompt.userChoice;
+  deferredPrompt = null;
 
-      if (choice.outcome === "accepted") {
-        banner.style.display = "none";
-        document.body.classList.remove("has-install-banner");
-      }
-    }
-  };
+  if (choice && choice.outcome === "accepted") {
+    localStorage.setItem("donkey_install_dismissed", "1");
+    banner.style.display = "none";
+    document.body.classList.remove("has-install-banner");
+  }
+};
+
 
   // Apple badge click (iOS)
-  appleBadge.onclick = function () {
-    if (!isIOS) return;
+appleBadge.onclick = function () {
+  if (!isIOS) return;
 
-    alert("On iPhone: Tap Share → Add to Home Screen.");
-  };
+  alert("On iPhone: Tap Share → Add to Home Screen.");
+
+  // dismiss after showing instructions
+  localStorage.setItem("donkey_install_dismissed", "1");
+  banner.style.display = "none";
+  document.body.classList.remove("has-install-banner");
+};
+
 
   // Auto show for iOS (since no native event exists)
   if (isIOS) {
     setTimeout(showBanner, 1200);
   }
-
+  
+if (isAndroid) {
+  setTimeout(() => {
+    if (!deferredPrompt) showBanner();
+  }, 1200);
+}
+  
 })();
 </script>
 
