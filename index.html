@@ -40,7 +40,19 @@
   </div>
 </div>
 
-<div id="installBanner" style="display:none; text-align:center; margin:16px 0;">
+<div id="installBanner" style="
+  display:none;
+  position:fixed;
+  left:0;
+  right:0;
+  bottom:0;
+  padding:12px 10px calc(12px + env(safe-area-inset-bottom));
+  background:#ffffff;
+  border-top:1px solid #e1e1e1;
+  text-align:center;
+  z-index:9998;
+  box-shadow:0 -2px 8px rgba(0,0,0,0.06);
+">
   
   <!-- Apple Badge -->
   <img id="appleBadge"
