@@ -210,4 +210,7 @@ button:disabled {
   display: none;
 }
 
+body.has-install-banner {
+  padding-bottom: 90px;
+}
 
