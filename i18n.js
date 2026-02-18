@@ -20,6 +20,11 @@
       terms_link_privacy: "Privacy Policy",
       update_available: "Update available.",
       update_refresh: "Refresh",
+      install_msg: "Install Donkey App for a faster, full-screen experience.",
+      install_btn: "Install",
+      install_not_now: "Not now",
+      install_ios_msg: "On iPhone: Share → Add to Home Screen.",
+      install_ok: "OK",
       offline: "You are offline. Reconnect to load jokes."
     },
 
@@ -43,6 +48,11 @@
       offline: "Brak połączenia z internetem. Połącz się, aby wczytać dowcipy.",
       update_available: "Dostępna jest aktualizacja.",
       update_refresh: "Odśwież",
+      install_msg: "Zainstaluj Donkey App, aby korzystać szybciej i w trybie pełnoekranowym.",
+      install_btn: "Zainstaluj",
+      install_not_now: "Nie teraz",
+      install_ios_msg: "Na iPhonie: Udostępnij → Dodaj do ekranu głównego.",
+      install_ok: "OK",
       terms_link_privacy: "Politykę prywatności"
     },
 
@@ -66,6 +76,11 @@
       offline: "Du bist offline. Stelle die Verbindung wieder her, um Witze zu laden.",
       update_available: "Aktualisierung verfügbar.",
       update_refresh: "Aktualisieren",
+      install_msg: "Installiere Donkey App für ein schnelleres, vollbildiges Erlebnis.",
+      install_btn: "Installieren",
+      install_not_now: "Jetzt nicht",
+      install_ios_msg: "Auf dem iPhone: Teilen → Zum Home-Bildschirm.",
+      install_ok: "OK",
       terms_link_privacy: "Datenschutzrichtlinie"
     },
 
@@ -89,6 +104,11 @@
       offline: "Estás sin conexión. Conéctate para cargar chistes.",
       update_available: "Actualización disponible.",
       update_refresh: "Actualizar",
+      install_msg: "Instala Donkey App para una experiencia más rápida y a pantalla completa.",
+      install_btn: "Instalar",
+      install_not_now: "Ahora no",
+      install_ios_msg: "En iPhone: Compartir → Añadir a pantalla de inicio.",
+      install_ok: "OK",
       terms_link_privacy: "Política de privacidad"
     },
 
@@ -112,6 +132,11 @@
       offline: "Vous êtes hors ligne. Reconnectez-vous pour charger des blagues.",
       update_available: "Mise à jour disponible.",
       update_refresh: "Actualiser",
+      install_msg: "Installe Donkey App pour une expérience plus rapide et en plein écran.",
+      install_btn: "Installer",
+      install_not_now: "Pas maintenant",
+      install_ios_msg: "Sur iPhone : Partager → Sur l’écran d’accueil.",
+      install_ok: "OK",
       terms_link_privacy: "Politique de confidentialité"
     }
   };
