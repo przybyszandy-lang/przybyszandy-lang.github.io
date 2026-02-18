@@ -8,6 +8,8 @@ body {
   padding: 40px 15px;
 }
 
+/* ---------- LANGUAGE BAR ---------- */
+
 #languageBar {
   display: none;
   margin: 0 auto 18px auto;
@@ -39,15 +41,12 @@ body {
 #languageBar img.flag {
   width: 30px;
   height: 15px;
-  min-width: 30px;
-  min-height: 15px;
-  max-width: 30px;
-  max-height: 15px;
   object-fit: cover;
   border: 1px solid #ddd;
   border-radius: 4px;
-  display: inline-block;
 }
+
+/* ---------- BUTTONS ---------- */
 
 .btnRow {
   display: inline-flex;
@@ -84,6 +83,8 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* ---------- CONTENT ---------- */
+
 #content {
   margin-top: 30px;
   display: none;
@@ -96,6 +97,8 @@ button:disabled {
   min-height: 80px;
   margin-bottom: 18px;
 }
+
+/* ---------- RATING ---------- */
 
 #ratingIcons {
   display: flex;
@@ -110,7 +113,6 @@ button:disabled {
   width: 64px;
   height: 64px;
   cursor: pointer;
-  user-select: none;
   transition: transform 0.08s ease;
 }
 
@@ -133,6 +135,8 @@ button:disabled {
   margin: 0 auto 14px auto;
 }
 
+/* ---------- LINKS ---------- */
+
 #extras {
   font-size: 13px;
 }
@@ -140,8 +144,9 @@ button:disabled {
 #extras a {
   color: #0000ee;
   text-decoration: underline;
-  cursor: pointer;
 }
+
+/* ---------- ERROR ---------- */
 
 #errorBox {
   display: none;
@@ -156,6 +161,8 @@ button:disabled {
   text-align: left;
   white-space: pre-wrap;
 }
+
+/* ---------- COPY TOAST ---------- */
 
 #copyToast {
   display: none;
@@ -178,6 +185,8 @@ button:disabled {
   justify-content: center;
 }
 
+/* ---------- TERMS ---------- */
+
 #termsNote {
   margin: 14px auto 18px auto;
   font-size: 12px;
@@ -189,8 +198,10 @@ button:disabled {
 #termsNote a {
   color: #0000ee;
   text-decoration: underline;
-  cursor: pointer;
 }
+
+/* ---------- LOGO ---------- */
+
 #logoContainer {
   text-align: center;
   margin-top: 40px;
@@ -210,7 +221,16 @@ button:disabled {
   display: none;
 }
 
+/* ---------- INSTALL BANNER SPACING ---------- */
+
+/* Add space when bottom install banner is visible */
 body.has-install-banner {
-  padding-bottom: 90px;
+  padding-bottom: calc(40px + 110px);
 }
 
+/* iPhone safe area support */
+@supports (padding: env(safe-area-inset-bottom)) {
+  body.has-install-banner {
+    padding-bottom: calc(40px + 110px + env(safe-area-inset-bottom));
+  }
+}
