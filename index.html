@@ -626,9 +626,10 @@ if (!isStandalone) return;
   const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
   const isAndroid = /Android/.test(ua);
 
-  function showBanner() {
-    banner.style.display = "block";
-  }
+function showBanner() {
+  banner.style.display = "block";
+  document.body.classList.add("has-install-banner");
+}
 
   // Android install capture
   window.addEventListener("beforeinstallprompt", (e) => {
