@@ -326,23 +326,26 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
       );
 
       // ---------- RATING ----------
-      const ratingOptions = [
-        { key: 'rating_dont_get_it_count', img: '1.png' },
-        { key: 'rating_ehh_count', img: '2.png' },
-        { key: 'rating_good_one_count', img: '3.png' },
-        { key: 'rating_fell_off_chair_count', img: '4.png' }
-      ];
+const ratingOptions = [
+  { vote: "bad",   emoji: "😕" },
+  { vote: "meh",   emoji: "😐" },
+  { vote: "good",  emoji: "🙂" },
+  { vote: "great", emoji: "😂" },
+];
 
-      function renderRatingIcons() {
-        ratingIconsDiv.innerHTML = '';
-        ratingOptions.forEach(opt => {
-          const img = document.createElement('img');
-          img.src = opt.img;
-          img.alt = opt.key;
-          img.onclick = () => rateJoke(opt.key);
-          ratingIconsDiv.appendChild(img);
-        });
-      }
+function renderRatingIcons() {
+  ratingIconsDiv.innerHTML = "";
+
+  ratingOptions.forEach((opt) => {
+    const btn = document.createElement("button");
+    btn.type = "button";
+    btn.className = "ratingEmojiBtn";
+    btn.textContent = opt.emoji;
+    btn.onclick = () => rateJoke(opt.vote);
+
+    ratingIconsDiv.appendChild(btn);
+  });
+}
 
       // ---------- WEIGHTED RANDOM ----------
       const MAX_AVG = 4;
@@ -492,46 +495,58 @@ const { data, error } = await client.rpc("get_jokes_feed_lang", {
       }
 
       // ---------- VOTE ----------
-      function incrementLocalCountAndAverage(jokeObj, ratingKey) {
-        jokeObj[ratingKey] = (jokeObj[ratingKey] || 0) + 1;
+function incrementLocalCountAndAverage(jokeObj, vote) {
+  // Keep local counts in memory only (purely for UI weighting)
+  jokeObj._c_bad = (jokeObj._c_bad || 0) + (vote === "bad" ? 1 : 0);
+  jokeObj._c_meh = (jokeObj._c_meh || 0) + (vote === "meh" ? 1 : 0);
+  jokeObj._c_good = (jokeObj._c_good || 0) + (vote === "good" ? 1 : 0);
+  jokeObj._c_great = (jokeObj._c_great || 0) + (vote === "great" ? 1 : 0);
 
-        const c1 = Number(jokeObj.rating_dont_get_it_count) || 0;
-        const c2 = Number(jokeObj.rating_ehh_count) || 0;
-        const c3 = Number(jokeObj.rating_good_one_count) || 0;
-        const c4 = Number(jokeObj.rating_fell_off_chair_count) || 0;
+  const cBad = Number(jokeObj._c_bad) || 0;
+  const cMeh = Number(jokeObj._c_meh) || 0;
+  const cGood = Number(jokeObj._c_good) || 0;
+  const cGreat = Number(jokeObj._c_great) || 0;
 
-        const total = c1 + c2 + c3 + c4;
-        if (total <= 0) {
-          jokeObj.average = 0;
-          return;
-        }
+  const total = cBad + cMeh + cGood + cGreat;
+  if (total <= 0) {
+    jokeObj.average = 0;
+    return;
+  }
 
-        jokeObj.average = (1*c1 + 2*c2 + 3*c3 + 4*c4) / total;
-      }
+  jokeObj.average = ((-2*cBad) + (-1*cMeh) + (1*cGood) + (2*cGreat)) / total;
+}
 
-      async function rateJoke(ratingKey) {
-        if (voteLocked || !currentJoke) return;
-        voteLocked = true;
+async function rateJoke(vote) {
+  if (voteLocked || !currentJoke) return;
+  voteLocked = true;
 
-        voteMessageDiv.style.display = 'inline-block';
-        voteMessageDiv.textContent = t('thanks_vote', currentLang);
+  // Immediately swap emojis into "Your vote: X"
+  ratingIconsDiv.innerHTML = "";
+  const chosen = ratingOptions.find((o) => o.vote === vote);
+  ratingIconsDiv.textContent = `Your vote: ${chosen ? chosen.emoji : ""}`;
 
-        incrementLocalCountAndAverage(currentJoke, ratingKey);
-        const newValue = currentJoke[ratingKey] || 0;
+  voteMessageDiv.style.display = "inline-block";
+  voteMessageDiv.textContent = t("thanks_vote", currentLang);
 
-// COMMENT: RLS-safe rating increment via RPC (prevents arbitrary updates)
-const { error } = await client.rpc("rate_joke", {
-  p_id: currentJoke.id,
-  p_rating_key: ratingKey,
-});
+  // Update local avg (optional, for weighting feel)
+  incrementLocalCountAndAverage(currentJoke, vote);
 
-        if (error) {
-          showError('Vote failed:\n' + (error.message || JSON.stringify(error)));
-          voteMessageDiv.textContent = t('vote_failed', currentLang);
-          voteLocked = false;
-          return;
-        }
-      }
+  // Call your SQL RPC
+  const { error } = await client.rpc("rate_joke", {
+    p_id: currentJoke.id,
+    p_vote: vote,
+  });
+
+  if (error) {
+    showError("Vote failed:\n" + (error.message || JSON.stringify(error)));
+    voteMessageDiv.textContent = t("vote_failed", currentLang);
+    voteLocked = false;
+
+    // If vote failed, restore the buttons
+    renderRatingIcons();
+    return;
+  }
+}
 
       // ---------- BUTTONS ----------
       prevButton.onclick = () => {
