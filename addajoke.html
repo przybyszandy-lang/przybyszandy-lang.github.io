@@ -217,6 +217,15 @@ const submitterToken = getOrCreateSubmitterToken();
       submitBtn.disabled = true;
       setMessage('Submitting...');
 
+      // Prevent extremely fast repeated submissions (basic bot protection)
+if (window.lastSubmit && Date.now() - window.lastSubmit < 5000) {
+  setMessage("Please wait a few seconds before submitting another joke.", true);
+  submitBtn.disabled = false;
+  return;
+}
+
+window.lastSubmit = Date.now();
+
       // Use array form for insert (most robust)
 const payload = [{
   content: content,
