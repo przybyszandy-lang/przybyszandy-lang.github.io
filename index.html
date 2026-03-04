@@ -531,10 +531,10 @@ async function rateJoke(vote) {
   incrementLocalCountAndAverage(currentJoke, vote);
 
   // Call your SQL RPC
-  const { error } = await client.rpc("rate_joke", {
-    p_id: currentJoke.id,
-    p_vote: vote,
-  });
+const { error } = await client.rpc("rate_joke", {
+  p_id: currentJoke.id,
+  p_vote: ratingKey,
+});
 
   if (error) {
     showError("Vote failed:\n" + (error.message || JSON.stringify(error)));
