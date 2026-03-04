@@ -231,7 +231,6 @@ const payload = [{
       const { data, error } = await supabase
         .from('jokes')
         .insert(payload)
-        .select('id'); // optional: confirms insert + returns id if allowed by RLS
 
       submitBtn.disabled = false;
 
@@ -249,7 +248,7 @@ const payload = [{
 const count = await getSubmissionCount(submitterToken);
 
 // Base success message
-let msg = `Thank you! Your joke has been submitted.${data?.[0]?.id ? ` (id: ${data[0].id})` : ''}`;
+let msg = `Thank you! Your joke has been submitted.`;
 
 // Add progress if we could fetch it
 if (typeof count === "number") {
