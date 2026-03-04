@@ -348,16 +348,15 @@ function renderRatingIcons() {
 }
 
       // ---------- WEIGHTED RANDOM ----------
-      const MAX_AVG = 4;
+function weightFromAverage(j) {
+  const avg = Number(j?.average) || 0;
 
-      function weightFromAverage(j) {
-        const avg = Number(j && j.average);
-        const safeAvg = Number.isFinite(avg) ? avg : 0;
-        const clamped = Math.max(0, Math.min(MAX_AVG, safeAvg));
-        const baseline = 1;
-        const strength = 2;
-        return baseline + Math.pow(clamped, strength);
-      }
+  // convert -2..2 → 0..4
+  const normalized = avg + 2;
+
+  // baseline so every joke can appear
+  return 0.2 + (normalized / 4);
+}
 
       function pickWeighted(arr, weightFn) {
         if (!arr || arr.length === 0) return null;
