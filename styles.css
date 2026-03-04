@@ -83,6 +83,15 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.ratingEmojiBtn{
+  font-size: 26px;
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  padding: 6px 8px;
+  line-height: 1;
+}
+
 /* ---------- CONTENT ---------- */
 
 #content {
