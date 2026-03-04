@@ -468,13 +468,13 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
         clearError();
         jokeDiv.textContent = t('loading', currentLang);
 
-        const { data, error } = await client
-          .from('jokes')
-          .select('*')
-          .eq('is_visible', true)
-          .eq('is_flagged', false)
-          .eq('language', currentLang)
-          .limit(1000);
+// COMMENT: RLS-safe feed fetch via RPC (server enforces filters + hard limit)
+const { data, error } = await client.rpc("get_jokes_feed_lang", {
+  p_limit: 200,
+  p_after_created_at: null,
+  p_after_id: null,
+  p_language: currentLang,
+});
 
         if (error) {
           showError('Error loading jokes:\n' + (error.message || JSON.stringify(error)));
@@ -519,10 +519,11 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
         incrementLocalCountAndAverage(currentJoke, ratingKey);
         const newValue = currentJoke[ratingKey] || 0;
 
-        const { error } = await client
-          .from('jokes')
-          .update({ [ratingKey]: newValue })
-          .eq('id', currentJoke.id);
+// COMMENT: RLS-safe rating increment via RPC (prevents arbitrary updates)
+const { error } = await client.rpc("rate_joke", {
+  p_id: currentJoke.id,
+  p_rating_key: ratingKey,
+});
 
         if (error) {
           showError('Vote failed:\n' + (error.message || JSON.stringify(error)));
