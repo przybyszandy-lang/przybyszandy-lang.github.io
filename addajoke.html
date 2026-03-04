@@ -249,18 +249,22 @@ const count = await getSubmissionCount(submitterToken);
 
 // Base success message
 let msg = `Thank you! Your joke has been submitted.`;
-
-// Add progress if we could fetch it
-if (typeof count === "number") {
+      
+// Show warnings ONLY when count is above 80
+if (typeof count === "number" && count > 80) {
   msg += `\n\nSubmissions from this device: ${count} / 100`;
 
   // Soft warnings for real contributors
   if (count >= 95) {
-    msg += `\n\nYou are very close to the limit. If you’re a genuine contributor, email us and we’ll lift it.`;
-  } else if (count >= 80) {
-    msg += `\n\nYou’re approaching the limit. If you plan to submit lots more, consider emailing us so we can whitelist you.`;
+    msg += `\n\nYou are very close to the limit. If you are a real user and not a bot, send me an email at andy@donkeyapp.com and I will increase your limit.`;
+  } else {
+    msg += `\n\nYou’re approaching the limit. If you are a real user and not a bot, send me an email at andy@donkeyapp.com and I will increase your limit.`;
   }
 }
+
+// NOTE (future):
+// We will NOT apply this device-based cap to account holders.
+// For logged-in users we can rate-limit differently and ban/wipe abusive accounts.
 
 setMessage(msg);
 
