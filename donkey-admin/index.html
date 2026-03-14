@@ -1,14 +1,57 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Login</title>
-  <meta name="robots" content="noindex, nofollow" />
+<meta name="robots" content="noindex,nofollow">
+<title>Login</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
 </head>
+
 <body>
-  <input type="email" placeholder="Email" />
-  <input type="password" placeholder="Password" />
-  <button>Login</button>
+
+<input id="email" type="email" placeholder="Email">
+<input id="password" type="password" placeholder="Password">
+<button onclick="login()">Login</button>
+
+<script>
+
+const supabase = window.supabase.createClient(
+"https://mknsvxajrvdlwqywvlrf.supabase.co",
+"sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw"
+)
+
+async function login() {
+
+const email = document.getElementById("email").value
+const password = document.getElementById("password").value
+
+const { data, error } = await supabase.auth.signInWithPassword({
+email: email,
+password: password
+})
+
+if(error){
+alert("Access denied")
+return
+}
+
+const { data: profile } = await supabase
+.from("profiles")
+.select("is_admin")
+.eq("id", data.user.id)
+.single()
+
+if(!profile || !profile.is_admin){
+alert("Access denied")
+return
+}
+
+window.location.href = "/donkey-admin/dashboard.html"
+
+}
+
+</script>
+
 </body>
 </html>
