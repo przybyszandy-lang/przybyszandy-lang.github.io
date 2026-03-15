@@ -1,59 +1,675 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta name="robots" content="noindex,nofollow">
-<title>Login</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>DonkeyApp Admin Moderation</title>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --success: #166534;
+      --danger: #b91c1c;
+      --warning-bg: #fef3c7;
+      --warning-text: #92400e;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --error-bg: #fee2e2;
+      --error-text: #991b1b;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .wrap {
+      max-width: 1400px;
+      margin: 0 auto;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 {
+      margin-top: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    input[type="email"],
+    input[type="text"],
+    textarea {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 11px 16px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+    }
+
+    button:hover {
+      background: var(--accent-hover);
+    }
+
+    button.secondary {
+      background: #374151;
+    }
+
+    button.secondary:hover {
+      background: #1f2937;
+    }
+
+    button.light {
+      background: #e5e7eb;
+      color: #111827;
+    }
+
+    button.light:hover {
+      background: #d1d5db;
+    }
+
+    .message {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.4;
+      margin-top: 12px;
+    }
+
+    .message.info {
+      background: var(--warning-bg);
+      color: var(--warning-text);
+    }
+
+    .message.success {
+      background: var(--ok-bg);
+      color: var(--ok-text);
+    }
+
+    .message.error {
+      background: var(--error-bg);
+      color: var(--error-text);
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      gap: 16px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+
+    .topbar-actions {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .table-wrap {
+      overflow-x: auto;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 1100px;
+    }
+
+    th, td {
+      border-bottom: 1px solid var(--border);
+      padding: 12px;
+      vertical-align: top;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    th {
+      background: #f9fafb;
+      position: sticky;
+      top: 0;
+      z-index: 1;
+    }
+
+    tr:last-child td {
+      border-bottom: 0;
+    }
+
+    .decision-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-width: 110px;
+    }
+
+    .decision-group label {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .joke-cell {
+      min-width: 420px;
+      white-space: pre-wrap;
+      line-height: 1.45;
+    }
+
+    .small {
+      font-size: 12px;
+      color: var(--muted);
+      word-break: break-word;
+    }
+
+    textarea {
+      min-height: 240px;
+      font-family: Consolas, Monaco, monospace;
+      resize: vertical;
+    }
+
+    .count-box {
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    @media (max-width: 800px) {
+      body {
+        padding: 12px;
+      }
+
+      .card {
+        padding: 14px;
+      }
+    }
+  </style>
 </head>
-
 <body>
+  <div class="wrap">
+    <div class="card" translate="no">
+      <h1>DonkeyApp Admin Moderation</h1>
+      <p class="muted">OTP login only. This page generates SQL for moderation decisions. It does not update the database directly.</p>
+    </div>
 
-<input id="email" type="email" placeholder="Email">
-<input id="password" type="password" placeholder="Password">
-<button onclick="alert('clicked')">Login</button>
+    <div id="auth-section" class="card" translate="no">
+      <h2>Admin Login</h2>
 
+      <div class="stack">
+        <label for="email-input">Admin email</label>
+        <input id="email-input" type="email" placeholder="andy@donkeyapp.com" autocomplete="email" />
 
-<script>
+        <div class="row">
+          <button id="send-code-btn" type="button" onclick="sendCode()">Send code</button>
+        </div>
 
-const supabase = window.supabase.createClient(
-"https://mknsvxajrvdlwqywvlrf.supabase.co",
-"sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw"
-)
+        <div id="verify-block" class="hidden">
+          <label for="otp-input">One-time code</label>
+          <input id="otp-input" type="text" placeholder="Enter the code from your email" autocomplete="one-time-code" />
+          <div class="row">
+            <button id="verify-code-btn" type="button" onclick="verifyCode()">Verify code</button>
+          </div>
+        </div>
 
-async function login() {
+        <div id="auth-message" class="hidden message info"></div>
+      </div>
+    </div>
 
-const email = document.getElementById("email").value
-const password = document.getElementById("password").value
+    <div id="dashboard-section" class="hidden">
+      <div class="card">
+        <div class="topbar" translate="no">
+          <div>
+            <h2 style="margin-bottom: 4px;">Pending jokes</h2>
+            <div id="pending-count" class="count-box">Not loaded yet.</div>
+          </div>
 
-const { data, error } = await supabase.auth.signInWithPassword({
-email: email,
-password: password
-})
+          <div class="topbar-actions">
+            <button type="button" class="light" onclick="loadPendingJokes()">Refresh jokes</button>
+            <button type="button" onclick="generateSql()">Generate SQL</button>
+            <button type="button" class="secondary" onclick="copySql()">Copy SQL</button>
+            <button type="button" class="light" onclick="logout()">Logout</button>
+          </div>
+        </div>
 
-if(error){
-alert("Access denied")
-return
-}
+        <div class="message info" translate="no">
+          Translation note: joke text is marked as translatable for browser translation. Admin labels and SQL are not.
+        </div>
 
-const { data: profile } = await supabase
-.from("profiles")
-.select("is_admin")
-.eq("id", data.user.id)
-.single()
+        <div id="dashboard-message" class="hidden message info" translate="no"></div>
 
-if(!profile || !profile.is_admin){
-alert("Access denied")
-return
-}
+        <div class="table-wrap" style="margin-top: 16px;">
+          <table>
+            <thead translate="no">
+              <tr>
+                <th>Decision</th>
+                <th>Language</th>
+                <th>Joke</th>
+                <th>Created</th>
+                <th>ID</th>
+                <th>Author</th>
+              </tr>
+            </thead>
+            <tbody id="jokes-body">
+              <tr>
+                <td colspan="6" class="muted">No data loaded yet.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
 
-alert("Admin login worked")
+      <div class="card" translate="no">
+        <h3>Generated SQL</h3>
+        <p class="muted">Only rows with Approve or Reject selected will appear here.</p>
+        <textarea id="sql-output" readonly placeholder="Generated SQL will appear here..."></textarea>
+      </div>
+    </div>
+  </div>
 
+  <script>
+    const supabase = window.supabase.createClient(
+      "https://mknsvxajrvdlwqywvlrf.supabase.co",
+      "sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw"
+    );
 
-}
+    const pendingJokes = [];
+    const decisionMap = {};
 
-</script>
+    function setMessage(elementId, type, text) {
+      const el = document.getElementById(elementId);
+      el.className = "message " + type;
+      el.textContent = text;
+      el.classList.remove("hidden");
+    }
 
+    function hideMessage(elementId) {
+      const el = document.getElementById(elementId);
+      el.classList.add("hidden");
+      el.textContent = "";
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#39;");
+    }
+
+    function formatDate(value) {
+      if (!value) return "";
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return value;
+      return date.toLocaleString("en-GB", {
+        year: "numeric",
+        month: "short",
+        day: "2-digit",
+        hour: "2-digit",
+        minute: "2-digit"
+      });
+    }
+
+    function getAuthorText(row) {
+      if (row.user_id) {
+        return "User ID: " + row.user_id;
+      }
+      if (row.added_by_email) {
+        return row.added_by_email;
+      }
+      return "Anonymous";
+    }
+
+    async function sendCode() {
+      hideMessage("auth-message");
+
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+
+      if (!email) {
+        setMessage("auth-message", "error", "Please enter your email first.");
+        return;
+      }
+
+      const sendButton = document.getElementById("send-code-btn");
+      sendButton.disabled = true;
+      sendButton.textContent = "Sending...";
+
+      try {
+        const { error } = await supabase.auth.signInWithOtp({
+          email: email,
+          options: {
+            shouldCreateUser: false
+          }
+        });
+
+        if (error) {
+          setMessage("auth-message", "error", error.message || "Failed to send code.");
+          return;
+        }
+
+        document.getElementById("verify-block").classList.remove("hidden");
+        setMessage("auth-message", "success", "Code sent. Check your email and enter the code below.");
+      } catch (err) {
+        setMessage("auth-message", "error", "Unexpected error while sending the code.");
+      } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = "Send code";
+      }
+    }
+
+    async function verifyCode() {
+      hideMessage("auth-message");
+
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      const token = document.getElementById("otp-input").value.trim();
+
+      if (!email) {
+        setMessage("auth-message", "error", "Please enter your email.");
+        return;
+      }
+
+      if (!token) {
+        setMessage("auth-message", "error", "Please enter the code.");
+        return;
+      }
+
+      const verifyButton = document.getElementById("verify-code-btn");
+      verifyButton.disabled = true;
+      verifyButton.textContent = "Verifying...";
+
+      try {
+        const { data, error } = await supabase.auth.verifyOtp({
+          email: email,
+          token: token,
+          type: "email"
+        });
+
+        if (error || !data?.user) {
+          setMessage("auth-message", "error", error?.message || "Code verification failed.");
+          return;
+        }
+
+        const isAdmin = await checkAdmin(data.user.id);
+
+        if (!isAdmin) {
+          await supabase.auth.signOut();
+          setMessage("auth-message", "error", "Access denied. This account is not an admin.");
+          return;
+        }
+
+        document.getElementById("auth-section").classList.add("hidden");
+        document.getElementById("dashboard-section").classList.remove("hidden");
+        setMessage("dashboard-message", "success", "Admin access confirmed.");
+        await loadPendingJokes();
+      } catch (err) {
+        setMessage("auth-message", "error", "Unexpected error during verification.");
+      } finally {
+        verifyButton.disabled = false;
+        verifyButton.textContent = "Verify code";
+      }
+    }
+
+    async function checkAdmin(userId) {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
+
+      if (error || !data || data.is_admin !== true) {
+        return false;
+      }
+
+      return true;
+    }
+
+    async function loadPendingJokes() {
+      hideMessage("dashboard-message");
+
+      const tbody = document.getElementById("jokes-body");
+      const countBox = document.getElementById("pending-count");
+      const sqlBox = document.getElementById("sql-output");
+
+      tbody.innerHTML = '<tr><td colspan="6" class="muted">Loading pending jokes...</td></tr>';
+      countBox.textContent = "Loading...";
+      sqlBox.value = "";
+
+      pendingJokes.length = 0;
+      for (const key of Object.keys(decisionMap)) {
+        delete decisionMap[key];
+      }
+
+      try {
+        const { data, error } = await supabase
+          .from("jokes")
+          .select("id, content, language, created_at, user_id, added_by_email")
+          .eq("is_visible", false)
+          .eq("is_new", true)
+          .order("created_at", { ascending: false })
+          .limit(100);
+
+        if (error) {
+          tbody.innerHTML = '<tr><td colspan="6" class="muted">Failed to load jokes.</td></tr>';
+          countBox.textContent = "Load failed.";
+          setMessage("dashboard-message", "error", error.message || "Failed to load jokes.");
+          return;
+        }
+
+        if (!data || data.length === 0) {
+          tbody.innerHTML = '<tr><td colspan="6" class="muted">No pending jokes found.</td></tr>';
+          countBox.textContent = "0 pending jokes.";
+          setMessage("dashboard-message", "info", "There are no jokes waiting for review.");
+          return;
+        }
+
+        pendingJokes.push(...data);
+        renderJokes();
+        countBox.textContent = pendingJokes.length + " pending joke(s) loaded.";
+      } catch (err) {
+        tbody.innerHTML = '<tr><td colspan="6" class="muted">Unexpected error while loading jokes.</td></tr>';
+        countBox.textContent = "Load failed.";
+        setMessage("dashboard-message", "error", "Unexpected error while loading jokes.");
+      }
+    }
+
+    function renderJokes() {
+      const tbody = document.getElementById("jokes-body");
+
+      if (pendingJokes.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="6" class="muted">No pending jokes found.</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = pendingJokes.map((row) => {
+        const safeId = escapeHtml(row.id);
+        const safeLanguage = escapeHtml(row.language || "");
+        const safeContent = escapeHtml(row.content || "");
+        const safeCreated = escapeHtml(formatDate(row.created_at));
+        const safeAuthor = escapeHtml(getAuthorText(row));
+
+        return `
+          <tr>
+            <td translate="no">
+              <div class="decision-group">
+                <label>
+                  <input type="radio" name="decision-${safeId}" value="approve" onchange="setDecision('${safeId}', 'approve')" />
+                  <span>Approve</span>
+                </label>
+                <label>
+                  <input type="radio" name="decision-${safeId}" value="reject" onchange="setDecision('${safeId}', 'reject')" />
+                  <span>Reject</span>
+                </label>
+                <label>
+                  <input type="radio" name="decision-${safeId}" value="skip" onchange="setDecision('${safeId}', '')" checked />
+                  <span>Skip</span>
+                </label>
+              </div>
+            </td>
+            <td translate="no">${safeLanguage}</td>
+            <td class="joke-cell" translate="yes" lang="${safeLanguage || "auto"}">${safeContent}</td>
+            <td translate="no">${safeCreated}</td>
+            <td class="small" translate="no">${safeId}</td>
+            <td class="small" translate="no">${safeAuthor}</td>
+          </tr>
+        `;
+      }).join("");
+    }
+
+    function setDecision(id, value) {
+      if (!value) {
+        delete decisionMap[id];
+        return;
+      }
+      decisionMap[id] = value;
+    }
+
+    function generateSql() {
+      const sqlLines = [];
+
+      for (const row of pendingJokes) {
+        const decision = decisionMap[row.id];
+        if (!decision) continue;
+
+        if (decision === "approve") {
+          sqlLines.push(
+            "update public.jokes",
+            "set is_visible = true,",
+            "    is_new = false,",
+            "    updated_at = now()",
+            "where id = '" + row.id + "';",
+            ""
+          );
+        }
+
+        if (decision === "reject") {
+          sqlLines.push(
+            "update public.jokes",
+            "set is_visible = false,",
+            "    is_new = false,",
+            "    updated_at = now()",
+            "where id = '" + row.id + "';",
+            ""
+          );
+        }
+      }
+
+      const output = sqlLines.join("\n").trim();
+      document.getElementById("sql-output").value = output;
+
+      if (output) {
+        setMessage("dashboard-message", "success", "SQL generated.");
+      } else {
+        setMessage("dashboard-message", "info", "No decisions selected yet, so no SQL was generated.");
+      }
+    }
+
+    async function copySql() {
+      const sql = document.getElementById("sql-output").value;
+
+      if (!sql.trim()) {
+        setMessage("dashboard-message", "info", "There is no SQL to copy yet.");
+        return;
+      }
+
+      try {
+        await navigator.clipboard.writeText(sql);
+        setMessage("dashboard-message", "success", "SQL copied.");
+      } catch (err) {
+        setMessage("dashboard-message", "error", "Copy failed. Please copy the SQL manually.");
+      }
+    }
+
+    async function logout() {
+      await supabase.auth.signOut();
+
+      document.getElementById("dashboard-section").classList.add("hidden");
+      document.getElementById("auth-section").classList.remove("hidden");
+      document.getElementById("verify-block").classList.add("hidden");
+      document.getElementById("otp-input").value = "";
+      document.getElementById("sql-output").value = "";
+      document.getElementById("jokes-body").innerHTML = '<tr><td colspan="6" class="muted">No data loaded yet.</td></tr>';
+      document.getElementById("pending-count").textContent = "Not loaded yet.";
+
+      hideMessage("dashboard-message");
+      setMessage("auth-message", "info", "Logged out.");
+    }
+
+    async function restoreSession() {
+      const { data } = await supabase.auth.getUser();
+
+      if (!data?.user) {
+        return;
+      }
+
+      const isAdmin = await checkAdmin(data.user.id);
+
+      if (!isAdmin) {
+        await supabase.auth.signOut();
+        return;
+      }
+
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("dashboard-section").classList.remove("hidden");
+      setMessage("dashboard-message", "success", "Admin session restored.");
+      await loadPendingJokes();
+    }
+
+    restoreSession();
+  </script>
 </body>
 </html>
