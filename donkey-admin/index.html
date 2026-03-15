@@ -322,7 +322,7 @@
   </div>
 
   <script>
-    const supabase = window.supabase.createClient(
+    const supabaseClient = window.supabaseClient.createClient(
       "https://mknsvxajrvdlwqywvlrf.supabase.co",
       "sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw"
     );
@@ -390,7 +390,7 @@
   sendButton.textContent = "Sending...";
 
   try {
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabaseClient.auth.signInWithOtp({
       email: email
     });
 
@@ -432,7 +432,7 @@
       verifyButton.textContent = "Verifying...";
 
       try {
-        const { data, error } = await supabase.auth.verifyOtp({
+        const { data, error } = await supabaseClient.auth.verifyOtp({
           email: email,
           token: token,
           type: "email"
@@ -446,7 +446,7 @@
         const isAdmin = await checkAdmin(data.user.id);
 
         if (!isAdmin) {
-          await supabase.auth.signOut();
+          await supabaseClient.auth.signOut();
           setMessage("auth-message", "error", "Access denied. This account is not an admin.");
           return;
         }
@@ -634,7 +634,7 @@
     }
 
     async function logout() {
-      await supabase.auth.signOut();
+      await supabaseClient.auth.signOut();
 
       document.getElementById("dashboard-section").classList.add("hidden");
       document.getElementById("auth-section").classList.remove("hidden");
@@ -649,7 +649,7 @@
     }
 
     async function restoreSession() {
-      const { data } = await supabase.auth.getUser();
+      const { data } = await supabaseClient.auth.getUser();
 
       if (!data?.user) {
         return;
@@ -658,7 +658,7 @@
       const isAdmin = await checkAdmin(data.user.id);
 
       if (!isAdmin) {
-        await supabase.auth.signOut();
+        await supabaseClient.auth.signOut();
         return;
       }
 
