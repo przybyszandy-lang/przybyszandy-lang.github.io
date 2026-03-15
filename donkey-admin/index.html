@@ -375,42 +375,41 @@
       return "Anonymous";
     }
 
-    async function sendCode() {
-      hideMessage("auth-message");
+   async function sendCode() {
+  hideMessage("auth-message");
 
-      const email = document.getElementById("email-input").value.trim().toLowerCase();
+  const email = document.getElementById("email-input").value.trim().toLowerCase();
 
-      if (!email) {
-        setMessage("auth-message", "error", "Please enter your email first.");
-        return;
-      }
+  if (!email) {
+    setMessage("auth-message", "error", "Please enter your email first.");
+    return;
+  }
 
-      const sendButton = document.getElementById("send-code-btn");
-      sendButton.disabled = true;
-      sendButton.textContent = "Sending...";
+  const sendButton = document.getElementById("send-code-btn");
+  sendButton.disabled = true;
+  sendButton.textContent = "Sending...";
 
-      try {
-        const { error } = await supabase.auth.signInWithOtp({
-          email: email,
-          options: {
-            shouldCreateUser: false
-          }
-        });
+  try {
+    const { error } = await supabase.auth.signInWithOtp({
+      email: email
+    });
 
-        if (error) {
-          setMessage("auth-message", "error", error.message || "Failed to send code.");
-          return;
-        }
-
-        document.getElementById("verify-block").classList.remove("hidden");
-        setMessage("auth-message", "success", "Code sent. Check your email and enter the code below.");
-      } catch (err) {
-        setMessage("auth-message", "error", "Unexpected error while sending the code.");
-      } finally {
-        sendButton.disabled = false;
-        sendButton.textContent = "Send code";
-      }
+    if (error) {
+      console.log("Send code failed:", error);
+      setMessage("auth-message", "error", error.message || "Failed to send code.");
+      return;
     }
+
+    document.getElementById("verify-block").classList.remove("hidden");
+    setMessage("auth-message", "success", "Code sent. Check your email and enter the code below.");
+  } catch (err) {
+    console.log("Send code failed:", err);
+    setMessage("auth-message", "error", "Unexpected error while sending the code.");
+  } finally {
+    sendButton.disabled = false;
+    sendButton.textContent = "Send code";
+  }
+}
 
     async function verifyCode() {
       hideMessage("auth-message");
