@@ -465,20 +465,19 @@ if (error || !data?.user) {
         verifyButton.textContent = "Verify code";
       }
     }
+async function checkAdmin(userId) {
+  const { data, error } = await supabaseClient
+    .from("profiles")
+    .select("is_admin")
+    .eq("id", userId)
+    .single();
 
-    async function checkAdmin(userId) {
-      const { data, error } = await supabase
-        .from("profiles")
-        .select("is_admin")
-        .eq("id", userId)
-        .single();
+  if (error || !data || data.is_admin !== true) {
+    return false;
+  }
 
-      if (error || !data || data.is_admin !== true) {
-        return false;
-      }
-
-      return true;
-    }
+  return true;
+}
 
     async function loadPendingJokes() {
       hideMessage("dashboard-message");
@@ -497,13 +496,13 @@ if (error || !data?.user) {
       }
 
       try {
-        const { data, error } = await supabase
-          .from("jokes")
-          .select("id, content, language, created_at, user_id, added_by_email")
-          .eq("is_visible", false)
-          .eq("is_new", true)
-          .order("created_at", { ascending: false })
-          .limit(100);
+const { data, error } = await supabaseClient
+  .from("jokes")
+  .select("id, content, language, created_at, user_id, added_by_email")
+  .eq("is_visible", false)
+  .eq("is_new", true)
+  .order("created_at", { ascending: false })
+  .limit(100);
 
         if (error) {
           tbody.innerHTML = '<tr><td colspan="6" class="muted">Failed to load jokes.</td></tr>';
