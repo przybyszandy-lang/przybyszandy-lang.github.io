@@ -255,7 +255,7 @@
         <input id="email-input" type="email" placeholder="andy@donkeyapp.com" autocomplete="email" />
 
         <div class="row">
-          <button id="send-code-btn" type="button" onclick="sendCode()">Send code</button>
+          <button id="send-code-btn" type="button">Send code</button>
         </div>
  
         <div id="verify-block" class="hidden">
@@ -669,6 +669,10 @@
     }
 
     restoreSession();
+    document
+  .getElementById("send-code-btn")
+  .addEventListener("click", sendCode);
+    
   </script>
 </body>
 </html>
