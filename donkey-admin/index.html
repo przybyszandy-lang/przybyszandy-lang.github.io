@@ -498,7 +498,7 @@ async function checkAdmin(userId) {
       try {
 const { data, error } = await supabaseClient
   .from("jokes")
-  .select("id, content, language, created_at, user_id, added_by_email")
+  .select("id, content, language, created_at, user_id")
   .eq("is_visible", false)
   .eq("is_new", true)
   .order("created_at", { ascending: false })
