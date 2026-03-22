@@ -106,13 +106,13 @@
     <span class="langs">
       <a href="#" data-lang="English"><img class="flag" src="english.png" alt="English"></a>
      
-      <a href="#" data-lang="Polish"><img class="flag" src="polish.png" alt="Polish"></a>
+      <a href="#" data-lang="Polski"><img class="flag" src="polish.png" alt="Polski"></a>
      
-      <a href="#" data-lang="German"><img class="flag" src="german.png" alt="German"></a>
+      <a href="#" data-lang="Deutsch"><img class="flag" src="german.png" alt="Deutsch"></a>
      
-      <a href="#" data-lang="Spanish"><img class="flag" src="spanish.png" alt="Spanish"></a>
+      <a href="#" data-lang="Español"><img class="flag" src="spanish.png" alt="Español"></a>
       
-      <a href="#" data-lang="French"><img class="flag" src="french.png" alt="French"></a>
+      <a href="#" data-lang="Français"><img class="flag" src="french.png" alt="Français"></a>
     </span>
   </div>
 
@@ -216,10 +216,10 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
       // ---------- HELPERS ----------
       function applyHtmlLang() {
         document.documentElement.lang =
-          currentLang === 'Polish' ? 'pl' :
-          currentLang === 'German' ? 'de' :
-          currentLang === 'Spanish' ? 'es' :
-          currentLang === 'French' ? 'fr' : 'en';
+          currentLang === 'Polski' ? 'pl' :
+          currentLang === 'Deutsch' ? 'de' :
+          currentLang === 'Español' ? 'es' :
+          currentLang === 'Français' ? 'fr' : 'en';
       }
 
       function showError(msg) {
@@ -276,10 +276,10 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
 
         // optional: translate "and" nicely (fallback to "and")
         termsAnd.textContent =
-          currentLang === 'Polish' ? 'i' :
-          currentLang === 'German' ? 'und' :
-          currentLang === 'Spanish' ? 'y' :
-          currentLang === 'French' ? 'et' : 'and';
+          currentLang === 'Polski' ? 'i' :
+          currentLang === 'Deutsch' ? 'und' :
+          currentLang === 'Español' ? 'y' :
+          currentLang === 'Français' ? 'et' : 'and';
 
         // main button label depends on state
         mainButton.textContent = initialised
