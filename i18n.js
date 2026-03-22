@@ -28,7 +28,7 @@
       offline: "You are offline. Reconnect to load jokes."
     },
 
-    Polish: {
+    Polski: {
       show_lang: " ",
       press_first: "Kliknij, aby dostać dowcip",
       press_next: "Kolejny dowcip",
@@ -56,7 +56,7 @@
       terms_link_privacy: "Politykę prywatności"
     },
 
-    German: {
+    Deutsch: {
       show_lang: " ",
       press_first: "Drück mich für einen Witz",
       press_next: "Noch ein Witz",
@@ -84,7 +84,7 @@
       terms_link_privacy: "Datenschutzrichtlinie"
     },
 
-    Spanish: {
+    Español: {
       show_lang: " ",
       press_first: "Pulsa para ver un chiste",
       press_next: "Otro chiste",
@@ -112,7 +112,7 @@
       terms_link_privacy: "Política de privacidad"
     },
 
-    French: {
+    Français: {
       show_lang: " ",
       press_first: "Clique pour une blague",
       press_next: "Une autre blague",
