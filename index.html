@@ -168,7 +168,7 @@
       const { t, getLang, setLang } = window.DonkeyI18n;
 
   // ---------- STATE ----------
-  let currentLang = getLang();
+    let currentLang = normalizeFeedLanguage(getLang());
 
   const APP_VERSION = "1.0.1"; // change this every deploy
   const appVersionDiv = document.getElementById("appVersion");
@@ -214,12 +214,22 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
       const termsAnd = document.getElementById('termsAnd');
 
       // ---------- HELPERS ----------
+      function normalizeFeedLanguage(lang) {
+        if (lang === 'Polish') return 'Polski';
+        if (lang === 'German') return 'Deutsch';
+        if (lang === 'French') return 'Français';
+        if (lang === 'Spanish') return 'Español';
+        return lang || 'English';
+      }
+
       function applyHtmlLang() {
+        const safeLang = normalizeFeedLanguage(currentLang);
+
         document.documentElement.lang =
-          currentLang === 'Polski' ? 'pl' :
-          currentLang === 'Deutsch' ? 'de' :
-          currentLang === 'Español' ? 'es' :
-          currentLang === 'Français' ? 'fr' : 'en';
+          safeLang === 'Polski' ? 'pl' :
+          safeLang === 'Deutsch' ? 'de' :
+          safeLang === 'Español' ? 'es' :
+          safeLang === 'Français' ? 'fr' : 'en';
       }
 
       function showError(msg) {
@@ -296,7 +306,7 @@ if (window.matchMedia("(display-mode: standalone)").matches) {
       });
 
       window.addEventListener('donkey:langchange', async (e) => {
-        currentLang = e.detail.lang;
+        currentLang = normalizeFeedLanguage(e.detail.lang);
 
         // reset history so Previous doesn’t mix languages
         recentJokeIds = [];
@@ -475,7 +485,7 @@ const { data, error } = await client.rpc("get_jokes_feed_lang", {
   p_limit: 200,
   p_after_created_at: null,
   p_after_id: null,
-  p_language: currentLang,
+  p_language: normalizeFeedLanguage(currentLang),
 });
 
         if (error) {
