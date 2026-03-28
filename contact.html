@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Donkey App — Contact Us</title>
+  <meta name="description" content="Contact Donkey App support." />
+  <style>
+    :root {
+      --bg: #efefef;
+      --card: #ffffff;
+      --text: #111111;
+      --muted: #555555;
+      --border: #dddddd;
+      --primary: #2f71d3;
+      --primary-disabled: #9bb6e6;
+      --error: #c62828;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+    }
+
+    .wrap {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .back-button {
+      display: inline-block;
+      text-decoration: none;
+      background: var(--card);
+      color: var(--text);
+      font-weight: 600;
+      border: 1px solid #e2e2e2;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+
+    h1 {
+      margin: 0 0 12px;
+      font-size: 24px;
+      font-weight: 700;
+    }
+
+    label {
+      display: block;
+      font-size: 13px;
+      color: var(--muted);
+      margin: 10px 0 6px;
+    }
+
+    label.error-label {
+      color: var(--error);
+      font-weight: 700;
+    }
+
+    input,
+    textarea {
+      width: 100%;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      font-size: 15px;
+      color: var(--text);
+      background: var(--card);
+      outline: none;
+    }
+
+    textarea {
+      min-height: 220px;
+      resize: vertical;
+      font-family: inherit;
+      line-height: 1.45;
+    }
+
+    .error-input {
+      border: 2px solid var(--error);
+    }
+
+    .counter {
+      margin-top: 6px;
+      text-align: right;
+      color: #777777;
+      font-size: 12px;
+    }
+
+    .button {
+      width: 100%;
+      margin-top: 20px;
+      border: 0;
+      border-radius: 12px;
+      background: var(--primary);
+      color: #ffffff;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .button:disabled {
+      background: var(--primary-disabled);
+      cursor: default;
+    }
+
+    .thank-you-box {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 18px;
+      margin: 8px 0 20px;
+    }
+
+    .thank-you-box p {
+      margin: 0 0 12px;
+      color: #333333;
+      line-height: 1.45;
+    }
+
+    .hidden { display: none; }
+
+    @media (prefers-color-scheme: dark) {
+      :root {
+        --bg: #101010;
+        --card: #1b1b1b;
+        --text: #f3f3f3;
+        --muted: #bdbdbd;
+        --border: #333333;
+      }
+
+      .back-button { border-color: #333333; }
+      .counter { color: #bdbdbd; }
+      .thank-you-box p { color: #e5e5e5; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <a class="back-button" href="/">← Back</a>
+
+    <section id="form-screen">
+      <h1>Type your message here</h1>
+
+      <form id="contact-form" novalidate>
+        <label for="message" id="message-label">Message</label>
+        <textarea
+          id="message"
+          name="message"
+          placeholder="Write your message here..."
+          maxlength="3000"
+        ></textarea>
+        <div class="counter"><span id="message-count">0</span> / 3000 (minimum 20)</div>
+
+        <label for="name" id="name-label">Name (Minimum 1 Character)</label>
+        <input id="name" name="name" type="text" placeholder="Your name" maxlength="100" />
+
+        <label for="email" id="email-label">Email (optional)</label>
+        <input id="email" name="email" type="email" placeholder="Your email" maxlength="200" />
+
+        <button id="send-button" class="button" type="submit">Send message</button>
+      </form>
+    </section>
+
+    <section id="thank-you-screen" class="hidden">
+      <h1>Thank you</h1>
+      <div class="thank-you-box">
+        <p>Thank you for submitting your message.</p>
+        <p>If you left your email address, we aim to respond within 72 hours.</p>
+      </div>
+      <button id="send-another-button" class="button" type="button">Send another message</button>
+    </section>
+  </div>
+
+  <script type="module">
+    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+
+    const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
+    const supabaseKey = 'sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw';
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const formScreen = document.getElementById('form-screen');
+    const thankYouScreen = document.getElementById('thank-you-screen');
+    const form = document.getElementById('contact-form');
+    const messageInput = document.getElementById('message');
+    const nameInput = document.getElementById('name');
+    const emailInput = document.getElementById('email');
+    const messageCount = document.getElementById('message-count');
+    const sendButton = document.getElementById('send-button');
+    const sendAnotherButton = document.getElementById('send-another-button');
+    const nameLabel = document.getElementById('name-label');
+    const emailLabel = document.getElementById('email-label');
+
+    const resetErrors = () => {
+      nameLabel.classList.remove('error-label');
+      emailLabel.classList.remove('error-label');
+      nameInput.classList.remove('error-input');
+      emailInput.classList.remove('error-input');
+      emailLabel.textContent = 'Email (optional)';
+    };
+
+    const showThankYou = () => {
+      formScreen.classList.add('hidden');
+      thankYouScreen.classList.remove('hidden');
+    };
+
+    const showForm = () => {
+      thankYouScreen.classList.add('hidden');
+      formScreen.classList.remove('hidden');
+    };
+
+    messageInput.addEventListener('input', () => {
+      messageCount.textContent = messageInput.value.length;
+    });
+
+    nameInput.addEventListener('input', () => {
+      if (nameInput.value.trim().length >= 1) {
+        nameLabel.classList.remove('error-label');
+        nameInput.classList.remove('error-input');
+      }
+    });
+
+    emailInput.addEventListener('input', () => {
+      const value = emailInput.value.trim();
+      const valid = value.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      if (valid) {
+        emailLabel.classList.remove('error-label');
+        emailInput.classList.remove('error-input');
+        emailLabel.textContent = 'Email (optional)';
+      }
+    });
+
+    sendAnotherButton.addEventListener('click', () => {
+      showForm();
+    });
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      resetErrors();
+
+      const cleanMessage = messageInput.value.trim();
+      const cleanName = nameInput.value.trim();
+      const cleanEmail = emailInput.value.trim();
+
+      if (cleanMessage.length < 20) {
+        alert('Please write at least 20 characters.');
+        return;
+      }
+
+      if (cleanName.length < 1) {
+        nameLabel.classList.add('error-label');
+        nameInput.classList.add('error-input');
+        return;
+      }
+
+      if (cleanEmail.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+        emailLabel.classList.add('error-label');
+        emailInput.classList.add('error-input');
+        emailLabel.textContent = 'Please enter a valid email address';
+        return;
+      }
+
+      try {
+        sendButton.disabled = true;
+        sendButton.textContent = 'Sending...';
+
+        const { error } = await supabase.from('contact_messages').insert({
+          name: cleanName,
+          email: cleanEmail || null,
+          reason: 'Other',
+          message: cleanMessage,
+        });
+
+        if (error) throw error;
+
+        form.reset();
+        messageCount.textContent = '0';
+        showThankYou();
+      } catch (error) {
+        alert(error?.message || 'Something went wrong.');
+      } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = 'Send message';
+      }
+    });
+  </script>
+</body>
+</html>
