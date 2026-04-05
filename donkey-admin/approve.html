@@ -542,6 +542,7 @@ const { data, error } = await supabaseClient
         const safeContent = escapeHtml(row.content || "");
         const safeCreated = escapeHtml(formatDate(row.created_at));
         const safeAuthor = escapeHtml(getAuthorText(row));
+                decisionMap[row.id] = "approve";
 
         return `
           <tr>
