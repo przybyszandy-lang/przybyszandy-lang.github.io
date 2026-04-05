@@ -195,10 +195,12 @@
     tr:last-child td {
       border-bottom: 0;
     }
-
     .preview-cell {
       min-width: 360px;
       max-width: 420px;
+    }
+
+    .preview-text {
       white-space: pre-wrap;
       line-height: 1.45;
       display: -webkit-box;
@@ -405,7 +407,7 @@
     }
 
     function buildLanguageOptions(currentLanguage) {
-      const options = [];
+      const options = ['<option value="" selected>No change</option>'];
       const seen = new Set();
 
       if (currentLanguage && !languageOptions.includes(currentLanguage)) {
@@ -591,11 +593,13 @@
         const safeStatus = escapeHtml(getStatusText(row));
         const optionsHtml = buildLanguageOptions(currentLanguage);
 
-        selectedLanguageMap[row.id] = currentLanguage;
+        selectedLanguageMap[row.id] = "";
 
         return `
           <tr>
-            <td class="preview-cell" translate="yes" lang="${safeCurrentLanguage || "auto"}">${safePreview}</td>
+            <td class="preview-cell" translate="yes" lang="${safeCurrentLanguage || "auto"}">
+              <div class="preview-text">${safePreview}</div>
+            </td>
             <td translate="no">${safeCurrentLanguage}</td>
             <td translate="no">
               <select onchange="setSelectedLanguage('${safeId}', this.value)">
@@ -619,9 +623,9 @@
 
       for (const row of recentJokes) {
         const currentLanguage = row.language || "English";
-        const selectedLanguage = selectedLanguageMap[row.id] || currentLanguage;
+        const selectedLanguage = selectedLanguageMap[row.id] || "";
 
-        if (selectedLanguage === currentLanguage) {
+        if (!selectedLanguage || selectedLanguage === currentLanguage) {
           continue;
         }
 
