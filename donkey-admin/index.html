@@ -548,7 +548,7 @@ const { data, error } = await supabaseClient
             <td translate="no">
               <div class="decision-group">
                 <label>
-                  <input type="radio" name="decision-${safeId}" value="approve" onchange="setDecision('${safeId}', 'approve')" />
+                  <input type="radio" name="decision-${safeId}" value="approve" onchange="setDecision('${safeId}', 'approve')" checked />
                   <span>Approve</span>
                 </label>
                 <label>
@@ -556,7 +556,7 @@ const { data, error } = await supabaseClient
                   <span>Reject</span>
                 </label>
                 <label>
-                  <input type="radio" name="decision-${safeId}" value="skip" onchange="setDecision('${safeId}', '')" checked />
+                  <input type="radio" name="decision-${safeId}" value="skip" onchange="setDecision('${safeId}', '')" />
                   <span>Skip</span>
                 </label>
               </div>
@@ -584,6 +584,7 @@ const { data, error } = await supabaseClient
 
       for (const row of pendingJokes) {
         const decision = decisionMap[row.id];
+        const safeAuthor = escapeHtml(getAuthorText(row));
         if (!decision) continue;
 
         if (decision === "approve") {
