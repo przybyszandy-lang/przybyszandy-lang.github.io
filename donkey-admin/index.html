@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex,nofollow" />
-  <title>DonkeyApp Admin Moderation</title>
+  <title>DonkeyApp Admin</title>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -17,14 +17,12 @@
       --border: #d1d5db;
       --accent: #2563eb;
       --accent-hover: #1d4ed8;
-      --success: #166534;
-      --danger: #b91c1c;
-      --warning-bg: #fef3c7;
-      --warning-text: #92400e;
       --ok-bg: #dcfce7;
       --ok-text: #166534;
       --error-bg: #fee2e2;
       --error-text: #991b1b;
+      --info-bg: #fef3c7;
+      --info-text: #92400e;
     }
 
     * {
@@ -40,7 +38,7 @@
     }
 
     .wrap {
-      max-width: 1400px;
+      max-width: 900px;
       margin: 0 auto;
     }
 
@@ -52,7 +50,7 @@
       margin-bottom: 20px;
     }
 
-    h1, h2, h3 {
+    h1, h2 {
       margin-top: 0;
     }
 
@@ -64,6 +62,12 @@
       display: none !important;
     }
 
+    .stack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
     .row {
       display: flex;
       gap: 12px;
@@ -71,15 +75,8 @@
       align-items: center;
     }
 
-    .stack {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
     input[type="email"],
-    input[type="text"],
-    textarea {
+    input[type="text"] {
       width: 100%;
       padding: 12px;
       border: 1px solid var(--border);
@@ -89,27 +86,23 @@
       color: var(--text);
     }
 
-    button {
+    button,
+    a.menu-link {
       border: 0;
       border-radius: 10px;
-      padding: 11px 16px;
+      padding: 12px 16px;
       background: var(--accent);
       color: white;
       cursor: pointer;
       font-size: 15px;
       font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
     }
 
-    button:hover {
+    button:hover,
+    a.menu-link:hover {
       background: var(--accent-hover);
-    }
-
-    button.secondary {
-      background: #374151;
-    }
-
-    button.secondary:hover {
-      background: #1f2937;
     }
 
     button.light {
@@ -130,8 +123,8 @@
     }
 
     .message.info {
-      background: var(--warning-bg);
-      color: var(--warning-text);
+      background: var(--info-bg);
+      color: var(--info-text);
     }
 
     .message.success {
@@ -144,89 +137,31 @@
       color: var(--error-text);
     }
 
-    .topbar {
-      display: flex;
-      justify-content: space-between;
-      gap: 16px;
-      align-items: center;
-      flex-wrap: wrap;
-      margin-bottom: 16px;
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
     }
 
-    .topbar-actions {
-      display: flex;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .table-wrap {
-      overflow-x: auto;
+    .menu-item {
       border: 1px solid var(--border);
       border-radius: 12px;
+      padding: 16px;
       background: #fff;
     }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      min-width: 1100px;
+    .menu-item h3 {
+      margin-top: 0;
+      margin-bottom: 8px;
     }
 
-    th, td {
-      border-bottom: 1px solid var(--border);
-      padding: 12px;
-      vertical-align: top;
-      text-align: left;
-      font-size: 14px;
-    }
-
-    th {
-      background: #f9fafb;
-      position: sticky;
-      top: 0;
-      z-index: 1;
-    }
-
-    tr:last-child td {
-      border-bottom: 0;
-    }
-
-    .decision-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      min-width: 110px;
-    }
-
-    .decision-group label {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 14px;
-      cursor: pointer;
-    }
-
-    .joke-cell {
-      min-width: 420px;
-      white-space: pre-wrap;
-      line-height: 1.45;
-    }
-
-    .small {
-      font-size: 12px;
+    .menu-item p {
+      margin-top: 0;
+      margin-bottom: 14px;
       color: var(--muted);
-      word-break: break-word;
-    }
-
-    textarea {
-      min-height: 240px;
-      font-family: Consolas, Monaco, monospace;
-      resize: vertical;
-    }
-
-    .count-box {
       font-size: 14px;
-      color: var(--muted);
+      line-height: 1.4;
     }
 
     @media (max-width: 800px) {
@@ -243,8 +178,8 @@
 <body>
   <div class="wrap">
     <div class="card" translate="no">
-      <h1>DonkeyApp Admin Moderation</h1>
-      <p class="muted">OTP login only. This page generates SQL for moderation decisions. It does not update the database directly.</p>
+      <h1>DonkeyApp Admin</h1>
+      <p class="muted">Admin menu. Login required before entering the tools.</p>
     </div>
 
     <div id="auth-section" class="card" translate="no">
@@ -257,7 +192,7 @@
         <div class="row">
           <button id="send-code-btn" type="button">Send code</button>
         </div>
- 
+
         <div id="verify-block" class="hidden">
           <label for="otp-input">One-time code</label>
           <input id="otp-input" type="text" placeholder="Enter the code from your email" autocomplete="one-time-code" />
@@ -270,54 +205,30 @@
       </div>
     </div>
 
-    <div id="dashboard-section" class="hidden">
-      <div class="card">
-        <div class="topbar" translate="no">
-          <div>
-            <h2 style="margin-bottom: 4px;">Pending jokes</h2>
-            <div id="pending-count" class="count-box">Not loaded yet.</div>
-          </div>
+    <div id="menu-section" class="card hidden" translate="no">
+      <div class="row" style="justify-content: space-between; align-items: center;">
+        <div>
+          <h2 style="margin-bottom: 4px;">Admin Menu</h2>
+          <div class="muted">Choose the panel you want to open.</div>
+        </div>
+        <button type="button" class="light" onclick="logout()">Logout</button>
+      </div>
 
-          <div class="topbar-actions">
-            <button type="button" class="light" onclick="loadPendingJokes()">Refresh jokes</button>
-            <button type="button" onclick="generateSql()">Generate SQL</button>
-            <button type="button" class="secondary" onclick="copySql()">Copy SQL</button>
-            <button type="button" class="light" onclick="logout()">Logout</button>
-          </div>
+      <div class="menu-grid">
+        <div class="menu-item">
+          <h3>Moderation</h3>
+          <p>Approve or reject pending jokes and generate moderation SQL.</p>
+          <a class="menu-link" href="./approve.html">Open approve panel</a>
         </div>
 
-        <div class="message info" translate="no">
-          Translation note: joke text is marked as translatable for browser translation. Admin labels and SQL are not.
-        </div>
-
-        <div id="dashboard-message" class="hidden message info" translate="no"></div>
-
-        <div class="table-wrap" style="margin-top: 16px;">
-          <table>
-            <thead translate="no">
-              <tr>
-                <th>Decision</th>
-                <th>Language</th>
-                <th>Joke</th>
-                <th>Created</th>
-                <th>ID</th>
-                <th>Author</th>
-              </tr>
-            </thead>
-            <tbody id="jokes-body">
-              <tr>
-                <td colspan="6" class="muted">No data loaded yet.</td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="menu-item">
+          <h3>Language</h3>
+          <p>Fix joke language values in a separate panel.</p>
+          <a class="menu-link" href="./language.html">Open language panel</a>
         </div>
       </div>
 
-      <div class="card" translate="no">
-        <h3>Generated SQL</h3>
-        <p class="muted">Only rows with Approve or Reject selected will appear here.</p>
-        <textarea id="sql-output" readonly placeholder="Generated SQL will appear here..."></textarea>
-      </div>
+      <div id="menu-message" class="hidden message info"></div>
     </div>
   </div>
 
@@ -326,9 +237,6 @@
       "https://mknsvxajrvdlwqywvlrf.supabase.co",
       "sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw"
     );
-
-    const pendingJokes = [];
-    const decisionMap = {};
 
     function setMessage(elementId, type, text) {
       const el = document.getElementById(elementId);
@@ -343,73 +251,41 @@
       el.textContent = "";
     }
 
-    function escapeHtml(value) {
-      return String(value ?? "")
-        .replaceAll("&", "&amp;")
-        .replaceAll("<", "&lt;")
-        .replaceAll(">", "&gt;")
-        .replaceAll('"', "&quot;")
-        .replaceAll("'", "&#39;");
-    }
+    async function sendCode() {
+      hideMessage("auth-message");
 
-    function formatDate(value) {
-      if (!value) return "";
-      const date = new Date(value);
-      if (Number.isNaN(date.getTime())) return value;
-      return date.toLocaleString("en-GB", {
-        year: "numeric",
-        month: "short",
-        day: "2-digit",
-        hour: "2-digit",
-        minute: "2-digit"
-      });
-    }
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
 
-    function getAuthorText(row) {
-      if (row.user_id) {
-        return "User ID: " + row.user_id;
+      if (!email) {
+        setMessage("auth-message", "error", "Please enter your email first.");
+        return;
       }
-      if (row.added_by_email) {
-        return row.added_by_email;
+
+      const sendButton = document.getElementById("send-code-btn");
+      sendButton.disabled = true;
+      sendButton.textContent = "Sending...";
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email: email
+        });
+
+        if (error) {
+          console.log("Send code failed:", error);
+          setMessage("auth-message", "error", error.message || "Failed to send code.");
+          return;
+        }
+
+        document.getElementById("verify-block").classList.remove("hidden");
+        setMessage("auth-message", "success", "Code sent. Check your email and enter the code below.");
+      } catch (err) {
+        console.log("Send code failed:", err);
+        setMessage("auth-message", "error", "Unexpected error while sending the code.");
+      } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = "Send code";
       }
-      return "Anonymous";
     }
-
-   async function sendCode() {
-  hideMessage("auth-message");
-
-  const email = document.getElementById("email-input").value.trim().toLowerCase();
-
-  if (!email) {
-    setMessage("auth-message", "error", "Please enter your email first.");
-    return;
-  }
-
-  const sendButton = document.getElementById("send-code-btn");
-  sendButton.disabled = true;
-  sendButton.textContent = "Sending...";
-
-  try {
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email: email
-    });
-
-    if (error) {
-      console.log("Send code failed:", error);
-      setMessage("auth-message", "error", error.message || "Failed to send code.");
-      return;
-    }
-
-    document.getElementById("verify-block").classList.remove("hidden");
-    setMessage("auth-message", "success", "Code sent. Check your email and enter the code below.");
-  } catch (err) {
-    console.log("Send code failed:", err);
-    setMessage("auth-message", "error", "Unexpected error while sending the code.");
-  } finally {
-    sendButton.disabled = false;
-    sendButton.textContent = "Send code";
-  }
-}
 
     async function verifyCode() {
       hideMessage("auth-message");
@@ -432,18 +308,18 @@
       verifyButton.textContent = "Verifying...";
 
       try {
-const { data, error } = await supabaseClient.auth.verifyOtp({
-  email: email,
-  token: token,
-  type: "email"
-});
+        const { data, error } = await supabaseClient.auth.verifyOtp({
+          email: email,
+          token: token,
+          type: "email"
+        });
 
-console.log("verifyOtp result:", { data, error });
+        console.log("verifyOtp result:", { data, error });
 
-if (error || !data?.user) {
-  setMessage("auth-message", "error", error?.message || "Code verification failed.");
-  return;
-}
+        if (error || !data?.user) {
+          setMessage("auth-message", "error", error?.message || "Code verification failed.");
+          return;
+        }
 
         const isAdmin = await checkAdmin(data.user.id);
 
@@ -454,200 +330,40 @@ if (error || !data?.user) {
         }
 
         document.getElementById("auth-section").classList.add("hidden");
-        document.getElementById("dashboard-section").classList.remove("hidden");
-        setMessage("dashboard-message", "success", "Admin access confirmed.");
-        await loadPendingJokes();
-} catch (err) {
-  console.log("Verify code crashed:", err);
-  setMessage("auth-message", "error", "Unexpected error during verification. Check console.");
-} finally {
+        document.getElementById("menu-section").classList.remove("hidden");
+        setMessage("menu-message", "success", "Admin access confirmed.");
+      } catch (err) {
+        console.log("Verify code crashed:", err);
+        setMessage("auth-message", "error", "Unexpected error during verification. Check console.");
+      } finally {
         verifyButton.disabled = false;
         verifyButton.textContent = "Verify code";
       }
     }
-async function checkAdmin(userId) {
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", userId)
-    .single();
 
-  if (error || !data || data.is_admin !== true) {
-    return false;
-  }
+    async function checkAdmin(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
 
-  return true;
-}
-
-    async function loadPendingJokes() {
-      hideMessage("dashboard-message");
-
-      const tbody = document.getElementById("jokes-body");
-      const countBox = document.getElementById("pending-count");
-      const sqlBox = document.getElementById("sql-output");
-
-      tbody.innerHTML = '<tr><td colspan="6" class="muted">Loading pending jokes...</td></tr>';
-      countBox.textContent = "Loading...";
-      sqlBox.value = "";
-
-      pendingJokes.length = 0;
-      for (const key of Object.keys(decisionMap)) {
-        delete decisionMap[key];
+      if (error || !data || data.is_admin !== true) {
+        return false;
       }
 
-      try {
-const { data, error } = await supabaseClient
-  .from("jokes")
-  .select("id, content, language, created_at, user_id")
-  .eq("is_visible", false)
-  .eq("is_new", true)
-  .order("created_at", { ascending: false })
-  .limit(100);
-
-        if (error) {
-          tbody.innerHTML = '<tr><td colspan="6" class="muted">Failed to load jokes.</td></tr>';
-          countBox.textContent = "Load failed.";
-          setMessage("dashboard-message", "error", error.message || "Failed to load jokes.");
-          return;
-        }
-
-        if (!data || data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="muted">No pending jokes found.</td></tr>';
-          countBox.textContent = "0 pending jokes.";
-          setMessage("dashboard-message", "info", "There are no jokes waiting for review.");
-          return;
-        }
-
-        pendingJokes.push(...data);
-        renderJokes();
-        countBox.textContent = pendingJokes.length + " pending joke(s) loaded.";
-      } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="6" class="muted">Unexpected error while loading jokes.</td></tr>';
-        countBox.textContent = "Load failed.";
-        setMessage("dashboard-message", "error", "Unexpected error while loading jokes.");
-      }
-    }
-
-    function renderJokes() {
-      const tbody = document.getElementById("jokes-body");
-
-      if (pendingJokes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="muted">No pending jokes found.</td></tr>';
-        return;
-      }
-
-      tbody.innerHTML = pendingJokes.map((row) => {
-        const safeId = escapeHtml(row.id);
-        const safeLanguage = escapeHtml(row.language || "");
-        const safeContent = escapeHtml(row.content || "");
-        const safeCreated = escapeHtml(formatDate(row.created_at));
-        const safeAuthor = escapeHtml(getAuthorText(row));
-
-        return `
-          <tr>
-            <td translate="no">
-              <div class="decision-group">
-                <label>
-                  <input type="radio" name="decision-${safeId}" value="approve" onchange="setDecision('${safeId}', 'approve')" checked />
-                  <span>Approve</span>
-                </label>
-                <label>
-                  <input type="radio" name="decision-${safeId}" value="reject" onchange="setDecision('${safeId}', 'reject')" />
-                  <span>Reject</span>
-                </label>
-                <label>
-                  <input type="radio" name="decision-${safeId}" value="skip" onchange="setDecision('${safeId}', '')" />
-                  <span>Skip</span>
-                </label>
-              </div>
-            </td>
-            <td translate="no">${safeLanguage}</td>
-            <td class="joke-cell" translate="yes" lang="${safeLanguage || "auto"}">${safeContent}</td>
-            <td translate="no">${safeCreated}</td>
-            <td class="small" translate="no">${safeId}</td>
-            <td class="small" translate="no">${safeAuthor}</td>
-          </tr>
-        `;
-      }).join("");
-    }
-
-    function setDecision(id, value) {
-      if (!value) {
-        delete decisionMap[id];
-        return;
-      }
-      decisionMap[id] = value;
-    }
-
-    function generateSql() {
-      const sqlLines = [];
-
-      for (const row of pendingJokes) {
-        const decision = decisionMap[row.id];
-        const safeAuthor = escapeHtml(getAuthorText(row));
-        if (!decision) continue;
-
-        if (decision === "approve") {
-          sqlLines.push(
-            "update public.jokes",
-            "set is_visible = true,",
-            "    is_new = false,",
-            "    updated_at = now()",
-            "where id = '" + row.id + "';",
-            ""
-          );
-        }
-
-        if (decision === "reject") {
-          sqlLines.push(
-            "update public.jokes",
-            "set is_visible = false,",
-            "    is_new = false,",
-            "    updated_at = now()",
-            "where id = '" + row.id + "';",
-            ""
-          );
-        }
-      }
-
-      const output = sqlLines.join("\n").trim();
-      document.getElementById("sql-output").value = output;
-
-      if (output) {
-        setMessage("dashboard-message", "success", "SQL generated.");
-      } else {
-        setMessage("dashboard-message", "info", "No decisions selected yet, so no SQL was generated.");
-      }
-    }
-
-    async function copySql() {
-      const sql = document.getElementById("sql-output").value;
-
-      if (!sql.trim()) {
-        setMessage("dashboard-message", "info", "There is no SQL to copy yet.");
-        return;
-      }
-
-      try {
-        await navigator.clipboard.writeText(sql);
-        setMessage("dashboard-message", "success", "SQL copied.");
-      } catch (err) {
-        setMessage("dashboard-message", "error", "Copy failed. Please copy the SQL manually.");
-      }
+      return true;
     }
 
     async function logout() {
       await supabaseClient.auth.signOut();
 
-      document.getElementById("dashboard-section").classList.add("hidden");
+      document.getElementById("menu-section").classList.add("hidden");
       document.getElementById("auth-section").classList.remove("hidden");
       document.getElementById("verify-block").classList.add("hidden");
       document.getElementById("otp-input").value = "";
-      document.getElementById("sql-output").value = "";
-      document.getElementById("jokes-body").innerHTML = '<tr><td colspan="6" class="muted">No data loaded yet.</td></tr>';
-      document.getElementById("pending-count").textContent = "Not loaded yet.";
 
-      hideMessage("dashboard-message");
+      hideMessage("menu-message");
       setMessage("auth-message", "info", "Logged out.");
     }
 
@@ -666,16 +382,15 @@ const { data, error } = await supabaseClient
       }
 
       document.getElementById("auth-section").classList.add("hidden");
-      document.getElementById("dashboard-section").classList.remove("hidden");
-      setMessage("dashboard-message", "success", "Admin session restored.");
-      await loadPendingJokes();
+      document.getElementById("menu-section").classList.remove("hidden");
+      setMessage("menu-message", "success", "Admin session restored.");
     }
 
     restoreSession();
+
     document
-  .getElementById("send-code-btn")
-  .addEventListener("click", sendCode);
-    
+      .getElementById("send-code-btn")
+      .addEventListener("click", sendCode);
   </script>
 </body>
 </html>
