@@ -1,762 +1,1717 @@
 <!DOCTYPE html>
 <html lang="en">
-  
 <head>
+  <meta charset="UTF-8" />
+  <title>DonkeyApp — Jokes</title>
 
-<meta charset="UTF-8" />
-<title>DonkeyApp — Jokes</title>
+  <meta
+    name="description"
+    content="Donkey App comedy feed with jokes in multiple languages, user pages, favourites, voting and reporting."
+  />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.donkeyapp.com/" />
 
-<meta name="description" content="Donkey App Jokes. Good Jokes and Nothing more">
-<meta name="robots" content="index,follow">
-<link rel="canonical" href="https://www.donkeyapp.com/">
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
 
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<meta name="theme-color" content="#0b3d91">
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.donkeyapp.com/" />
+  <meta property="og:title" content="DonkeyApp — Jokes" />
+  <meta
+    property="og:description"
+    content="A simple multi-language joke feed with favourites, voting and reporting."
+  />
+  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
 
-<!-- Open Graph -->
-<meta property="og:type" content="website">
-<meta property="og:url" content="https://www.donkeyapp.com/">
-<meta property="og:title" content="DonkeyApp — Jokes">
-<meta property="og:description" content="A simple multi-language joke app. Tap to get a joke and rate it.">
-<meta property="og:image" content="https://www.donkeyapp.com/icon-512.png">
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="DonkeyApp — Jokes" />
+  <meta
+    name="twitter:description"
+    content="A simple multi-language joke feed."
+  />
+  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
 
-<!-- Twitter -->
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:title" content="DonkeyApp — Jokes">
-<meta name="twitter:description" content="A simple multi-language joke app.">
-<meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-F63ZRL5GBH"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag("js", new Date());
+    gtag("config", "G-F63ZRL5GBH");
+  </script>
 
-<!-- Google Analytics -->
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-F63ZRL5GBH"></script>
-<script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
-  gtag('config', 'G-F63ZRL5GBH');
-</script>
+  <link rel="manifest" href="/manifest.json" />
+  <link rel="icon" href="/icon-192.png" type="image/png" />
+  <link rel="apple-touch-icon" href="/icon-192.png" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
-<link rel="manifest" href="/manifest.json">
-<link rel="icon" href="/icon-192.png" type="image/png">
+  <script type="application/ld+json">
+  {
+    "@context": "https://schema.org",
+    "@type": "WebApplication",
+    "name": "DonkeyApp",
+    "url": "https://www.donkeyapp.com/",
+    "applicationCategory": "EntertainmentApplication",
+    "operatingSystem": "Web",
+    "description": "A public joke feed with multi-language jokes, favourites, voting and reporting.",
+    "image": "https://www.donkeyapp.com/icon-512.png"
+  }
+  </script>
 
-<!-- iOS home screen icon + standalone mode -->
-<link rel="apple-touch-icon" href="/icon-192.png">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <style>
+    :root {
+      --bg: #efefef;
+      --card: #ffffff;
+      --border: #e2e2e2;
+      --border-soft: #e8e8e8;
+      --text: #111111;
+      --muted: #666666;
+      --link: #2f71d3;
+      --panel: #fafafa;
+      --blue: #0b3d91;
+      --danger-bg: #fff4f4;
+      --danger-border: #ffd2d2;
+      --danger-text: #a40000;
+      --shadow: 0 4px 14px rgba(0,0,0,0.06);
+      --header-height: 72px;
+      --bottom-gap: 110px;
+      --desktop-side-width: 170px;
+      --feed-width: 760px;
+    }
 
-<link rel="stylesheet" href="/styles.css">
+    * {
+      box-sizing: border-box;
+    }
 
-<!-- Structured data -->
-<script type="application/ld+json">
-{
-  "@context": "https://schema.org",
-  "@type": "WebApplication",
-  "name": "DonkeyApp",
-  "url": "https://www.donkeyapp.com/",
-  "applicationCategory": "EntertainmentApplication",
-  "operatingSystem": "Web",
-  "description": "A simple joke app with multi-language jokes.",
-  "image": "https://www.donkeyapp.com/icon-512.png"
-}
-</script>
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
+    body.has-install-banner {
+      padding-bottom: 110px;
+    }
+
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+
+    button, input, select {
+      font: inherit;
+    }
+
+    .sr-only {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    #updateBanner {
+      display: none;
+      position: fixed;
+      top: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: min(520px, calc(100vw - 24px));
+      z-index: 10001;
+    }
+
+    #updateBannerInner {
+      border: 1px solid var(--border);
+      background: var(--card);
+      padding: 10px 12px;
+      border-radius: 12px;
+      font-size: 13px;
+      box-shadow: var(--shadow);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    #updateBtn {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      padding: 8px 12px;
+      cursor: pointer;
+    }
+
+    #installBanner {
+      display: none;
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      padding: 10px 12px calc(10px + env(safe-area-inset-bottom));
+      z-index: 10000;
+      box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+    }
+
+    .installBannerInner {
+      max-width: 980px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .installBannerText {
+      font-size: 14px;
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .installBannerBadges {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .storeBadge {
+      height: 46px;
+      cursor: pointer;
+      display: block;
+    }
+
+    .pageShell {
+      width: 100%;
+      min-height: 100vh;
+      padding-top: calc(var(--header-height) + 14px);
+      padding-bottom: var(--bottom-gap);
+    }
+
+    .topBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: var(--header-height);
+      background: rgba(239,239,239,0.96);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-soft);
+      z-index: 9999;
+    }
+
+    .topBarInner {
+      height: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .logoWrap {
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: transparent;
+    }
+
+    .logoWrap img {
+      width: 38px;
+      height: 38px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .searchWrap {
+      flex: 1;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 0 10px;
+      min-width: 0;
+    }
+
+    .searchIcon {
+      color: var(--muted);
+      font-size: 18px;
+      margin-right: 8px;
+      line-height: 1;
+    }
+
+    #searchInput {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    #searchClear {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 4px;
+      display: none;
+    }
+
+    .mobileLangWrap {
+      display: none;
+      min-width: 118px;
+      height: 44px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      background: var(--card);
+    }
+
+    #mobileLanguageSelect {
+      width: 100%;
+      height: 100%;
+      border: 0;
+      outline: none;
+      background: var(--card);
+      color: var(--text);
+      padding: 0 12px;
+      appearance: none;
+      cursor: pointer;
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 12px;
+      display: grid;
+      grid-template-columns: var(--desktop-side-width) minmax(0, var(--feed-width)) var(--desktop-side-width);
+      gap: 16px;
+      align-items: start;
+      justify-content: center;
+    }
+
+    .desktopRail {
+      position: sticky;
+      top: calc(var(--header-height) + 14px);
+      display: block;
+    }
+
+    .railCard {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .railTitle {
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 12px 0;
+    }
+
+    .adPlaceholder {
+      min-height: 320px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--muted);
+      background:
+        linear-gradient(135deg, #fafafa 25%, #f4f4f4 25%, #f4f4f4 50%, #fafafa 50%, #fafafa 75%, #f4f4f4 75%, #f4f4f4 100%);
+      background-size: 20px 20px;
+      text-align: center;
+      border-radius: 12px;
+      border: 1px dashed #d4d4d4;
+      font-size: 14px;
+      line-height: 1.5;
+      padding: 20px;
+    }
+
+    .langButtonList {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .langButton {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 10px;
+      padding: 10px 12px;
+      text-align: left;
+      cursor: pointer;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+    }
+
+    .langButton.active {
+      border-color: #c9d8f7;
+      background: #eef4ff;
+      color: var(--link);
+      font-weight: 700;
+    }
+
+    .feedColumn {
+      min-width: 0;
+    }
+
+    #errorBox {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: 12px;
+      color: var(--danger-text);
+      white-space: pre-wrap;
+    }
+
+    .feedMeta {
+      margin-bottom: 10px;
+      color: var(--muted);
+      font-size: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    #feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .recentLabel {
+      font-size: 15px;
+      font-style: italic;
+      color: var(--link);
+      margin-bottom: 8px;
+    }
+
+    .jokeText {
+      font-size: 16px;
+      line-height: 1.55;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .addedBy {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .addedByLink {
+      color: var(--link);
+      font-weight: 700;
+    }
+
+    .cardFooter {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 1px auto;
+      align-items: stretch;
+      background: var(--panel);
+      border: 1px solid #e6e6e6;
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .footerLeft {
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .footerDivider {
+      background: #e0e0e0;
+      width: 1px;
+    }
+
+    .footerRight {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px;
+    }
+
+    .ratingRow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 34px;
+    }
+
+    .footerLabelInline {
+      font-size: 14px;
+      color: #555;
+      margin-right: 6px;
+      font-weight: 600;
+    }
+
+    .ratingEmojiBtn,
+    .iconBtn {
+      border: 1px solid #e3e3e3;
+      background: #f3f3f3;
+      border-radius: 10px;
+      cursor: pointer;
+      min-width: 38px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    .ratingEmojiBtn {
+      font-size: 21px;
+    }
+
+    .iconBtn {
+      font-size: 18px;
+      color: #333;
+    }
+
+    .iconBtn.activeFav {
+      color: #d32f2f;
+    }
+
+    .iconBtn.activeReport {
+      color: var(--link);
+    }
+
+    .feedEnd,
+    .feedLoading {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 14px 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #copyToast {
+      display: none;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 86px;
+      background: rgba(0,0,0,0.88);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 10002;
+      white-space: nowrap;
+      max-width: calc(100vw - 24px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .siteFooter {
+      margin-top: 16px;
+      padding: 14px 2px 0 2px;
+      color: var(--muted);
+      font-size: 13px;
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .siteFooter a {
+      color: var(--link);
+    }
+
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.30);
+      display: none;
+      justify-content: flex-start;
+      padding-top: 60px;
+      padding-inline: 12px;
+      z-index: 10003;
+    }
+
+    .modalSheet {
+      width: min(520px, 100%);
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .modalTitle {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 10px 0;
+    }
+
+    .modalItem {
+      padding: 12px 0;
+      border-top: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .modalItemRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modalItemText {
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .modalCheck {
+      color: #2e7d32;
+      font-weight: 700;
+    }
+
+    .reportDivider {
+      height: 1px;
+      background: #ddd;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .reportButtons {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .reportButton,
+    .reportCloseButton {
+      flex: 1;
+      border: 0;
+      min-height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .reportButton {
+      background: #2f71d3;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .reportButton:disabled {
+      background: #ccc;
+      cursor: default;
+    }
+
+    .reportCloseButton {
+      background: #eee;
+      color: #333;
+      font-weight: 700;
+    }
+
+    @media (max-width: 980px) {
+      .layout {
+        grid-template-columns: 1fr;
+      }
+
+      .desktopRail {
+        display: none;
+      }
+
+      .mobileLangWrap {
+        display: block;
+      }
+
+      .feedColumn {
+        width: 100%;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .topBarInner {
+        gap: 8px;
+      }
+
+      .logoWrap {
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+      }
+
+      .logoWrap img {
+        width: 34px;
+        height: 34px;
+      }
+
+      .searchWrap {
+        height: 42px;
+      }
+
+      .mobileLangWrap {
+        min-width: 108px;
+        height: 42px;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .cardFooter {
+        grid-template-columns: 1fr;
+      }
+
+      .footerDivider {
+        display: none;
+      }
+
+      .footerRight {
+        justify-content: flex-end;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      #copyToast {
+        bottom: 96px;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <main class="sr-only">
+    <h1>DonkeyApp Joke Feed</h1>
+    <p>
+      DonkeyApp is a multi-language public joke feed with favourites, voting,
+      reporting and user pages.
+    </p>
+  </main>
 
-  <div id="updateBanner" style="display:none; margin: 12px auto 0 auto; max-width: 520px;">
-  <div style="border:1px solid #e1e1e1; background:#fafafa; padding:10px 12px; border-radius:10px; font-size:13px;">
-    <span id="updateText"></span>
-    <button id="updateBtn" style="margin-left:10px; padding:8px 12px; font-size:13px;"></button>
-  </div>
-</div>
-
-<div id="installBanner" style="
-  display:none;
-  position:fixed;
-  left:0;
-  right:0;
-  bottom:0;
-  padding:12px 10px calc(12px + env(safe-area-inset-bottom));
-  background:#ffffff;
-  border-top:1px solid #e1e1e1;
-  text-align:center;
-  z-index:9998;
-  box-shadow:0 -2px 8px rgba(0,0,0,0.06);
-">
-  
-  <!-- Apple Badge -->
-  <img id="appleBadge"
-       src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
-       alt="Download on the App Store"
-       style="height:50px; margin:6px; cursor:pointer;">
-
-  <!-- Google Play Badge -->
-  <img id="googleBadge"
-       src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
-       alt="Get it on Google Play"
-       style="height:50px; margin:6px; cursor:pointer;">
-
-</div>
-
-
-  
-  <div id="languageBar">
-    <span id="showLangLabel"> </span>
-    <span class="langs">
-      <a href="#" data-lang="English"><img class="flag" src="english.png" alt="English"></a>
-     
-      <a href="#" data-lang="Polski"><img class="flag" src="polish.png" alt="Polski"></a>
-     
-      <a href="#" data-lang="Deutsch"><img class="flag" src="german.png" alt="Deutsch"></a>
-     
-      <a href="#" data-lang="Español"><img class="flag" src="spanish.png" alt="Español"></a>
-      
-      <a href="#" data-lang="Français"><img class="flag" src="french.png" alt="Français"></a>
-    </span>
+  <div id="updateBanner">
+    <div id="updateBannerInner">
+      <span id="updateText"></span>
+      <button id="updateBtn" type="button"></button>
+    </div>
   </div>
 
-  <div id="termsNote">
-    <span id="termsText">By clicking 'Press me to get a joke' you agree to these</span>
-    <a id="termsLinkConditions" href="conditions.html">Terms and Conditions</a>,
-    <a id="termsLinkCookies" href="cookies.html">Use of Cookies</a>
-    <span id="termsAnd">and</span>
-    <a id="termsLinkPrivacy" href="privacy.html">Privacy Policy</a>.
-  </div>
-  
-<div id="logoContainer">
-  <img id="appLogo" src="icon-512.png" alt="Donkey Logo">
-</div>
+  <div id="installBanner">
+    <div class="installBannerInner">
+      <div class="installBannerText" id="installBannerText">
+        Download the Donkey App for the best experience
+      </div>
 
-<main style="position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;">
-  <h1>DonkeyApp Joke Generator</h1>
-  <p>
-    DonkeyApp is a lightweight joke generator with jokes in English,
-    Polish, German, Spanish and French. Press the button to get a joke,
-    copy it, and rate it.
-  </p>
-</main>
-  
-  <div class="btnRow">
-    <button id="prevButton" disabled style="display:none;">Previous</button>
-    <button id="mainButton">Press me to get a joke</button>
-    <button id="copyButton" disabled style="display:none;">Copy Joke</button>
+      <div class="installBannerBadges">
+        <img
+          id="appleBadge"
+          class="storeBadge"
+          src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+          alt="Download on the App Store"
+        />
+        <img
+          id="googleBadge"
+          class="storeBadge"
+          src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+          alt="Get it on Google Play"
+        />
+      </div>
+    </div>
   </div>
 
-  <div id="errorBox"></div>
+  <header class="topBar">
+    <div class="topBarInner">
+      <a href="/" class="logoWrap" aria-label="DonkeyApp home">
+        <img src="/icon-512.png" alt="DonkeyApp logo" />
+      </a>
+
+      <div class="searchWrap">
+        <span class="searchIcon">⌕</span>
+        <input
+          id="searchInput"
+          type="text"
+          autocomplete="off"
+          autocapitalize="none"
+          autocorrect="off"
+          enterkeyhint="search"
+          placeholder="Search jokes…"
+        />
+        <button id="searchClear" type="button" aria-label="Clear search">✕</button>
+      </div>
+
+      <div class="mobileLangWrap">
+        <select id="mobileLanguageSelect" aria-label="Select language">
+          <option value="English">English</option>
+          <option value="Polski">Polski</option>
+          <option value="Deutsch">Deutsch</option>
+          <option value="Español">Español</option>
+          <option value="Français">Français</option>
+        </select>
+      </div>
+    </div>
+  </header>
+
+  <div class="pageShell">
+    <div class="layout">
+      <aside class="desktopRail">
+        <div class="railCard">
+          <div class="railTitle" id="leftRailTitle">Ad space</div>
+          <div class="adPlaceholder" id="leftAdPlaceholder">
+            Desktop ad placeholder
+          </div>
+        </div>
+      </aside>
+
+      <section class="feedColumn">
+        <div id="errorBox"></div>
+
+        <div class="feedMeta">
+          <div id="feedMetaLeft"></div>
+          <div id="feedMetaRight"></div>
+        </div>
+
+        <div id="feed"></div>
+
+        <div id="feedLoading" class="feedLoading hidden"></div>
+        <div id="feedEnd" class="feedEnd hidden"></div>
+
+        <div class="siteFooter">
+          <span id="termsText">By using this website you agree to these</span>
+          <a id="termsLinkConditions" href="conditions.html">Terms and Conditions</a>,
+          <a id="termsLinkCookies" href="cookies.html">Use of Cookies</a>
+          <span id="termsAnd">and</span>
+          <a id="termsLinkPrivacy" href="privacy.html">Privacy Policy</a>.
+          <br />
+          <a id="addJokeLink" href="addajoke.html">Want to add a joke?</a>
+        </div>
+      </section>
+
+      <aside class="desktopRail">
+        <div class="railCard">
+          <div class="railTitle" id="showLangLabel">Language</div>
+          <div class="langButtonList">
+            <button class="langButton" type="button" data-lang="English">
+              <span>English</span><span>🇬🇧</span>
+            </button>
+            <button class="langButton" type="button" data-lang="Polski">
+              <span>Polski</span><span>🇵🇱</span>
+            </button>
+            <button class="langButton" type="button" data-lang="Deutsch">
+              <span>Deutsch</span><span>🇩🇪</span>
+            </button>
+            <button class="langButton" type="button" data-lang="Español">
+              <span>Español</span><span>🇪🇸</span>
+            </button>
+            <button class="langButton" type="button" data-lang="Français">
+              <span>Français</span><span>🇫🇷</span>
+            </button>
+          </div>
+        </div>
+      </aside>
+    </div>
+  </div>
+
   <div id="copyToast"></div>
 
-  <div id="content">
-    <div id="joke"></div>
-    <div id="ratingIcons"></div>
-    <div id="voteMessage">Thanks for your vote.</div>
+  <div id="reportModal" class="modalOverlay">
+    <div class="modalSheet">
+      <h2 class="modalTitle" id="reportTitle">Report joke</h2>
 
-    <div class="bottomRow">
-      <button id="copyButtonBottom" disabled style="display:none;">Copy Joke</button>
-    </div>
+      <div class="modalItem" data-report-reason="offensive">
+        <div class="modalItemRow">
+          <span class="modalItemText" id="reportOptionOffensive">This joke appears to be offensive</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
 
-    <div id="extras">
-      <a id="addJokeLink" href="addajoke.html">Want to add a joke?</a>
+      <div class="modalItem" data-report-reason="illegal">
+        <div class="modalItemRow">
+          <span class="modalItemText" id="reportOptionIllegal">This joke is clearly illegal</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
+
+      <div class="modalItem" data-report-reason="other">
+        <div class="modalItemRow">
+          <span class="modalItemText" id="reportOptionOther">Other</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
+
+      <div class="reportDivider"></div>
+
+      <div class="reportButtons">
+        <button id="reportSubmitButton" class="reportButton" type="button" disabled>
+          Report
+        </button>
+        <button id="reportCloseButton" class="reportCloseButton" type="button">
+          Close
+        </button>
+      </div>
     </div>
   </div>
+
+  <div id="appVersion" style="position:fixed; right:10px; bottom:8px; font-size:12px; opacity:0.35; z-index:9999;"></div>
 
   <script src="/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
   <script>
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener("DOMContentLoaded", () => {
       const { t, getLang, setLang } = window.DonkeyI18n;
 
-  // ---------- STATE ----------
-    let currentLang = normalizeFeedLanguage(getLang());
+      const APP_VERSION = "1.1.2";
+      const PAGE_SIZE = 20;
+      const RECENT_INSERT_EVERY = 4;
+      const RECENT_LIMIT = 20;
+      const FAVOURITES_KEY = "donkey:favourites:v1";
+      const VOTES_KEY = "donkey:votes:v1";
 
-  const APP_VERSION = "1.0.1"; // change this every deploy
-  const appVersionDiv = document.getElementById("appVersion");
-  if (appVersionDiv) appVersionDiv.textContent = "v" + APP_VERSION;
+      const ratingOptions = [
+        { vote: "bad", emoji: "😕" },
+        { vote: "meh", emoji: "😐" },
+        { vote: "good", emoji: "🙂" },
+        { vote: "great", emoji: "😂" }
+      ];
 
-  let jokesCache = [];
-  let currentJoke = null;
-  let initialised = false;
-  let voteLocked = false;
+      const searchInput = document.getElementById("searchInput");
+      const searchClear = document.getElementById("searchClear");
+      const feed = document.getElementById("feed");
+      const feedLoading = document.getElementById("feedLoading");
+      const feedEnd = document.getElementById("feedEnd");
+      const errorBox = document.getElementById("errorBox");
+      const copyToast = document.getElementById("copyToast");
+      const showLangLabel = document.getElementById("showLangLabel");
+      const mobileLanguageSelect = document.getElementById("mobileLanguageSelect");
+      const addJokeLink = document.getElementById("addJokeLink");
+      const feedMetaLeft = document.getElementById("feedMetaLeft");
+      const feedMetaRight = document.getElementById("feedMetaRight");
+      const termsText = document.getElementById("termsText");
+      const termsLinkConditions = document.getElementById("termsLinkConditions");
+      const termsLinkCookies = document.getElementById("termsLinkCookies");
+      const termsLinkPrivacy = document.getElementById("termsLinkPrivacy");
+      const termsAnd = document.getElementById("termsAnd");
+      const installBannerText = document.getElementById("installBannerText");
+      const leftRailTitle = document.getElementById("leftRailTitle");
+      const leftAdPlaceholder = document.getElementById("leftAdPlaceholder");
+      const reportModal = document.getElementById("reportModal");
+      const reportSubmitButton = document.getElementById("reportSubmitButton");
+      const reportCloseButton = document.getElementById("reportCloseButton");
+      const appVersionDiv = document.getElementById("appVersion");
 
-  let recentJokeIds = [];
-  const RECENT_LIMIT = 20;
+      if (appVersionDiv) {
+        appVersionDiv.textContent = "v" + APP_VERSION;
+      }
 
-  let history = [];
-  let historyIndex = -1;
-
-  // ---------- DOM ----------
-      const mainButton = document.getElementById('mainButton');
-      const prevButton = document.getElementById('prevButton');
-      const copyButton = document.getElementById('copyButton');
-      const copyButtonBottom = document.getElementById('copyButtonBottom');
-      const contentDiv = document.getElementById('content');
-      const jokeDiv = document.getElementById('joke');
-      const ratingIconsDiv = document.getElementById('ratingIcons');
-      const voteMessageDiv = document.getElementById('voteMessage');
-      const languageBar = document.getElementById('languageBar');
-      const errorBox = document.getElementById('errorBox');
-      const copyToast = document.getElementById('copyToast');
-      const termsNote = document.getElementById('termsNote');
-      
-if (window.matchMedia("(display-mode: standalone)").matches) {
-  termsNote.style.display = "none";
-  languageBar.style.display = "none";
-}
-
-      const showLangLabel = document.getElementById('showLangLabel');
-      const addJokeLink = document.getElementById('addJokeLink');
-
-      const termsText = document.getElementById('termsText');
-      const termsLinkConditions = document.getElementById('termsLinkConditions');
-      const termsLinkCookies = document.getElementById('termsLinkCookies');
-      const termsLinkPrivacy = document.getElementById('termsLinkPrivacy');
-      const termsAnd = document.getElementById('termsAnd');
-
-      // ---------- HELPERS ----------
       function normalizeFeedLanguage(lang) {
-        if (lang === 'Polish') return 'Polski';
-        if (lang === 'German') return 'Deutsch';
-        if (lang === 'French') return 'Français';
-        if (lang === 'Spanish') return 'Español';
-        return lang || 'English';
+        if (lang === "Polish") return "Polski";
+        if (lang === "German") return "Deutsch";
+        if (lang === "French") return "Français";
+        if (lang === "Spanish") return "Español";
+        return lang || "English";
       }
 
-      function applyHtmlLang() {
-        const safeLang = normalizeFeedLanguage(currentLang);
+      let currentLang = normalizeFeedLanguage(getLang());
+      let searchText = "";
+      let searchQuery = "";
+      let mainJokes = [];
+      let recentJokes = [];
+      let finalFeed = [];
+      let cursorCreatedAt = null;
+      let cursorId = null;
+      let loading = false;
+      let loadingRecent = false;
+      let hasMore = true;
+      let reportReason = null;
+      let reportJokeId = null;
+      let favouriteIds = new Set();
+      let votesByJokeId = {};
+      let reportedIds = new Set();
 
-        document.documentElement.lang =
-          safeLang === 'Polski' ? 'pl' :
-          safeLang === 'Deutsch' ? 'de' :
-          safeLang === 'Español' ? 'es' :
-          safeLang === 'Français' ? 'fr' : 'en';
-      }
-
-      function showError(msg) {
-        console.error(msg);
-        errorBox.style.display = 'block';
-        errorBox.textContent = String(msg);
-      }
-
-      function clearError() {
-        errorBox.style.display = 'none';
-        errorBox.textContent = '';
-      }
-
-      function showToast(msg) {
-        copyToast.textContent = msg;
-        copyToast.style.display = 'block';
-        clearTimeout(showToast._t);
-        showToast._t = setTimeout(() => {
-          copyToast.style.display = 'none';
-        }, 1600);
-      }
-
-      function updatePrevButton() {
-        prevButton.disabled = historyIndex <= 0;
-      }
-
-      function updateCopyButtons() {
-        const enabled = !!(currentJoke && currentJoke.content);
-        copyButton.disabled = !enabled;
-        copyButtonBottom.disabled = !enabled;
-      }
-
-      function applyStaticTranslations() {
-
-        const updateText = document.getElementById('updateText');
-        const updateBtn = document.getElementById('updateBtn');
-        if (updateText) updateText.textContent = t('update_available', currentLang);
-        if (updateBtn) updateBtn.textContent = t('update_refresh', currentLang);
-
-        applyHtmlLang();
-
-        showLangLabel.textContent = t('show_lang', currentLang);
-
-        prevButton.textContent = t('previous', currentLang);
-        copyButton.textContent = t('copy_joke', currentLang);
-        copyButtonBottom.textContent = t('copy_joke', currentLang);
-
-        addJokeLink.textContent = t('add_joke', currentLang);
-
-        termsText.textContent = t('terms_note', currentLang);
-        termsLinkConditions.textContent = t('terms_link_conditions', currentLang);
-        termsLinkCookies.textContent = t('terms_link_cookies', currentLang);
-        termsLinkPrivacy.textContent = t('terms_link_privacy', currentLang);
-
-        // optional: translate "and" nicely (fallback to "and")
-        termsAnd.textContent =
-          currentLang === 'Polski' ? 'i' :
-          currentLang === 'Deutsch' ? 'und' :
-          currentLang === 'Español' ? 'y' :
-          currentLang === 'Français' ? 'et' : 'and';
-
-        // main button label depends on state
-        mainButton.textContent = initialised
-          ? t('press_next', currentLang)
-          : t('press_first', currentLang);
-      }
-
-      // ---------- LANGUAGE SWITCH ----------
-      document.querySelectorAll('#languageBar a[data-lang]').forEach(a => {
-        a.addEventListener('click', (e) => {
-          e.preventDefault();
-          setLang(a.dataset.lang);
-        });
-      });
-
-      window.addEventListener('donkey:langchange', async (e) => {
-        currentLang = normalizeFeedLanguage(e.detail.lang);
-
-        // reset history so Previous doesn’t mix languages
-        recentJokeIds = [];
-        history = [];
-        historyIndex = -1;
-        updatePrevButton();
-        updateCopyButtons();
-
-        applyStaticTranslations();
-
-        // reload jokes if already started
-        if (initialised) {
-          await loadJokes();
-        }
-      });
-
-      // ---------- SUPABASE ----------
       if (!window.supabase || !window.supabase.createClient) {
-        showError('Supabase library did not load. Check your internet connection or the CDN link.');
+        showError("Supabase library did not load. Check your internet connection or the CDN link.");
         return;
       }
 
       const { createClient } = window.supabase;
       const client = createClient(
-        'https://mknsvxajrvdlwqywvlrf.supabase.co',
-        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo'
+        "https://mknsvxajrvdlwqywvlrf.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo"
       );
 
-      // ---------- RATING ----------
-const ratingOptions = [
-  { vote: "bad",   emoji: "😕" },
-  { vote: "meh",   emoji: "😐" },
-  { vote: "good",  emoji: "🙂" },
-  { vote: "great", emoji: "😂" },
-];
-
-function renderRatingIcons() {
-  ratingIconsDiv.innerHTML = "";
-
-  ratingOptions.forEach((opt) => {
-    const btn = document.createElement("button");
-    btn.type = "button";
-    btn.className = "ratingEmojiBtn";
-    btn.textContent = opt.emoji;
-    btn.onclick = () => rateJoke(opt.vote);
-
-    ratingIconsDiv.appendChild(btn);
-  });
-}
-
-      // ---------- WEIGHTED RANDOM ----------
-function weightFromAverage(j) {
-  const avg = Number(j?.average) || 0;
-
-  // convert -2..2 → 0..4
-  const normalized = avg + 2;
-
-  // baseline so every joke can appear
-  return 0.2 + (normalized / 4);
-}
-
-      function pickWeighted(arr, weightFn) {
-        if (!arr || arr.length === 0) return null;
-
-        let total = 0;
-        const weights = new Array(arr.length);
-
-        for (let i = 0; i < arr.length; i++) {
-          const w = Math.max(0, Number(weightFn(arr[i])) || 0);
-          weights[i] = w;
-          total += w;
-        }
-
-        if (total <= 0) return arr[Math.floor(Math.random() * arr.length)];
-
-        let r = Math.random() * total;
-        for (let i = 0; i < arr.length; i++) {
-          r -= weights[i];
-          if (r <= 0) return arr[i];
-        }
-        return arr[arr.length - 1];
+      function applyHtmlLang() {
+        const safeLang = normalizeFeedLanguage(currentLang);
+        document.documentElement.lang =
+          safeLang === "Polski" ? "pl" :
+          safeLang === "Deutsch" ? "de" :
+          safeLang === "Español" ? "es" :
+          safeLang === "Français" ? "fr" : "en";
       }
 
-      // ---------- COPY ----------
-      async function copyCurrentJoke() {
-        if (!currentJoke || !currentJoke.content) return;
+      function safeText(key, fallback) {
+        const value = t(key, currentLang);
+        return value && value !== key ? value : fallback;
+      }
 
-        const textToCopy = `${currentJoke.content}\n\nfound at donkeyapp.com`;
+      function showError(msg) {
+        console.error(msg);
+        errorBox.style.display = "block";
+        errorBox.textContent = String(msg);
+      }
 
-        if (navigator.clipboard && window.isSecureContext) {
-          try {
-            await navigator.clipboard.writeText(textToCopy);
-            showToast(t('copied', currentLang));
-            return;
-          } catch (e) {}
+      function clearError() {
+        errorBox.style.display = "none";
+        errorBox.textContent = "";
+      }
+
+      function showToast(msg) {
+        copyToast.textContent = msg;
+        copyToast.style.display = "block";
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => {
+          copyToast.style.display = "none";
+        }, 2200);
+      }
+
+      function loadLocalState() {
+        try {
+          const rawFav = localStorage.getItem(FAVOURITES_KEY);
+          favouriteIds = new Set(rawFav ? JSON.parse(rawFav) : []);
+        } catch {
+          favouriteIds = new Set();
         }
 
         try {
-          const ta = document.createElement('textarea');
-          ta.value = textToCopy;
-          ta.setAttribute('readonly', '');
-          ta.style.position = 'fixed';
-          ta.style.left = '-9999px';
-          ta.style.top = '0';
-          document.body.appendChild(ta);
-          ta.select();
-          ta.setSelectionRange(0, ta.value.length);
-          const ok = document.execCommand('copy');
-          document.body.removeChild(ta);
-
-          if (ok) showToast(t('copied', currentLang));
-          else showToast(t('copy_failed', currentLang));
-        } catch (e) {
-          showToast(t('copy_failed', currentLang));
+          const rawVotes = localStorage.getItem(VOTES_KEY);
+          votesByJokeId = rawVotes ? JSON.parse(rawVotes) : {};
+        } catch {
+          votesByJokeId = {};
         }
       }
 
-      // ---------- RENDER / HISTORY ----------
-      function renderJoke(joke, addToHistory) {
-        if (!joke) return;
+      function saveFavourites() {
+        localStorage.setItem(FAVOURITES_KEY, JSON.stringify(Array.from(favouriteIds)));
+      }
 
-        currentJoke = joke;
-        jokeDiv.textContent = currentJoke.content;
+      function saveVotes() {
+        localStorage.setItem(VOTES_KEY, JSON.stringify(votesByJokeId));
+      }
 
-        voteLocked = false;
-        voteMessageDiv.style.display = 'none';
-        voteMessageDiv.textContent = t('thanks_vote', currentLang);
+      function updateSearchUi() {
+        searchClear.style.display = searchInput.value.trim() ? "inline-flex" : "none";
+      }
 
-        renderRatingIcons();
+      function updateLanguageUi() {
+        mobileLanguageSelect.value = currentLang;
 
-        if (addToHistory) {
-          if (historyIndex < history.length - 1) {
-            history = history.slice(0, historyIndex + 1);
+        document.querySelectorAll(".langButton").forEach((btn) => {
+          btn.classList.toggle("active", btn.dataset.lang === currentLang);
+        });
+      }
+
+      function updateMeta() {
+        const totalVisible = mainJokes.length;
+        const searchActive = searchQuery.trim() !== "";
+
+        feedMetaLeft.textContent = searchActive
+          ? safeText("search_results_for", "Search results for") + ": " + '"' + searchQuery + '"'
+          : safeText("browse_jokes", "Browse jokes");
+
+        feedMetaRight.textContent = totalVisible
+          ? totalVisible + " " + (totalVisible === 1
+              ? safeText("joke_single", "joke")
+              : safeText("joke_plural", "jokes"))
+          : safeText("loading", "Loading…");
+      }
+
+      function applyStaticTranslations() {
+        applyHtmlLang();
+        updateLanguageUi();
+
+        searchInput.placeholder = safeText("search_placeholder", "Search jokes…");
+        showLangLabel.textContent = safeText("show_lang", "Language");
+        addJokeLink.textContent = safeText("add_joke", "Want to add a joke?");
+        termsText.textContent = safeText("terms_note_web", "By using this website you agree to these");
+        termsLinkConditions.textContent = safeText("terms_link_conditions", "Terms and Conditions");
+        termsLinkCookies.textContent = safeText("terms_link_cookies", "Use of Cookies");
+        termsLinkPrivacy.textContent = safeText("terms_link_privacy", "Privacy Policy");
+        installBannerText.textContent = safeText("install_banner_text", "Download the Donkey App for the best experience");
+        leftRailTitle.textContent = safeText("ad_placeholder_title", "Ad space");
+        leftAdPlaceholder.textContent = safeText("ad_placeholder_text", "Desktop ad placeholder");
+        reportSubmitButton.textContent = safeText("report_submit", "Report");
+        reportCloseButton.textContent = safeText("close", "Close");
+        document.getElementById("reportTitle").textContent = safeText("report_title", "Report joke");
+        document.getElementById("reportOptionOffensive").textContent = safeText("report_offensive", "This joke appears to be offensive");
+        document.getElementById("reportOptionIllegal").textContent = safeText("report_illegal", "This joke is clearly illegal");
+        document.getElementById("reportOptionOther").textContent = safeText("report_other", "Other");
+        feedLoading.textContent = safeText("loading_more", "Loading more jokes…");
+        feedEnd.textContent = safeText("no_more_jokes", "No more jokes.");
+
+        termsAnd.textContent =
+          currentLang === "Polski" ? "i" :
+          currentLang === "Deutsch" ? "und" :
+          currentLang === "Español" ? "y" :
+          currentLang === "Français" ? "et" : "and";
+
+        updateMeta();
+        renderFeed();
+      }
+
+      function mixFeed(mainRows, recentRows) {
+        const maxRecent = Math.min(
+          Math.floor(mainRows.length / RECENT_INSERT_EVERY),
+          recentRows.length
+        );
+
+        const recentPool = recentRows.slice(0, maxRecent).map((item) => ({
+          ...item,
+          isRecentlyAdded: true
+        }));
+
+        const recentIds = new Set(recentPool.map((item) => item.id));
+        const normalPool = mainRows.filter((item) => !recentIds.has(item.id));
+
+        const mixed = [];
+        let normalIndex = 0;
+        let recentIndex = 0;
+
+        while (normalIndex < normalPool.length) {
+          mixed.push(normalPool[normalIndex]);
+          normalIndex += 1;
+
+          if (normalIndex % RECENT_INSERT_EVERY === 0 && recentIndex < recentPool.length) {
+            mixed.push(recentPool[recentIndex]);
+            recentIndex += 1;
           }
-          history.push(currentJoke);
-          historyIndex = history.length - 1;
         }
 
-        updatePrevButton();
-        updateCopyButtons();
+        while (recentIndex < recentPool.length) {
+          mixed.push(recentPool[recentIndex]);
+          recentIndex += 1;
+        }
+
+        return mixed;
       }
 
-      function showNextWeightedJoke() {
-        if (!jokesCache.length) return;
+      function copyText(textToCopy) {
+        const finalText = textToCopy.trim() + "\n\nFound at donkeyapp.com";
 
-        if (recentJokeIds.length >= jokesCache.length - 1) recentJokeIds = [];
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(finalText);
+        }
 
-        const candidates = jokesCache.filter(j => !recentJokeIds.includes(j.id));
-        const picked = pickWeighted(candidates.length ? candidates : jokesCache, weightFromAverage);
-        if (!picked) return;
-
-        recentJokeIds.push(picked.id);
-        if (recentJokeIds.length > RECENT_LIMIT) recentJokeIds.shift();
-
-        renderJoke(picked, true);
+        return new Promise((resolve, reject) => {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = finalText;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            ta.style.top = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            ta.setSelectionRange(0, ta.value.length);
+            const ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            if (ok) resolve();
+            else reject(new Error("Copy failed"));
+          } catch (e) {
+            reject(e);
+          }
+        });
       }
 
-      function showPreviousJoke() {
-        if (historyIndex <= 0) return;
-        historyIndex -= 1;
-        renderJoke(history[historyIndex], false);
+      async function onCopyJoke(content) {
+        try {
+          await copyText(content);
+          showToast(safeText("copied", "Joke copied. Share it however you want!"));
+        } catch {
+          showToast(safeText("copy_failed", "Copy failed."));
+        }
       }
 
-      // ---------- LOAD ----------
-      async function loadJokes() {
+      async function onVote(jokeId, vote, voteArea) {
+        if (votesByJokeId[jokeId]) return;
 
-          if (!navigator.onLine) {
-    jokeDiv.textContent = t('offline', currentLang);
-    return;
-  }
-        clearError();
-        jokeDiv.textContent = t('loading', currentLang);
+        votesByJokeId[jokeId] = vote;
+        saveVotes();
 
-// COMMENT: RLS-safe feed fetch via RPC (server enforces filters + hard limit)
-const { data, error } = await client.rpc("get_jokes_feed_lang", {
-  p_limit: 200,
-  p_after_created_at: null,
-  p_after_id: null,
-  p_language: normalizeFeedLanguage(currentLang),
-});
+        renderVoteArea(voteArea, jokeId);
+
+        const { error } = await client.rpc("rate_joke", {
+          p_id: jokeId,
+          p_vote: vote
+        });
 
         if (error) {
-          showError('Error loading jokes:\n' + (error.message || JSON.stringify(error)));
-          jokeDiv.textContent = t('error_loading', currentLang);
-          return;
+          console.log("Vote failed:", error);
+          showToast(safeText("vote_failed", "Vote saved locally, but failed to sync."));
         }
-
-        jokesCache = data || [];
-        if (!jokesCache.length) {
-          jokeDiv.textContent = t('no_jokes', currentLang);
-          return;
-        }
-
-        showNextWeightedJoke();
       }
 
-      // ---------- VOTE ----------
-function incrementLocalCountAndAverage(jokeObj, vote) {
-  // Keep local counts in memory only (purely for UI weighting)
-  jokeObj._c_bad = (jokeObj._c_bad || 0) + (vote === "bad" ? 1 : 0);
-  jokeObj._c_meh = (jokeObj._c_meh || 0) + (vote === "meh" ? 1 : 0);
-  jokeObj._c_good = (jokeObj._c_good || 0) + (vote === "good" ? 1 : 0);
-  jokeObj._c_great = (jokeObj._c_great || 0) + (vote === "great" ? 1 : 0);
-
-  const cBad = Number(jokeObj._c_bad) || 0;
-  const cMeh = Number(jokeObj._c_meh) || 0;
-  const cGood = Number(jokeObj._c_good) || 0;
-  const cGreat = Number(jokeObj._c_great) || 0;
-
-  const total = cBad + cMeh + cGood + cGreat;
-  if (total <= 0) {
-    jokeObj.average = 0;
-    return;
-  }
-
-  jokeObj.average = ((-2*cBad) + (-1*cMeh) + (1*cGood) + (2*cGreat)) / total;
-}
-
-async function rateJoke(vote) {
-  if (voteLocked || !currentJoke) return;
-  voteLocked = true;
-
-  // Immediately swap emojis into "Your vote: X"
-  ratingIconsDiv.innerHTML = "";
-  const chosen = ratingOptions.find((o) => o.vote === vote);
-  ratingIconsDiv.textContent = `Your vote: ${chosen ? chosen.emoji : ""}`;
-
-  voteMessageDiv.style.display = "inline-block";
-  voteMessageDiv.textContent = t("thanks_vote", currentLang);
-
-  // Update local avg (optional, for weighting feel)
-  incrementLocalCountAndAverage(currentJoke, vote);
-
-  // Call your SQL RPC
-const { error } = await client.rpc("rate_joke", {
-  p_id: currentJoke.id,
-  p_vote: ratingKey,
-});
-
-  if (error) {
-    showError("Vote failed:\n" + (error.message || JSON.stringify(error)));
-    voteMessageDiv.textContent = t("vote_failed", currentLang);
-    voteLocked = false;
-
-    // If vote failed, restore the buttons
-    renderRatingIcons();
-    return;
-  }
-}
-
-      // ---------- BUTTONS ----------
-      prevButton.onclick = () => {
-        if (!initialised) return;
-        showPreviousJoke();
-      };
-
-      copyButton.onclick = () => {
-        if (!initialised) return;
-        copyCurrentJoke();
-      };
-
-      copyButtonBottom.onclick = () => {
-        if (!initialised) return;
-        copyCurrentJoke();
-      };
-
-      mainButton.onclick = async () => {
-        if (!initialised) {
-
-const logo = document.getElementById("appLogo");
-logo.style.width = "90px";
-document.getElementById("logoContainer").style.marginTop = "10px";
-
-          initialised = true;
-
-          // hide the terms note after first click (start page only)
-          termsNote.style.display = 'none';
-
-          contentDiv.style.display = 'block';
-          languageBar.style.display = 'block';
-          prevButton.style.display = 'inline-block';
-          copyButton.style.display = 'inline-block';
-          copyButtonBottom.style.display = 'inline-block';
-
-          applyStaticTranslations(); // sets press_next + other labels
-          await loadJokes();
-        } else {
-          showNextWeightedJoke();
+      function openReportModal(jokeId) {
+        if (reportedIds.has(jokeId)) {
+          reportedIds.delete(jokeId);
+          renderFeed();
+          return;
         }
-      };
 
-      // ---------- INIT ----------
+        reportJokeId = jokeId;
+        reportReason = null;
+        updateReportSelectionUi();
+        reportModal.style.display = "flex";
+      }
+
+      function closeReportModal() {
+        reportModal.style.display = "none";
+        reportJokeId = null;
+        reportReason = null;
+        updateReportSelectionUi();
+      }
+
+      function updateReportSelectionUi() {
+        reportModal.querySelectorAll(".modalItem").forEach((item) => {
+          const active = item.dataset.reportReason === reportReason;
+          item.querySelector(".modalCheck").classList.toggle("hidden", !active);
+        });
+
+        reportSubmitButton.disabled = !reportReason;
+      }
+
+      async function submitReport() {
+        if (!reportJokeId || !reportReason) return;
+
+        const { error } = await client.rpc("report_joke", {
+          p_joke_id: reportJokeId,
+          p_reason: reportReason
+        });
+
+        if (error) {
+          console.log("Report failed:", error);
+          showToast(safeText("report_failed", "Report failed. Please try again."));
+          return;
+        }
+
+        reportedIds.add(reportJokeId);
+        closeReportModal();
+        renderFeed();
+        showToast(safeText("report_success", "Thank you. Report submitted."));
+      }
+
+      function toggleFavourite(jokeId) {
+        if (favouriteIds.has(jokeId)) {
+          favouriteIds.delete(jokeId);
+        } else {
+          favouriteIds.add(jokeId);
+        }
+
+        saveFavourites();
+        renderFeed();
+      }
+
+      function renderVoteArea(container, jokeId) {
+        container.innerHTML = "";
+
+        if (votesByJokeId[jokeId]) {
+          const label = document.createElement("span");
+          label.className = "footerLabelInline";
+          label.textContent = safeText("your_vote", "Your vote:");
+
+          const emoji = document.createElement("span");
+          emoji.textContent =
+            votesByJokeId[jokeId] === "bad" ? "😕" :
+            votesByJokeId[jokeId] === "meh" ? "😐" :
+            votesByJokeId[jokeId] === "good" ? "🙂" : "😂";
+          emoji.style.fontSize = "22px";
+
+          container.appendChild(label);
+          container.appendChild(emoji);
+          return;
+        }
+
+        ratingOptions.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ratingEmojiBtn";
+          btn.textContent = opt.emoji;
+          btn.addEventListener("click", () => onVote(jokeId, opt.vote, container));
+          container.appendChild(btn);
+        });
+      }
+
+      function createCard(item) {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        if (item.isRecentlyAdded) {
+          const recentLabel = document.createElement("div");
+          recentLabel.className = "recentLabel";
+          recentLabel.textContent = safeText("recently_added", "Recently Added");
+          card.appendChild(recentLabel);
+        }
+
+        const jokeText = document.createElement("div");
+        jokeText.className = "jokeText";
+        jokeText.textContent = item.content || "";
+        card.appendChild(jokeText);
+
+        const addedBy = document.createElement("div");
+        addedBy.className = "addedBy";
+
+        const nameToShow =
+          item.display_name && item.display_name.trim() !== ""
+            ? item.display_name
+            : "Anonymous";
+
+        if (nameToShow !== "Anonymous" && item.user_id) {
+          addedBy.append(
+            document.createTextNode(safeText("added_by", "Added by") + " ")
+          );
+
+          const link = document.createElement("a");
+          link.className = "addedByLink";
+          link.href = "userID.html?userId=" + encodeURIComponent(item.user_id);
+          link.textContent = nameToShow;
+          addedBy.appendChild(link);
+        } else {
+          addedBy.textContent = safeText("added_by", "Added by") + " " + nameToShow;
+        }
+
+        card.appendChild(addedBy);
+
+        const footer = document.createElement("div");
+        footer.className = "cardFooter";
+
+        const footerLeft = document.createElement("div");
+        footerLeft.className = "footerLeft";
+
+        const ratingRow = document.createElement("div");
+        ratingRow.className = "ratingRow";
+        renderVoteArea(ratingRow, item.id);
+        footerLeft.appendChild(ratingRow);
+
+        const footerDivider = document.createElement("div");
+        footerDivider.className = "footerDivider";
+
+        const footerRight = document.createElement("div");
+        footerRight.className = "footerRight";
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "iconBtn";
+        copyBtn.title = safeText("copy_joke", "Copy joke");
+        copyBtn.textContent = "⧉";
+        copyBtn.addEventListener("click", () => onCopyJoke(item.content));
+
+        const reportBtn = document.createElement("button");
+        reportBtn.type = "button";
+        reportBtn.className = "iconBtn";
+        if (reportedIds.has(item.id)) reportBtn.classList.add("activeReport");
+        reportBtn.title = safeText("report_title", "Report joke");
+        reportBtn.textContent = reportedIds.has(item.id) ? "⚑" : "⚐";
+        reportBtn.addEventListener("click", () => openReportModal(item.id));
+
+        const favBtn = document.createElement("button");
+        favBtn.type = "button";
+        favBtn.className = "iconBtn";
+        if (favouriteIds.has(item.id)) favBtn.classList.add("activeFav");
+        favBtn.title = safeText("favourite", "Favourite");
+        favBtn.textContent = favouriteIds.has(item.id) ? "♥" : "♡";
+        favBtn.addEventListener("click", () => toggleFavourite(item.id));
+
+        footerRight.appendChild(copyBtn);
+        footerRight.appendChild(reportBtn);
+        footerRight.appendChild(favBtn);
+
+        footer.appendChild(footerLeft);
+        footer.appendChild(footerDivider);
+        footer.appendChild(footerRight);
+
+        card.appendChild(footer);
+
+        return card;
+      }
+
+      function renderFeed() {
+        feed.innerHTML = "";
+
+        finalFeed.forEach((item) => {
+          feed.appendChild(createCard(item));
+        });
+
+        updateMeta();
+      }
+
+      async function loadRecentJokes() {
+        if (loadingRecent) return;
+        loadingRecent = true;
+
+        try {
+          const { data, error } = await client.rpc("get_recent_jokes_with_names", {
+            p_language: normalizeFeedLanguage(currentLang),
+            p_limit: RECENT_LIMIT
+          });
+
+          if (error) throw error;
+
+          recentJokes = Array.isArray(data) ? data : [];
+        } catch (e) {
+          console.log("Recent jokes failed:", e);
+          recentJokes = [];
+        } finally {
+          loadingRecent = false;
+        }
+      }
+
+      async function loadInitial() {
+        if (!navigator.onLine) {
+          showError(safeText("offline", "You appear to be offline."));
+          return;
+        }
+
+        clearError();
+        loading = true;
+        hasMore = true;
+        cursorCreatedAt = null;
+        cursorId = null;
+        mainJokes = [];
+        finalFeed = [];
+        feed.innerHTML = "";
+        feedLoading.classList.remove("hidden");
+        feedEnd.classList.add("hidden");
+        updateMeta();
+
+        try {
+          await loadRecentJokes();
+
+          const { data, error } = await client.rpc("get_jokes_feed_lang", {
+            p_limit: PAGE_SIZE,
+            p_after_created_at: null,
+            p_after_id: null,
+            p_language: normalizeFeedLanguage(currentLang),
+            p_search: searchQuery ? searchQuery : null
+          });
+
+          if (error) throw error;
+
+          const rows = Array.isArray(data) ? data : [];
+          mainJokes = rows;
+
+          const last = rows[rows.length - 1];
+          cursorCreatedAt = last ? last.created_at : null;
+          cursorId = last ? last.id : null;
+          hasMore = rows.length === PAGE_SIZE;
+
+          finalFeed = mixFeed(mainJokes, recentJokes);
+          renderFeed();
+
+          if (!rows.length) {
+            feedLoading.classList.add("hidden");
+            feedEnd.classList.remove("hidden");
+            feedEnd.textContent = safeText("no_jokes", "No jokes found.");
+          } else {
+            feedLoading.classList.add("hidden");
+            feedEnd.classList.toggle("hidden", hasMore);
+          }
+        } catch (e) {
+          showError((e && e.message) ? e.message : safeText("error_loading", "Error loading jokes."));
+          feedLoading.classList.add("hidden");
+        } finally {
+          loading = false;
+        }
+      }
+
+      async function loadMore() {
+        if (loading || !hasMore || !cursorCreatedAt || !cursorId) return;
+
+        loading = true;
+        feedLoading.classList.remove("hidden");
+
+        try {
+          const { data, error } = await client.rpc("get_jokes_feed_lang", {
+            p_limit: PAGE_SIZE,
+            p_after_created_at: cursorCreatedAt,
+            p_after_id: cursorId,
+            p_language: normalizeFeedLanguage(currentLang),
+            p_search: searchQuery ? searchQuery : null
+          });
+
+          if (error) throw error;
+
+          const rowsRaw = Array.isArray(data) ? data : [];
+          const knownIds = new Set(mainJokes.map((item) => item.id));
+          const rows = rowsRaw.filter((item) => !knownIds.has(item.id));
+
+          mainJokes = [...mainJokes, ...rows];
+
+          const last = rowsRaw[rowsRaw.length - 1];
+          cursorCreatedAt = last ? last.created_at : null;
+          cursorId = last ? last.id : null;
+          hasMore = rowsRaw.length === PAGE_SIZE;
+
+          finalFeed = mixFeed(mainJokes, recentJokes);
+          renderFeed();
+
+          if (!hasMore) {
+            feedEnd.classList.remove("hidden");
+          }
+        } catch (e) {
+          console.log("Load more failed:", e);
+        } finally {
+          feedLoading.classList.add("hidden");
+          loading = false;
+        }
+      }
+
+      function maybeLoadMoreOnScroll() {
+        if (loading || !hasMore) return;
+
+        const scrollY = window.scrollY || window.pageYOffset;
+        const viewportHeight = window.innerHeight;
+        const fullHeight = document.documentElement.scrollHeight;
+
+        if (scrollY + viewportHeight >= fullHeight - 900) {
+          loadMore();
+        }
+      }
+
+      function runSearch() {
+        const cleanSearch = searchInput.value.trim();
+
+        if (cleanSearch.length === 0) {
+          searchQuery = "";
+          searchText = "";
+          loadInitial();
+          return;
+        }
+
+        if (cleanSearch.length < 3) {
+          showToast(safeText("search_minimum", "Please enter at least 3 characters."));
+          return;
+        }
+
+        searchText = cleanSearch;
+        searchQuery = cleanSearch;
+        loadInitial();
+      }
+
+      searchInput.addEventListener("input", () => {
+        updateSearchUi();
+        if (searchInput.value === "") {
+          searchText = "";
+          searchQuery = "";
+          loadInitial();
+        }
+      });
+
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          runSearch();
+        }
+      });
+
+      searchClear.addEventListener("click", () => {
+        searchInput.value = "";
+        updateSearchUi();
+        searchText = "";
+        searchQuery = "";
+        loadInitial();
+      });
+
+      mobileLanguageSelect.addEventListener("change", (e) => {
+        setLang(e.target.value);
+      });
+
+      document.querySelectorAll(".langButton").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          setLang(btn.dataset.lang);
+        });
+      });
+
+      window.addEventListener("donkey:langchange", async (e) => {
+        currentLang = normalizeFeedLanguage(e.detail.lang);
+        applyStaticTranslations();
+        await loadInitial();
+      });
+
+      reportModal.addEventListener("click", (e) => {
+        if (e.target === reportModal) {
+          closeReportModal();
+        }
+      });
+
+      reportModal.querySelectorAll(".modalItem").forEach((item) => {
+        item.addEventListener("click", () => {
+          reportReason = item.dataset.reportReason;
+          updateReportSelectionUi();
+        });
+      });
+
+      reportSubmitButton.addEventListener("click", submitReport);
+      reportCloseButton.addEventListener("click", closeReportModal);
+
+      window.addEventListener("scroll", maybeLoadMoreOnScroll, { passive: true });
+
+      loadLocalState();
+      updateSearchUi();
       applyStaticTranslations();
+      loadInitial();
     });
   </script>
 
-<script>
-  if ("serviceWorker" in navigator) {
-    window.addEventListener("load", async () => {
-      try {
-        const reg = await navigator.serviceWorker.register("/sw.js");
-        console.log("SW registered:", reg.scope);
+  <script>
+    if ("serviceWorker" in navigator) {
+      window.addEventListener("load", async () => {
+        try {
+          const reg = await navigator.serviceWorker.register("/sw.js");
 
-        const banner = document.getElementById("updateBanner");
-        const btn = document.getElementById("updateBtn");
+          const banner = document.getElementById("updateBanner");
+          const btn = document.getElementById("updateBtn");
 
-function showUpdateBanner() {
+          function showUpdateBanner() {
+            const isStandalone =
+              window.matchMedia("(display-mode: standalone)").matches ||
+              window.navigator.standalone === true;
 
-  // Only show banner if running as installed app
-const isStandalone =
-  window.matchMedia("(display-mode: standalone)").matches ||
-  window.navigator.standalone === true;
+            if (!isStandalone) return;
+            if (!banner) return;
 
-if (!isStandalone) return;
+            banner.style.display = "block";
 
-
-  if (!banner) return;
-
-  banner.style.display = "block";
-
-  if (btn) {
-    btn.onclick = () => {
-      if (reg.waiting) {
-        reg.waiting.postMessage({ type: "SKIP_WAITING" });
-      }
-    };
-  }
-}
-
-
-        // If an update is already waiting
-        if (reg.waiting && navigator.serviceWorker.controller) {
-          showUpdateBanner();
-        }
-
-        // Watch for new SW installs
-        reg.addEventListener("updatefound", () => {
-          const newWorker = reg.installing;
-          if (!newWorker) return;
-
-          newWorker.addEventListener("statechange", () => {
-            if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
-              showUpdateBanner();
+            if (btn) {
+              btn.onclick = () => {
+                if (reg.waiting) {
+                  reg.waiting.postMessage({ type: "SKIP_WAITING" });
+                }
+              };
             }
+          }
+
+          if (reg.waiting && navigator.serviceWorker.controller) {
+            showUpdateBanner();
+          }
+
+          reg.addEventListener("updatefound", () => {
+            const newWorker = reg.installing;
+            if (!newWorker) return;
+
+            newWorker.addEventListener("statechange", () => {
+              if (newWorker.state === "installed" && navigator.serviceWorker.controller) {
+                showUpdateBanner();
+              }
+            });
           });
-        });
 
-        // When the new SW takes control, reload to get the new assets
-        navigator.serviceWorker.addEventListener("controllerchange", () => {
-          window.location.reload();
-        });
+          navigator.serviceWorker.addEventListener("controllerchange", () => {
+            window.location.reload();
+          });
 
-      } catch (err) {
-        console.error("SW registration failed:", err);
-      }
-    });
-  }
-</script>
-
-<script>
-(function () {
-
-  const banner = document.getElementById("installBanner");
-  const appleBadge = document.getElementById("appleBadge");
-  const googleBadge = document.getElementById("googleBadge");
-
-  if (!banner || !appleBadge || !googleBadge) return;
-
-  // Never show inside installed app
-  const isStandalone =
-    window.matchMedia("(display-mode: standalone)").matches ||
-    window.navigator.standalone === true;
-
-  if (isStandalone) return;
-
-  // Don’t show if dismissed
-  if (localStorage.getItem("donkey_install_dismissed") === "1") return;
-
-  let deferredPrompt = null;
-
-  const ua = navigator.userAgent || "";
-  const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
-  const isAndroid = /Android/.test(ua);
-
-  if (isIOS) googleBadge.style.display = "none";
-if (isAndroid) appleBadge.style.display = "none";
-
-function showBanner() {
-  banner.style.display = "block";
-  document.body.classList.add("has-install-banner");
-}
-
-  // Android install capture
-  window.addEventListener("beforeinstallprompt", (e) => {
-    e.preventDefault();
-    deferredPrompt = e;
-
-    if (isAndroid) {
-      showBanner();
+        } catch (err) {
+          console.error("SW registration failed:", err);
+        }
+      });
     }
-  });
-  
-// Google badge click (Android)
-googleBadge.onclick = function () {
-  if (!isAndroid) return;
+  </script>
 
-  banner.innerHTML = "<div style='font-size:15px;padding:12px;'>Thank you for trying to download the app.<br><br>It is currently being developed. Please try again in 2–3 days.</div>";
+  <script>
+    (function () {
+      const banner = document.getElementById("installBanner");
+      const appleBadge = document.getElementById("appleBadge");
+      const googleBadge = document.getElementById("googleBadge");
 
-  setTimeout(() => {
-    localStorage.setItem("donkey_install_dismissed", "1");
-    banner.style.display = "none";
-    document.body.classList.remove("has-install-banner");
-  }, 10000);
-};
+      if (!banner || !appleBadge || !googleBadge) return;
 
+      const isStandalone =
+        window.matchMedia("(display-mode: standalone)").matches ||
+        window.navigator.standalone === true;
 
+      if (isStandalone) return;
+      if (localStorage.getItem("donkey_install_dismissed") === "1") return;
 
-  // Apple badge click (iOS)
-appleBadge.onclick = function () {
-  if (!isIOS) return;
+      let deferredPrompt = null;
+      const ua = navigator.userAgent || "";
+      const isIOS = /iPad|iPhone|iPod/.test(ua) && !window.MSStream;
+      const isAndroid = /Android/.test(ua);
 
-  banner.innerHTML = "<div style='font-size:15px;padding:12px;'>Thank you for trying to download the app.<br><br>It is currently being developed. Please try again in 2–3 days.</div>";
+      if (isIOS) googleBadge.style.display = "none";
+      if (isAndroid) appleBadge.style.display = "none";
 
-  setTimeout(() => {
-    localStorage.setItem("donkey_install_dismissed", "1");
-    banner.style.display = "none";
-    document.body.classList.remove("has-install-banner");
-  }, 10000);
-};
+      function showBanner() {
+        banner.style.display = "block";
+        document.body.classList.add("has-install-banner");
+      }
 
+      window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (isAndroid) showBanner();
+      });
 
+      googleBadge.onclick = function () {
+        if (!isAndroid) return;
 
-  // Auto show for iOS (since no native event exists)
-  if (isIOS) {
-    setTimeout(showBanner, 1200);
-  }
-  
-if (isAndroid) {
-  setTimeout(() => {
-    if (!deferredPrompt) showBanner();
-  }, 1200);
-}
-  
-})();
-</script>
+        banner.innerHTML = "<div style='max-width:980px;margin:0 auto;font-size:15px;padding:12px;text-align:center;'>Thank you for trying to download the app.<br><br>It is currently being developed. Please try again in 2–3 days.</div>";
 
+        setTimeout(() => {
+          localStorage.setItem("donkey_install_dismissed", "1");
+          banner.style.display = "none";
+          document.body.classList.remove("has-install-banner");
+        }, 10000);
+      };
 
+      appleBadge.onclick = function () {
+        if (!isIOS) return;
 
-  
-<div id="appVersion" style="position:fixed; right:10px; bottom:8px; font-size:12px; opacity:0.35; z-index:9999;"></div>
-  
+        banner.innerHTML = "<div style='max-width:980px;margin:0 auto;font-size:15px;padding:12px;text-align:center;'>Thank you for trying to download the app.<br><br>It is currently being developed. Please try again in 2–3 days.</div>";
+
+        setTimeout(() => {
+          localStorage.setItem("donkey_install_dismissed", "1");
+          banner.style.display = "none";
+          document.body.classList.remove("has-install-banner");
+        }, 10000);
+      };
+
+      if (isIOS) {
+        setTimeout(showBanner, 1200);
+      }
+
+      if (isAndroid) {
+        setTimeout(() => {
+          if (!deferredPrompt) showBanner();
+        }, 1200);
+      }
+    })();
+  </script>
 </body>
 </html>
