@@ -180,6 +180,20 @@
       flex-wrap: wrap;
     }
 
+    .mobileFavButton {
+height:44px;
+min-width:44px;
+display:flex;
+align-items:center;
+justify-content:center;
+border:1px solid var(--border);
+background:var(--card);
+border-radius:12px;
+font-size:18px;
+text-decoration:none;
+color:var(--text);
+}
+
     .storeBadge {
       height: 46px;
       cursor: pointer;
@@ -768,7 +782,7 @@
         />
         <button id="searchClear" type="button" aria-label="Clear search">✕</button>
       </div>
-
+<a href="favourites.html" class="mobileFavButton">❤️</a>
       <div class="mobileLangWrap">
         <select id="mobileLanguageSelect" aria-label="Select language">
           <option value="English">English</option>
@@ -817,7 +831,13 @@
       </section>
 
       <aside class="desktopRail">
+        <div class="railCard" style="margin-bottom:12px;">
+  <a href="favourites.html" class="langButton" style="justify-content:center; font-weight:700;">
+    ❤️ Favourites
+  </a>
+</div>
         <div class="railCard">
+          
           <div class="railTitle" id="showLangLabel">Language</div>
           <div class="langButtonList">
             <button class="langButton" type="button" data-lang="English">
