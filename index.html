@@ -180,18 +180,18 @@
       flex-wrap: wrap;
     }
 
-    .mobileFavButton {
-height:44px;
-min-width:44px;
-display:flex;
-align-items:center;
-justify-content:center;
-border:1px solid var(--border);
-background:var(--card);
-border-radius:12px;
-font-size:18px;
-text-decoration:none;
-color:var(--text);
+.mobileFavButton {
+  display: none;
+  height: 44px;
+  min-width: 44px;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid var(--border);
+  background: var(--card);
+  border-radius: 12px;
+  font-size: 18px;
+  text-decoration: none;
+  color: var(--text);
 }
 
     .storeBadge {
@@ -507,6 +507,21 @@ color:var(--text);
       line-height: 1;
     }
 
+    .desktopFavLink {
+  width: 100%;
+  border: 1px solid var(--border);
+  background: #fff;
+  border-radius: 10px;
+  padding: 10px 12px;
+  text-align: center;
+  cursor: pointer;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
     .ratingEmojiBtn {
       font-size: 21px;
     }
@@ -661,6 +676,10 @@ color:var(--text);
       .layout {
         grid-template-columns: 1fr;
       }
+
+      .mobileFavButton {
+  display: flex;
+}
 
       .desktopRail {
         display: none;
@@ -832,7 +851,7 @@ color:var(--text);
 
       <aside class="desktopRail">
         <div class="railCard" style="margin-bottom:12px;">
-  <a href="favourites.html" class="langButton" style="justify-content:center; font-weight:700;">
+  <a href="favourites.html" class="desktopFavLink" style="justify-content:center; font-weight:700;">
     ❤️ Favourites
   </a>
 </div>
