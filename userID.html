@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>DonkeyApp — User Jokes</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,follow" />
+  <style>
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: #efefef;
+      color: #111;
+    }
+
+    .page {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .backButton {
+      display: inline-block;
+      margin-bottom: 12px;
+      padding: 12px 14px;
+      background: #fff;
+      border: 1px solid #e2e2e2;
+      border-radius: 12px;
+      color: #111;
+      text-decoration: none;
+      font-weight: 600;
+    }
+
+    .headerCard,
+    .card,
+    .errorBox {
+      background: #fff;
+      border: 1px solid #e2e2e2;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .title {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: #666;
+      margin: 0;
+    }
+
+    .jokeText {
+      font-size: 16px;
+      line-height: 1.5;
+      white-space: pre-wrap;
+    }
+
+    .smallNote {
+      text-align: center;
+      color: #666;
+      padding: 20px 0;
+    }
+
+    .errorBox {
+      color: #a40000;
+      background: #fff4f4;
+      border-color: #ffd2d2;
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <a class="backButton" href="/">← Back</a>
+
+    <div id="errorBox" class="errorBox" style="display:none;"></div>
+
+    <div id="loadingBox" class="smallNote">Loading profile…</div>
+
+    <div id="profileContent" style="display:none;">
+      <div class="headerCard">
+        <h1 id="profileName" class="title">User</h1>
+        <p id="profileCount" class="subtitle">0 jokes</p>
+      </div>
+
+      <div id="jokesList"></div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const params = new URLSearchParams(window.location.search);
+      const userId = params.get("userId") || "";
+
+      const loadingBox = document.getElementById("loadingBox");
+      const errorBox = document.getElementById("errorBox");
+      const profileContent = document.getElementById("profileContent");
+      const profileName = document.getElementById("profileName");
+      const profileCount = document.getElementById("profileCount");
+      const jokesList = document.getElementById("jokesList");
+
+      function showError(message) {
+        loadingBox.style.display = "none";
+        errorBox.style.display = "block";
+        errorBox.textContent = message;
+      }
+
+      if (!userId) {
+        showError("No user ID was provided.");
+        return;
+      }
+
+      if (!window.supabase || !window.supabase.createClient) {
+        showError("Supabase library did not load.");
+        return;
+      }
+
+      const { createClient } = window.supabase;
+
+      const client = createClient(
+        "https://mknsvxajrvdlwqywvlrf.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo"
+      );
+
+      try {
+        const { data, error } = await client.rpc("get_profile_jokes_with_name", {
+          p_user_id: userId
+        });
+
+        if (error) {
+          throw error;
+        }
+
+        const rows = Array.isArray(data) ? data : [];
+
+        loadingBox.style.display = "none";
+        profileContent.style.display = "block";
+
+        const displayName =
+          rows[0]?.display_name && rows[0].display_name.trim() !== ""
+            ? rows[0].display_name
+            : "User";
+
+        profileName.textContent = "Jokes added by " + displayName;
+        profileCount.textContent = rows.length === 1 ? "1 joke" : rows.length + " jokes";
+
+        if (!rows.length) {
+          jokesList.innerHTML = '<div class="smallNote">This user has no visible jokes yet.</div>';
+          return;
+        }
+
+        rows.forEach((item) => {
+          const card = document.createElement("div");
+          card.className = "card";
+
+          const jokeText = document.createElement("div");
+          jokeText.className = "jokeText";
+          jokeText.textContent = item.content || "";
+
+          card.appendChild(jokeText);
+          jokesList.appendChild(card);
+        });
+      } catch (e) {
+        showError(e?.message || "Failed to load profile.");
+      }
+    });
+  </script>
+</body>
+</html>
