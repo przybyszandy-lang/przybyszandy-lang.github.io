@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<title>DonkeyApp — Favourites</title>
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="robots" content="noindex,follow" />
+
+<style>
+body {
+margin:0;
+font-family: Arial, Helvetica, sans-serif;
+background:#efefef;
+color:#111;
+}
+
+.page {
+max-width:760px;
+margin:0 auto;
+padding:16px;
+}
+
+.backButton {
+display:inline-block;
+margin-bottom:12px;
+padding:12px 14px;
+background:#fff;
+border:1px solid #e2e2e2;
+border-radius:12px;
+color:#111;
+text-decoration:none;
+font-weight:600;
+}
+
+.headerCard,
+.card {
+background:#fff;
+border:1px solid #e2e2e2;
+border-radius:14px;
+padding:14px;
+margin-bottom:12px;
+}
+
+.title {
+font-size:24px;
+font-weight:700;
+margin:0 0 4px 0;
+}
+
+.subtitle {
+font-size:14px;
+color:#666;
+margin:0;
+}
+
+.jokeText {
+font-size:16px;
+line-height:1.5;
+white-space:pre-wrap;
+}
+
+.smallNote {
+text-align:center;
+color:#666;
+padding:20px 0;
+}
+</style>
+</head>
+
+<body>
+
+<div class="page">
+
+<a class="backButton" href="/">← Back</a>
+
+<div class="headerCard">
+<h1 class="title">Favourites</h1>
+<p id="favCount" class="subtitle">0 jokes</p>
+</div>
+
+<div id="jokesList"></div>
+
+<div id="emptyState" class="smallNote" style="display:none;">
+No favourites yet.
+</div>
+
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+<script>
+document.addEventListener("DOMContentLoaded", async () => {
+
+const FAVOURITES_KEY = "donkey:favourites:v1";
+
+const favCount = document.getElementById("favCount");
+const jokesList = document.getElementById("jokesList");
+const emptyState = document.getElementById("emptyState");
+
+function getFavourites() {
+try {
+return JSON.parse(localStorage.getItem(FAVOURITES_KEY) || "[]");
+} catch {
+return [];
+}
+}
+
+const favouriteIds = getFavourites();
+
+if (!favouriteIds.length) {
+emptyState.style.display = "block";
+return;
+}
+
+if (!window.supabase || !window.supabase.createClient) {
+emptyState.textContent = "Failed to load.";
+emptyState.style.display = "block";
+return;
+}
+
+const { createClient } = window.supabase;
+
+const client = createClient(
+"https://mknsvxajrvdlwqywvlrf.supabase.co",
+"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo"
+);
+
+try {
+
+const { data, error } = await client
+.from("jokes")
+.select("id, content")
+.in("id", favouriteIds);
+
+if (error) throw error;
+
+const rows = Array.isArray(data) ? data : [];
+
+favCount.textContent =
+rows.length === 1 ? "1 joke" : rows.length + " jokes";
+
+if (!rows.length) {
+emptyState.style.display = "block";
+return;
+}
+
+rows.forEach((item) => {
+
+const card = document.createElement("div");
+card.className = "card";
+
+const jokeText = document.createElement("div");
+jokeText.className = "jokeText";
+jokeText.textContent = item.content || "";
+
+card.appendChild(jokeText);
+jokesList.appendChild(card);
+
+});
+
+} catch (e) {
+
+emptyState.textContent = "Failed to load favourites.";
+emptyState.style.display = "block";
+
+}
+
+});
+</script>
+
+</body>
+</html>
