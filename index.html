@@ -252,8 +252,20 @@
   flex-wrap: wrap;
 }
 
+.cookieTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
 .cookieText {
   font-size: 14px;
+  line-height: 1.5;
+}
+
+.cookieText a {
+  color: var(--link);
+  font-weight: 600;
 }
 
 .cookieButtons button {
@@ -1022,14 +1034,25 @@
 
 <div id="cookieConsent" class="cookieConsent">
   <div class="cookieInner">
+
+    <div class="cookieTitle">
+      Privacy Choices
+    </div>
+
     <div class="cookieText">
-      We use cookies for analytics and advertising.
+      We and our partners use cookies and similar technologies to store and/or access information on your device. 
+      This helps us improve the service and show relevant content and advertising.
+      See our 
+      <a href="privacy.html" target="_blank">Privacy Policy</a> 
+      and 
+      <a href="cookies.html" target="_blank">Cookie Policy</a>.
     </div>
 
     <div class="cookieButtons">
-      <button id="cookieAccept">Accept</button>
-      <button id="cookieReject">Reject</button>
+      <button id="cookieAccept">Accept All</button>
+      <button id="cookieReject">Reject All</button>
     </div>
+
   </div>
 </div>
 
