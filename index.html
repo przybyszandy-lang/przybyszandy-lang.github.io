@@ -75,7 +75,7 @@
       --danger-text: #a40000;
       --shadow: 0 4px 14px rgba(0,0,0,0.06);
       --header-height: 72px;
-      --bottom-gap: 110px;
+      --bottom-gap: 160px;
       --desktop-side-width: 170px;
       --feed-width: 760px;
     }
@@ -157,6 +157,42 @@
       box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
     }
 
+    #legalBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+  z-index: 10000;
+  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
+}
+
+.legalInner {
+  max-width: 980px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.legalLinks {
+  display: flex;
+  gap: 12px;
+  font-size: 13px;
+}
+
+.legalLinks a {
+  color: var(--link);
+}
+
+.legalText {
+  font-size: 12px;
+  color: var(--muted);
+}
+
     .installBannerInner {
       max-width: 980px;
       margin: 0 auto;
@@ -192,6 +228,46 @@
   font-size: 18px;
   text-decoration: none;
   color: var(--text);
+}
+
+    .cookieConsent {
+  position: fixed;
+  bottom: 60px;
+  left: 0;
+  right: 0;
+  z-index: 10001;
+  display: none;
+}
+
+.cookieInner {
+  max-width: 980px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 12px;
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.cookieText {
+  font-size: 14px;
+}
+
+.cookieButtons button {
+  border: 1px solid var(--border);
+  background: #fff;
+  padding: 6px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+#cookieAccept {
+  background: var(--blue);
+  color: #fff;
+  border: none;
 }
 
     .storeBadge {
@@ -889,6 +965,21 @@
 
   <div id="copyToast"></div>
 
+<div id="legalBar">
+  <div class="legalInner">
+    <div class="legalLinks">
+      <a href="conditions.html">Terms</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="cookies.html">Cookies</a>
+      <a href="guidelines.html">Guidelines</a>
+    </div>
+
+    <div class="legalText">
+      © DonkeyApp
+    </div>
+  </div>
+</div>
+
   <div id="reportModal" class="modalOverlay">
     <div class="modalSheet">
       <h2 class="modalTitle" id="reportTitle">Report joke</h2>
@@ -928,6 +1019,19 @@
   </div>
 
   <div id="appVersion" style="position:fixed; right:10px; bottom:8px; font-size:12px; opacity:0.35; z-index:9999;"></div>
+
+<div id="cookieConsent" class="cookieConsent">
+  <div class="cookieInner">
+    <div class="cookieText">
+      We use cookies for analytics and advertising.
+    </div>
+
+    <div class="cookieButtons">
+      <button id="cookieAccept">Accept</button>
+      <button id="cookieReject">Reject</button>
+    </div>
+  </div>
+</div>
 
   <script src="/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1759,5 +1863,27 @@
       }
     })();
   </script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+const consent = localStorage.getItem("donkey_cookie");
+
+if(!consent){
+  document.getElementById("cookieConsent").style.display = "block";
+}
+
+document.getElementById("cookieAccept").onclick = function(){
+  localStorage.setItem("donkey_cookie","accepted");
+  document.getElementById("cookieConsent").style.display = "none";
+}
+
+document.getElementById("cookieReject").onclick = function(){
+  localStorage.setItem("donkey_cookie","rejected");
+  document.getElementById("cookieConsent").style.display = "none";
+}
+
+});
+</script>
+
 </body>
 </html>
