@@ -281,6 +281,52 @@
   color: #fff;
   border: none;
 }
+    .contentNotice {
+  position: fixed;
+  bottom: 180px;
+  left: 0;
+  right: 0;
+  z-index: 10002;
+  display: none;
+}
+
+.contentInner {
+  max-width: 980px;
+  margin: 0 auto;
+  background: #fff;
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.contentTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+.contentText {
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.contentText a {
+  color: var(--link);
+  font-weight: 600;
+}
+
+.contentButtons {
+  margin-top: 10px;
+}
+
+#contentAccept {
+  background: var(--blue);
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 8px;
+  cursor: pointer;
+}
 
     .storeBadge {
       height: 46px;
@@ -1055,6 +1101,29 @@
 
   </div>
 </div>
+<div id="contentNotice" class="contentNotice">
+  <div class="contentInner">
+
+    <div class="contentTitle">
+      Entertainment Notice
+    </div>
+
+    <div class="contentText">
+      DonkeyApp is a humour platform created for entertainment purposes.
+      Some content may be considered offensive or controversial by some viewers.
+      All content is intended as humour and should not be taken seriously.
+      Please refer to our 
+      <a href="conditions.html" target="_blank">Terms & Conditions</a> 
+      and 
+      <a href="guidelines.html" target="_blank">Community Guidelines</a>.
+    </div>
+
+    <div class="contentButtons">
+      <button id="contentAccept">I Understand</button>
+    </div>
+
+  </div>
+</div>  
 
   <script src="/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1903,6 +1972,23 @@ document.getElementById("cookieAccept").onclick = function(){
 document.getElementById("cookieReject").onclick = function(){
   localStorage.setItem("donkey_cookie","rejected");
   document.getElementById("cookieConsent").style.display = "none";
+}
+
+});
+</script>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+const contentSeen = localStorage.getItem("donkey_content_notice");
+
+if(!contentSeen){
+  document.getElementById("contentNotice").style.display = "block";
+}
+
+document.getElementById("contentAccept").onclick = function(){
+  localStorage.setItem("donkey_content_notice","seen");
+  document.getElementById("contentNotice").style.display = "none";
 }
 
 });
