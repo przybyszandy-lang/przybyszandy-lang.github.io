@@ -30,11 +30,18 @@
     content="A simple multi-language joke feed."
   />
   <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
-
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-F63ZRL5GBH"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
+
+    gtag("consent", "default", {
+      ad_storage: "denied",
+      analytics_storage: "denied",
+      ad_user_data: "denied",
+      ad_personalization: "denied"
+    });
+
     gtag("js", new Date());
     gtag("config", "G-F63ZRL5GBH");
   </script>
@@ -1944,40 +1951,53 @@ and
 document.addEventListener("DOMContentLoaded", function(){
 
 const consent = localStorage.getItem("donkey_cookie");
+const cookieBox = document.getElementById("cookieConsent");
+const acceptBtn = document.getElementById("cookieAccept");
+const rejectBtn = document.getElementById("cookieReject");
 
-if(!consent){
-  document.getElementById("cookieConsent").style.display = "block";
+if (consent === "accepted") {
+  gtag("consent", "update", {
+    ad_storage: "granted",
+    analytics_storage: "granted",
+    ad_user_data: "granted",
+    ad_personalization: "granted"
+  });
+} else if (consent === "rejected") {
+  gtag("consent", "update", {
+    ad_storage: "denied",
+    analytics_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied"
+  });
+} else {
+  cookieBox.style.display = "block";
 }
 
-document.getElementById("cookieAccept").onclick = function(){
+acceptBtn.onclick = function(){
   localStorage.setItem("donkey_cookie","accepted");
-  document.getElementById("cookieConsent").style.display = "none";
-}
+  gtag("consent", "update", {
+    ad_storage: "granted",
+    analytics_storage: "granted",
+    ad_user_data: "granted",
+    ad_personalization: "granted"
+  });
+  cookieBox.style.display = "none";
+};
 
-document.getElementById("cookieReject").onclick = function(){
+rejectBtn.onclick = function(){
   localStorage.setItem("donkey_cookie","rejected");
-  document.getElementById("cookieConsent").style.display = "none";
-}
+  gtag("consent", "update", {
+    ad_storage: "denied",
+    analytics_storage: "denied",
+    ad_user_data: "denied",
+    ad_personalization: "denied"
+  });
+  cookieBox.style.display = "none";
+};
 
 });
 </script>
 
-<script>
-document.addEventListener("DOMContentLoaded", function(){
-
-const contentSeen = localStorage.getItem("donkey_content_notice");
-
-if(!contentSeen){
-  document.getElementById("contentNotice").style.display = "block";
-}
-
-document.getElementById("contentAccept").onclick = function(){
-  localStorage.setItem("donkey_content_notice","seen");
-  document.getElementById("contentNotice").style.display = "none";
-}
-
-});
-</script>
 
 </body>
 </html>
