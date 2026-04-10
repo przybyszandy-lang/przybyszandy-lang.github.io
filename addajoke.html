@@ -48,10 +48,6 @@
       box-sizing: border-box;
     }
 
-    html {
-      scroll-behavior: smooth;
-    }
-
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
@@ -242,10 +238,9 @@
     textarea,
     select {
       width: 100%;
-      box-sizing: border-box;
       font-family: inherit;
       font-size: 15px;
-      padding: 14px 14px;
+      padding: 14px;
       border: 1px solid var(--border);
       border-radius: 14px;
       background: #fff;
@@ -283,7 +278,7 @@
       border: 0;
       border-radius: 14px;
       background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-      color: #000;
+      color: #fff;
       font-weight: 700;
       font-size: 16px;
       padding: 14px 22px;
@@ -426,9 +421,7 @@
         <div class="hero-grid">
           <div class="hero-left">
             <h1>Add a Joke</h1>
-            <p>
-              Quality over quantity. Funny beats noisy.
-            </p>
+            <p>Quality over quantity. Funny beats noisy.</p>
             <p>
               Send us something genuinely good, weird, sharp, silly, or gloriously unnecessary.
               We would rather have one strong joke than fifty lazy ones.
@@ -475,6 +468,7 @@
           <form id="addJokeForm">
             <label for="jokeContent">Your joke</label>
             <textarea id="jokeContent" placeholder="Type your joke here..." required></textarea>
+
             <div class="helper">
               Give it your best version. Clean formatting helps. Strong punchline helps even more.
             </div>
@@ -560,7 +554,7 @@
       messageDiv.style.color = isError ? 'var(--error)' : 'var(--success)';
     }
 
-    const SUBMITTER_TOKEN_KEY = "donkey_submitter_token_v1";
+    const SUBMITTER_TOKEN_KEY = 'donkey_submitter_token_v1';
 
     function getOrCreateSubmitterToken() {
       let token = localStorage.getItem(SUBMITTER_TOKEN_KEY);
@@ -571,8 +565,8 @@
         const bytes = new Uint8Array(16);
         crypto.getRandomValues(bytes);
         token = Array.from(bytes)
-          .map((b) => b.toString(16).padStart(2, "0"))
-          .join("");
+          .map((b) => b.toString(16).padStart(2, '0'))
+          .join('');
       } else {
         token = (
           Date.now().toString(16) +
@@ -586,16 +580,16 @@
     }
 
     async function getSubmissionCount(token) {
-      const { data, error } = await supabase.rpc("get_submission_count", {
+      const { data, error } = await supabase.rpc('get_submission_count', {
         p_submitter_token: token,
       });
 
       if (error) {
-        console.log("Count RPC failed:", error);
+        console.log('Count RPC failed:', error);
         return null;
       }
 
-      return typeof data === "number" ? data : null;
+      return typeof data === 'number' ? data : null;
     }
 
     form.addEventListener('submit', async (event) => {
@@ -615,7 +609,7 @@
       setMessage('Submitting...');
 
       if (window.lastSubmit && Date.now() - window.lastSubmit < 5000) {
-        setMessage("Please wait a few seconds before submitting another joke.", true);
+        setMessage('Please wait a few seconds before submitting another joke.', true);
         submitBtn.disabled = false;
         return;
       }
@@ -649,15 +643,15 @@
 
       const count = await getSubmissionCount(submitterToken);
 
-      let msg = `Thank you. Your joke has been submitted for review and will appear as Anonymous if approved.`;
+      let msg = 'Thank you. Your joke has been submitted for review and will appear as Anonymous if approved.';
 
-      if (typeof count === "number" && count > 80) {
+      if (typeof count === 'number' && count > 80) {
         msg += `\n\nSubmissions from this device: ${count} / 100`;
 
         if (count >= 95) {
-          msg += `\n\nYou are very close to the limit. If you are a real user and not a bot, send an email to andy@donkeyapp.com and your limit can be increased.`;
+          msg += '\n\nYou are very close to the limit. If you are a real user and not a bot, send an email to andy@donkeyapp.com and your limit can be increased.';
         } else {
-          msg += `\n\nYou’re approaching the limit. If you are a real user and not a bot, send an email to andy@donkeyapp.com and your limit can be increased.`;
+          msg += '\n\nYou’re approaching the limit. If you are a real user and not a bot, send an email to andy@donkeyapp.com and your limit can be increased.';
         }
       }
 
