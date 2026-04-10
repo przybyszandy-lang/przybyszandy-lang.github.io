@@ -2,6 +2,676 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <title>Add a Joke — Donkey App</title>
+  <meta
+    name="description"
+    content="Submit a joke to Donkey App. Web submissions are anonymous and reviewed before appearing in the feed."
+  />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.donkeyapp.com/addajoke.html" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.donkeyapp.com/addajoke.html" />
+  <meta property="og:title" content="Add a Joke — Donkey App" />
+  <meta
+    property="og:description"
+    content="Send your joke to Donkey App. Funny is good. Spam is not."
+  />
+  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Add a Joke — Donkey App" />
+  <meta
+    name="twitter:description"
+    content="Submit a joke to Donkey App. Web submissions are anonymous and reviewed before appearing in the feed."
+  />
+  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1e2430;
+      --muted: #5c667a;
+      --accent: #0b3d91;
+      --accent-2: #1f5fd1;
+      --border: #dfe5f0;
+      --shadow: 0 10px 30px rgba(11, 61, 145, 0.08);
+      --max: 1180px;
+      --success: #137333;
+      --error: #b42318;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .topbar {
+      width: 100%;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 20px 32px;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+    }
+
+    .hero-left {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      padding: 40px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .hero-left p {
+      margin: 0 0 16px;
+      font-size: 17px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-right {
+      padding: 40px 34px;
+    }
+
+    .hero-right h2 {
+      margin: 0 0 16px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .hero-right p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px 28px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+    }
+
+    .section h3 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .note-box {
+      background: linear-gradient(135deg, #eef4ff 0%, #f7fbff 100%);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-top: 10px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .form-card {
+      background: #f9fbff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-top: 22px;
+    }
+
+    label {
+      display: block;
+      font-size: 14px;
+      font-weight: 700;
+      margin-top: 16px;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+
+    textarea,
+    select {
+      width: 100%;
+      box-sizing: border-box;
+      font-family: inherit;
+      font-size: 15px;
+      padding: 14px 14px;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 190px;
+      resize: vertical;
+      line-height: 1.55;
+    }
+
+    textarea:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(31, 95, 209, 0.12);
+    }
+
+    .helper {
+      margin-top: 8px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .submit-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin-top: 22px;
+    }
+
+    button {
+      border: 0;
+      border-radius: 14px;
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      font-weight: 700;
+      font-size: 16px;
+      padding: 14px 22px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(11, 61, 145, 0.14);
+    }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    #message {
+      margin-top: 16px;
+      font-size: 14px;
+      min-height: 18px;
+      white-space: pre-wrap;
+      font-weight: 700;
+    }
+
+    .agreement {
+      margin-top: 20px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .download-box {
+      margin-top: 22px;
+      padding: 18px 20px;
+      border-radius: 18px;
+      background: #fff;
+      border: 1px solid var(--border);
+    }
+
+    .download-box strong {
+      display: block;
+      margin-bottom: 8px;
+      color: var(--text);
+      font-size: 16px;
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 18px 20px 46px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left h1 {
+        font-size: 34px;
+      }
+
+      .hero-right h2,
+      .section h3 {
+        font-size: 24px;
+      }
+
+      .hero-left,
+      .hero-right,
+      .section-card {
+        padding: 28px 22px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand {
+        font-size: 18px;
+      }
+
+      .nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-left h1 {
+        font-size: 30px;
+      }
+
+      .submit-row {
+        align-items: stretch;
+      }
+
+      button {
+        width: 100%;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="icon-192.png" alt="Donkey App logo" />
+        <span>Donkey App</span>
+      </div>
+
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="favourites.html">Favourites</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="guidelines.html">Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <h1>Add a Joke</h1>
+            <p>
+              Quality over quantity. Funny beats noisy.
+            </p>
+            <p>
+              Send us something genuinely good, weird, sharp, silly, or gloriously unnecessary.
+              We would rather have one strong joke than fifty lazy ones.
+            </p>
+
+            <div class="badge-row">
+              <span class="badge">Quality First</span>
+              <span class="badge">Reviewed Before Posting</span>
+              <span class="badge">Anonymous On Web</span>
+              <span class="badge">App For Accounts</span>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <h2>How web submission works</h2>
+            <p>
+              Jokes sent from this page are submitted for review and added from the website as <strong>Anonymous</strong>.
+            </p>
+            <p>
+              That means there is no name field here and no account linking on the website just yet.
+              If you want your jokes attached to an account, use the mobile app once installed.
+            </p>
+            <p>
+              Keep it funny, keep it readable, and keep it within the rules.
+              Comedy is welcome. Spam, abuse, hate, and personal data are not.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-card">
+        <h3>Send your joke</h3>
+        <p>
+          Use the form below to send your joke for moderation. Good jokes matter more than fast jokes.
+        </p>
+
+        <div class="note-box">
+          Web jokes are submitted anonymously. If you want named submissions and account features, use the app.
+        </div>
+
+        <div class="form-card">
+          <form id="addJokeForm">
+            <label for="jokeContent">Your joke</label>
+            <textarea id="jokeContent" placeholder="Type your joke here..." required></textarea>
+            <div class="helper">
+              Give it your best version. Clean formatting helps. Strong punchline helps even more.
+            </div>
+
+            <label for="jokeLanguage">Language</label>
+            <select id="jokeLanguage" aria-label="Select joke language">
+              <option value="English" selected>English</option>
+              <option value="Polski">Polski</option>
+              <option value="Deutsch">Deutsch</option>
+              <option value="Français">Français</option>
+              <option value="Español">Español</option>
+              <option value="Italiano">Italiano</option>
+              <option value="Nederlands">Nederlands</option>
+              <option value="Português">Português</option>
+              <option value="Svenska">Svenska</option>
+              <option value="Dansk">Dansk</option>
+              <option value="Suomi">Suomi</option>
+              <option value="Norsk">Norsk</option>
+              <option value="Čeština">Čeština</option>
+              <option value="Slovenčina">Slovenčina</option>
+              <option value="Magyar">Magyar</option>
+              <option value="Română">Română</option>
+              <option value="Hrvatski">Hrvatski</option>
+              <option value="Slovenščina">Slovenščina</option>
+              <option value="Eesti">Eesti</option>
+              <option value="Latviešu">Latviešu</option>
+            </select>
+
+            <div class="submit-row">
+              <button id="submitBtn" type="submit">Submit joke</button>
+            </div>
+          </form>
+
+          <div id="message"></div>
+
+          <div class="agreement">
+            By submitting a joke, you agree to the
+            <a href="guidelines.html">Community Guidelines</a>,
+            <a href="terms.html">Terms &amp; Conditions</a>,
+            and
+            <a href="privacy.html">Privacy Policy</a>.
+          </div>
+
+          <div class="download-box">
+            <strong>Want your jokes linked to an account?</strong>
+            Account-based joke posting is not available on the website yet. For that, use the app when installed.
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-card">
+      <div>© 2026 Donkey App. Comedy first.</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="guidelines.html">Community Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <script type="module">
+    import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
+
+    const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
+    const supabaseKey = 'sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw';
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    const form = document.getElementById('addJokeForm');
+    const jokeContentInput = document.getElementById('jokeContent');
+    const jokeLanguageSelect = document.getElementById('jokeLanguage');
+    const messageDiv = document.getElementById('message');
+    const submitBtn = document.getElementById('submitBtn');
+
+    function setMessage(text, isError = false) {
+      messageDiv.textContent = text;
+      messageDiv.style.color = isError ? 'var(--error)' : 'var(--success)';
+    }
+
+    const SUBMITTER_TOKEN_KEY = "donkey_submitter_token_v1";
+
+    function getOrCreateSubmitterToken() {
+      let token = localStorage.getItem(SUBMITTER_TOKEN_KEY);
+
+      if (token && token.length >= 16) return token;
+
+      if (window.crypto && crypto.getRandomValues) {
+        const bytes = new Uint8Array(16);
+        crypto.getRandomValues(bytes);
+        token = Array.from(bytes)
+          .map((b) => b.toString(16).padStart(2, "0"))
+          .join("");
+      } else {
+        token = (
+          Date.now().toString(16) +
+          Math.random().toString(16).slice(2) +
+          Math.random().toString(16).slice(2)
+        ).slice(0, 32);
+      }
+
+      localStorage.setItem(SUBMITTER_TOKEN_KEY, token);
+      return token;
+    }
+
+    async function getSubmissionCount(token) {
+      const { data, error } = await supabase.rpc("get_submission_count", {
+        p_submitter_token: token,
+      });
+
+      if (error) {
+        console.log("Count RPC failed:", error);
+        return null;
+      }
+
+      return typeof data === "number" ? data : null;
+    }
+
+    form.addEventListener('submit', async (event) => {
+      event.preventDefault();
+      setMessage('');
+
+      const content = jokeContentInput.value.trim();
+      const language = jokeLanguageSelect.value;
+      const submitterToken = getOrCreateSubmitterToken();
+
+      if (!content) {
+        setMessage('Please type a joke before submitting.', true);
+        return;
+      }
+
+      submitBtn.disabled = true;
+      setMessage('Submitting...');
+
+      if (window.lastSubmit && Date.now() - window.lastSubmit < 5000) {
+        setMessage("Please wait a few seconds before submitting another joke.", true);
+        submitBtn.disabled = false;
+        return;
+      }
+
+      window.lastSubmit = Date.now();
+
+      const payload = [{
+        content: content,
+        language: language,
+        added_by_email: null,
+        submitter_token: submitterToken,
+        is_new: true,
+        is_visible: false,
+        is_flagged: false
+      }];
+
+      const { error } = await supabase
+        .from('jokes')
+        .insert(payload);
+
+      submitBtn.disabled = false;
+
+      if (error) {
+        console.error('Supabase insert error:', error);
+        setMessage(
+          `Error saving joke:\n${error.message}\n${error.details ?? ''}`.trim(),
+          true
+        );
+        return;
+      }
+
+      const count = await getSubmissionCount(submitterToken);
+
+      let msg = `Thank you. Your joke has been submitted for review and will appear as Anonymous if approved.`;
+
+      if (typeof count === "number" && count > 80) {
+        msg += `\n\nSubmissions from this device: ${count} / 100`;
+
+        if (count >= 95) {
+          msg += `\n\nYou are very close to the limit. If you are a real user and not a bot, send an email to andy@donkeyapp.com and your limit can be increased.`;
+        } else {
+          msg += `\n\nYou’re approaching the limit. If you are a real user and not a bot, send an email to andy@donkeyapp.com and your limit can be increased.`;
+        }
+      }
+
+      setMessage(msg);
+
+      jokeContentInput.value = '';
+      jokeLanguageSelect.value = 'English';
+    });
+  </script>
+</body>
+</html><!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
   <title>Add a Joke</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <style>
