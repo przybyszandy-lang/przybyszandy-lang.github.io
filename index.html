@@ -451,15 +451,9 @@
       white-space: pre-wrap;
     }
 
-    .feedMeta {
-      margin-bottom: 10px;
-      color: var(--muted);
-      font-size: 14px;
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-    }
+.feedMeta {
+  display: none;
+}
 
     #feed {
       display: flex;
@@ -770,27 +764,61 @@
         height: 42px;
       }
 
-      .card {
-        padding: 13px;
-      }
+@media (max-width: 640px) {
+  .topBarInner {
+    gap: 8px;
+  }
 
-      .cardFooter {
-        grid-template-columns: 1fr;
-      }
+  .logoWrap {
+    width: 38px;
+    min-width: 38px;
+    height: 38px;
+  }
 
-      .footerDivider {
-        display: none;
-      }
+  .logoWrap img {
+    width: 34px;
+    height: 34px;
+  }
 
-      .footerRight {
-        justify-content: flex-end;
-        border-top: 1px solid #e0e0e0;
-      }
+  .searchWrap {
+    height: 42px;
+  }
 
-      #copyToast {
-        bottom: 96px;
-      }
-    }
+  .mobileLangWrap {
+    min-width: 108px;
+    height: 42px;
+  }
+
+  .card {
+    padding: 13px;
+  }
+
+  .cardFooter {
+    grid-template-columns: 1fr;
+  }
+
+  .footerLeft {
+    display: flex;
+    justify-content: center;
+  }
+
+  .ratingRow {
+    justify-content: center;
+  }
+
+  .footerDivider {
+    display: none;
+  }
+
+  .footerRight {
+    justify-content: center;
+    border-top: 1px solid #e0e0e0;
+  }
+
+  #copyToast {
+    bottom: 96px;
+  }
+}
   </style>
 </head>
 
@@ -1462,7 +1490,7 @@ let currentFeedDay = getLocalFeedDay();
         copyBtn.type = "button";
         copyBtn.className = "iconBtn";
         copyBtn.title = safeText("copy_joke", "Copy joke");
-        copyBtn.textContent = "⧉";
+        copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect><rect x="5" y="5" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect></svg>';
         copyBtn.addEventListener("click", () => onCopyJoke(item.content));
 
         const reportBtn = document.createElement("button");
