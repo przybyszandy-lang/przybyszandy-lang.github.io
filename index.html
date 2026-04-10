@@ -516,12 +516,13 @@
       width: 1px;
     }
 
-    .footerRight {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px;
-    }
+.footerRight {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  padding: 8px;
+}
 
     .ratingRow {
       display: flex;
@@ -538,19 +539,30 @@
       font-weight: 600;
     }
 
-    .ratingEmojiBtn,
-    .iconBtn {
-      border: 1px solid #e3e3e3;
-      background: #f3f3f3;
-      border-radius: 10px;
-      cursor: pointer;
-      min-width: 38px;
-      height: 34px;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      line-height: 1;
-    }
+.ratingEmojiBtn,
+.iconBtn {
+  border: 1px solid #e5e5e5;
+  background: #f8f8f8;
+  border-radius: 12px;
+  cursor: pointer;
+  min-width: 38px;
+  height: 34px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  transition: background 0.15s ease, transform 0.05s ease;
+}
+    
+    .ratingEmojiBtn:hover,
+.iconBtn:hover {
+  background: #eaeaea;
+}
+
+.ratingEmojiBtn:active,
+.iconBtn:active {
+  transform: scale(0.96);
+}
 
     .desktopFavLink {
   width: 100%;
@@ -567,14 +579,24 @@
   gap: 8px;
 }
 
-    .ratingEmojiBtn {
-      font-size: 21px;
-    }
+.ratingEmojiBtn {
+  font-size: 20px;
+  width: 38px;
+  height: 34px;
+}
 
-    .iconBtn {
-      font-size: 18px;
-      color: #333;
-    }
+.iconBtn {
+  font-size: 18px;
+  color: #333;
+  width: 38px;
+  height: 34px;
+  padding: 0;
+}
+
+.iconBtn svg {
+  width: 18px;
+  height: 18px;
+}
 
     .iconBtn.activeFav {
       color: #d32f2f;
@@ -800,6 +822,7 @@
   .footerLeft {
     display: flex;
     justify-content: center;
+    padding-bottom: 6px;
   }
 
   .ratingRow {
