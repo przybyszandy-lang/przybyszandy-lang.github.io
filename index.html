@@ -923,6 +923,7 @@
       <a href="cookies.html">Cookies</a>
       <a href="guidelines.html">Guidelines</a>
       <a href="about.html">About</a>
+      <a href="contact.html">Contact Us</a>
     </div>
 
     <div class="legalText">
@@ -1016,6 +1017,7 @@ and
       const RECENT_LIMIT = 20;
       const FAVOURITES_KEY = "donkey:favourites:v1";
       const VOTES_KEY = "donkey:votes:v1";
+      const FEED_DAY_KEY = "donkey:feed-day:v1";
 
       const ratingOptions = [
         { vote: "bad", emoji: "😕" },
@@ -1076,6 +1078,15 @@ and
       let favouriteIds = new Set();
       let votesByJokeId = {};
       let reportedIds = new Set();
+      function getLocalFeedDay() {
+  const now = new Date();
+  const year = now.getFullYear();
+  const month = String(now.getMonth() + 1).padStart(2, "0");
+  const day = String(now.getDate()).padStart(2, "0");
+  return year + "-" + month + "-" + day;
+}
+
+let currentFeedDay = getLocalFeedDay();
 
       if (!window.supabase || !window.supabase.createClient) {
         showError("Supabase library did not load. Check your internet connection or the CDN link.");
@@ -1699,12 +1710,43 @@ and
       reportSubmitButton.addEventListener("click", submitReport);
       reportCloseButton.addEventListener("click", closeReportModal);
 
-      window.addEventListener("scroll", maybeLoadMoreOnScroll, { passive: true });
+window.addEventListener("scroll", maybeLoadMoreOnScroll, { passive: true });
 
-      loadLocalState();
-      updateSearchUi();
-      applyStaticTranslations();
-      loadInitial();
+document.addEventListener("visibilitychange", () => {
+  if (document.visibilityState !== "visible") return;
+
+  const latestFeedDay = getLocalFeedDay();
+  const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
+
+  if (savedFeedDay !== latestFeedDay) {
+    currentFeedDay = latestFeedDay;
+    localStorage.setItem(FEED_DAY_KEY, latestFeedDay);
+    loadInitial();
+  }
+});
+
+setInterval(() => {
+  const latestFeedDay = getLocalFeedDay();
+  const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
+
+  if (savedFeedDay !== latestFeedDay) {
+    currentFeedDay = latestFeedDay;
+    localStorage.setItem(FEED_DAY_KEY, latestFeedDay);
+    loadInitial();
+  }
+}, 60000);      
+
+loadLocalState();
+updateSearchUi();
+applyStaticTranslations();
+
+const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
+
+if (savedFeedDay !== currentFeedDay) {
+  localStorage.setItem(FEED_DAY_KEY, currentFeedDay);
+}
+
+loadInitial();
     });
   </script>
 
