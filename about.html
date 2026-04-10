@@ -1,0 +1,511 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>About Donkey App</title>
+
+  <meta
+    name="description"
+    content="Learn what Donkey App is about, why it was created, and where the project is heading next."
+  />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.donkeyapp.com/about.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.donkeyapp.com/about.html" />
+  <meta property="og:title" content="About Donkey App" />
+  <meta
+    property="og:description"
+    content="A comedy-first platform built for jokes, laughs, memes, satire, and creators who don’t take life too seriously."
+  />
+  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="About Donkey App" />
+  <meta
+    name="twitter:description"
+    content="Find out why Donkey App was created and where this comedy-first platform is heading next."
+  />
+  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1e2430;
+      --muted: #5c667a;
+      --accent: #0b3d91;
+      --accent-2: #1f5fd1;
+      --border: #dfe5f0;
+      --shadow: 0 10px 30px rgba(11, 61, 145, 0.08);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .topbar {
+      width: 100%;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 20px 32px;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 0;
+    }
+
+    .hero-left {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      padding: 40px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .hero-left p {
+      margin: 0 0 16px;
+      font-size: 17px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-right {
+      padding: 40px 34px;
+    }
+
+    .hero-right h2 {
+      margin: 0 0 16px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .hero-right p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px 28px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+    }
+
+    .section h3 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+    }
+
+    .mini-card {
+      background: #f9fbff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+    }
+
+    .mini-card h4 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .mini-card p {
+      margin: 0;
+    }
+
+    .quote-box {
+      background: linear-gradient(135deg, #eef4ff 0%, #f7fbff 100%);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-top: 10px;
+      font-size: 18px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 18px 20px 46px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid,
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left h1 {
+        font-size: 34px;
+      }
+
+      .hero-right h2,
+      .section h3 {
+        font-size: 24px;
+      }
+
+      .hero-left,
+      .hero-right,
+      .section-card {
+        padding: 28px 22px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand {
+        font-size: 18px;
+      }
+
+      .nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-left h1 {
+        font-size: 30px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="icon-192.png" alt="Donkey App logo" />
+        <span>Donkey App</span>
+      </div>
+
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="favourites.html">Favourites</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="guidelines.html">Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <h1>About Donkey App</h1>
+            <p>
+              Comedy first. Drama later. Or preferably never.
+            </p>
+            <p>
+              Donkey App is a place built for jokes, laughs, ridiculous ideas,
+              funny people, and the sort of humour that makes life feel a bit less heavy.
+            </p>
+
+            <div class="badge-row">
+              <span class="badge">Jokes</span>
+              <span class="badge">Memes Soon</span>
+              <span class="badge">Comedy Creators</span>
+              <span class="badge">App Launching Soon</span>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <h2>Why this exists</h2>
+            <p>
+              Donkey App started with a very simple thought: why is it so hard to find a good,
+              user-friendly comedy website in English that just lets people enjoy humour without
+              burying everything under clutter, nonsense, and digital chaos?
+            </p>
+            <p>
+              I know a lot of jokes. I know people who know even more jokes. And at some point
+              the answer became obvious: stop looking for the perfect comedy platform and build one.
+            </p>
+            <p>
+              The world is serious enough already. News is serious. Work is serious. Bills are serious.
+              Group chats are occasionally serious for no good reason. Sometimes people simply need a place
+              to switch off, have a scroll, and laugh at something gloriously stupid.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-card">
+        <h3>What Donkey App is</h3>
+        <p>
+          Donkey App is a comedy-focused platform where people can share humour with other people.
+          That is the whole point. If someone has a funny joke, they can post it. If someone knows a great one,
+          they can share it. If someone has something silly, clever, ridiculous, sharp, absurd, or completely
+          unnecessary but genuinely funny, this is the kind of place where it belongs.
+        </p>
+        <p>
+          So while the site currently focuses mainly on jokes, the bigger idea is much broader:
+          a social platform built around comedy, where the content comes from the people using it,
+          and where the main purpose is not outrage, not ego, not doomscrolling, but laughter.
+        </p>
+        <p>
+          In other words, this is social media with a sense of humour.
+          Which already makes it more likeable than most social media.
+        </p>
+
+        <div class="quote-box">
+          Life is serious enough. Donkey App exists so people can relax a bit and have a good laugh.
+        </div>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-card">
+        <h3>Where it goes next</h3>
+        <p>
+          This is only the start. Right now the website is in its final stages of deployment,
+          and the mobile app is also in the final stretch, with launch expected around the middle of April 2026.
+        </p>
+        <p>
+          After that, the plan is to grow beyond text jokes into memes, funny pictures, satire,
+          grotesque humour, visual comedy, creator content, and eventually a much wider comedy ecosystem.
+          The long-term vision is to build a proper home for comedy creators and comedy fans:
+          a place where people can post funny content, build an audience, interact with users,
+          and maybe even promote stand-up events, shows, projects, or whatever funny madness they are working on next.
+        </p>
+        <p>
+          The mission is deliberately wide open. If it makes people laugh, smile, snort, wheeze,
+          or question what on earth they just looked at, it probably belongs somewhere in the future of Donkey App.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-card">
+        <h3>Humour, tone, and not taking life too seriously</h3>
+        <p>
+          Let’s be honest: humour is not always neat, tidy, and perfectly polished.
+          Sometimes it is clever. Sometimes it is silly. Sometimes it is a bit weird.
+          Sometimes it is cheeky. And yes, sometimes comedy wanders close to the edge, has a look over,
+          and comes back laughing.
+        </p>
+        <p>
+          That does not mean the goal is to harm anyone. The spirit behind Donkey App is comedy,
+          not hostility. It is meant to be funny. Not preachy. Not miserable. Not another place on the internet
+          where everyone behaves as if they are attending a board meeting during a thunderstorm.
+        </p>
+        <p>
+          If you can laugh, you will probably enjoy it here. If you cannot laugh unless a legal team approves the joke first,
+          this may not be your natural habitat.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-card">
+        <h3>How the business side works</h3>
+
+        <div class="two-col">
+          <div class="mini-card">
+            <h4>Right now</h4>
+            <p>
+              At the moment, Donkey App is operating in a non-corporate model while the platform is being built,
+              tested, improved, and prepared for launch. In plain English: it is still in build mode,
+              still being polished, and still being pushed toward the finish line.
+            </p>
+          </div>
+
+          <div class="mini-card">
+            <h4>Near future</h4>
+            <p>
+              In the near future, this will become a for-profit project. There are no free launches,
+              and there is very rarely such a thing as free comedy once a platform starts growing.
+              That said, the plan is not to hide the website or app behind a paywall.
+            </p>
+          </div>
+        </div>
+
+        <p style="margin-top: 18px;">
+          The idea is simple: keep the platform accessible and free to use, and support it through advertising.
+          So the joke is free. The laugh is free. The scroll is free. The business model, however, is not charity.
+        </p>
+        <p>
+          In other words, users should be able to enjoy Donkey App without paying to enter,
+          while the platform earns through ads rather than locking comedy behind a subscription wall.
+          That feels like the fairest balance: open access for users, a realistic model for growth,
+          and a future where the platform can actually keep running without pretending servers are powered by positive thoughts.
+        </p>
+      </div>
+    </section>
+
+    <section class="section">
+      <div class="section-card">
+        <h3>The mission</h3>
+        <p>
+          The mission of Donkey App is to build a central place for comedy online:
+          a place for jokes, memes, funny pictures, satire, creators, communities, events, and everything else that exists
+          for one noble purpose — making people laugh.
+        </p>
+        <p>
+          If the internet is going to eat everyone’s time anyway, it might as well be funny.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-card">
+      <div>© 2026 Donkey App. Comedy first.</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="guidelines.html">Community Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
