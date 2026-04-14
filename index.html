@@ -30,6 +30,7 @@
     content="A simple multi-language joke feed."
   />
   <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
+
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3866370568277471"
      crossorigin="anonymous"></script>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-F63ZRL5GBH"></script>
@@ -71,22 +72,25 @@
   <style>
     :root {
       --bg: #efefef;
+      --bg-soft: #f5f7fb;
       --card: #ffffff;
       --border: #e2e2e2;
-      --border-soft: #e8e8e8;
+      --border-soft: #dfe5f0;
       --text: #111111;
       --muted: #666666;
       --link: #2f71d3;
       --panel: #fafafa;
       --blue: #0b3d91;
+      --blue-2: #1f5fd1;
       --danger-bg: #fff4f4;
       --danger-border: #ffd2d2;
       --danger-text: #a40000;
-      --shadow: 0 4px 14px rgba(0,0,0,0.06);
-      --header-height: 72px;
-      --bottom-gap: 160px;
-      --desktop-side-width: 170px;
+      --shadow: 0 6px 18px rgba(0,0,0,0.07);
+      --header-height: 74px;
+      --desktop-left-width: 220px;
       --feed-width: 760px;
+      --desktop-right-width: 220px;
+      --max: 1240px;
     }
 
     * {
@@ -96,7 +100,7 @@
     html, body {
       margin: 0;
       padding: 0;
-      background: var(--bg);
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
       color: var(--text);
       font-family: Arial, Helvetica, sans-serif;
     }
@@ -125,7 +129,7 @@
       left: 50%;
       transform: translateX(-50%);
       width: min(520px, calc(100vw - 24px));
-      z-index: 10001;
+      z-index: 10003;
     }
 
     #updateBannerInner {
@@ -149,113 +153,64 @@
       cursor: pointer;
     }
 
-    #legalBar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: #ffffff;
-  border-top: 1px solid var(--border);
-  z-index: 10000;
-  padding: 8px 12px calc(8px + env(safe-area-inset-bottom));
-}
+    .cookieConsent {
+      position: fixed;
+      bottom: 18px;
+      left: 12px;
+      right: 12px;
+      z-index: 10002;
+      display: none;
+    }
 
-.legalInner {
-  max-width: 980px;
-  margin: 0 auto;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 8px;
-}
+    .cookieInner {
+      max-width: 980px;
+      margin: 0 auto;
+      background: #fff;
+      border: 1px solid var(--border);
+      padding: 12px;
+      border-radius: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
 
-.legalLinks {
-  display: flex;
-  gap: 12px;
-  font-size: 13px;
-}
+    .cookieTitle {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 6px;
+    }
 
-.legalLinks a {
-  color: var(--link);
-}
+    .cookieText {
+      font-size: 14px;
+      line-height: 1.55;
+    }
 
-.legalText {
-  font-size: 12px;
-  color: var(--muted);
-}
+    .cookieText a {
+      color: var(--link);
+      font-weight: 600;
+    }
 
-.mobileFavButton {
-  display: none;
-  height: 44px;
-  min-width: 44px;
-  align-items: center;
-  justify-content: center;
-  border: 1px solid var(--border);
-  background: var(--card);
-  border-radius: 12px;
-  font-size: 18px;
-  text-decoration: none;
-  color: var(--text);
-}
+    .cookieButtons {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
 
-.cookieConsent {
-  position: fixed;
-  bottom: 60px;
-  left: 0;
-  right: 0;
-  z-index: 10000;
-  display: none;
-}
+    .cookieButtons button {
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 8px 12px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
 
-.cookieInner {
-  max-width: 980px;
-  margin: 0 auto;
-  background: #fff;
-  border: 1px solid var(--border);
-  padding: 12px;
-  border-radius: 12px;
-  display: flex;
-  justify-content: space-between;
-  gap: 10px;
-  flex-wrap: wrap;
-}
-
-.cookieTitle {
-  font-size: 18px;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-.cookieText {
-  font-size: 14px;
-  line-height: 1.5;
-}
-
-.cookieText a {
-  color: var(--link);
-  font-weight: 600;
-}
-
-.cookieButtons button {
-  border: 1px solid var(--border);
-  background: #fff;
-  padding: 6px 12px;
-  border-radius: 8px;
-  cursor: pointer;
-}
-
-#cookieAccept {
-  background: var(--blue);
-  color: #fff;
-  border: none;
-}
-
-    .pageShell {
-      width: 100%;
-      min-height: 100vh;
-      padding-top: calc(var(--header-height) + 14px);
-      padding-bottom: var(--bottom-gap);
+    #cookieAccept {
+      background: var(--blue);
+      color: #fff;
+      border: none;
     }
 
     .topBar {
@@ -263,51 +218,70 @@
       top: 0;
       left: 0;
       right: 0;
-      height: var(--header-height);
-      background: rgba(239,239,239,0.96);
+      min-height: var(--header-height);
+      background: rgba(255,255,255,0.92);
       backdrop-filter: blur(10px);
       border-bottom: 1px solid var(--border-soft);
-      z-index: 9999;
+      z-index: 10001;
     }
 
     .topBarInner {
-      height: 100%;
-      max-width: 1200px;
+      max-width: var(--max);
       margin: 0 auto;
-      padding: 12px;
+      min-height: var(--header-height);
+      padding: 12px 20px;
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 14px;
+    }
+
+    .brandLink {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--blue);
+      font-weight: 700;
+      min-width: 0;
+      flex-shrink: 0;
     }
 
     .logoWrap {
       width: 42px;
       min-width: 42px;
       height: 42px;
-      border-radius: 12px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      background: transparent;
     }
 
     .logoWrap img {
-      width: 38px;
-      height: 38px;
-      object-fit: contain;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       display: block;
+      object-fit: cover;
+    }
+
+    .brandText {
+      font-size: 20px;
+      line-height: 1;
+      white-space: nowrap;
     }
 
     .searchWrap {
-      flex: 1;
+      width: 320px;
+      max-width: 100%;
       height: 44px;
       display: flex;
       align-items: center;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 12px;
+      border-radius: 14px;
       padding: 0 10px;
       min-width: 0;
+      box-shadow: 0 2px 8px rgba(11,61,145,0.04);
+      flex-shrink: 1;
     }
 
     .searchIcon {
@@ -315,6 +289,7 @@
       font-size: 18px;
       margin-right: 8px;
       line-height: 1;
+      flex-shrink: 0;
     }
 
     #searchInput {
@@ -335,36 +310,117 @@
       font-size: 16px;
       padding: 2px 4px;
       display: none;
+      flex-shrink: 0;
     }
 
-    .mobileLangWrap {
+    .desktopNav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-left: auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 14px;
+    }
+
+    .desktopNav a {
+      color: var(--text);
+    }
+
+    .desktopNav a:hover {
+      color: var(--blue);
+      text-decoration: underline;
+    }
+
+    .menuButton {
       display: none;
-      min-width: 118px;
-      height: 44px;
-      border-radius: 12px;
-      overflow: hidden;
       border: 1px solid var(--border);
       background: var(--card);
+      color: var(--text);
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 20px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
-    #mobileLanguageSelect {
+    .mobileMenuOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.22);
+      display: none;
+      z-index: 10000;
+    }
+
+    .mobileMenuPanel {
+      position: absolute;
+      top: calc(var(--header-height) + 8px);
+      right: 12px;
+      width: min(320px, calc(100vw - 24px));
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .mobileMenuTitle {
+      font-size: 15px;
+      font-weight: 700;
+      margin: 0 0 12px 0;
+      color: var(--text);
+    }
+
+    .mobileMenuSection {
+      margin-bottom: 14px;
+    }
+
+    .mobileMenuSelect {
       width: 100%;
-      height: 100%;
-      border: 0;
-      outline: none;
-      background: var(--card);
+      min-height: 44px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: #fff;
       color: var(--text);
       padding: 0 12px;
-      appearance: none;
-      cursor: pointer;
+    }
+
+    .mobileMenuLinks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobileMenuLink {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      min-height: 44px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .pageShell {
+      width: 100%;
+      min-height: 100vh;
+      padding-top: calc(var(--header-height) + 18px);
+      padding-bottom: 28px;
     }
 
     .layout {
-      max-width: 1200px;
+      max-width: var(--max);
       margin: 0 auto;
-      padding: 0 12px;
+      padding: 0 20px;
       display: grid;
-      grid-template-columns: var(--desktop-side-width) minmax(0, var(--feed-width)) var(--desktop-side-width);
+      grid-template-columns:
+        var(--desktop-left-width)
+        minmax(0, var(--feed-width))
+        var(--desktop-right-width);
       gap: 16px;
       align-items: start;
       justify-content: center;
@@ -372,14 +428,20 @@
 
     .desktopRail {
       position: sticky;
-      top: calc(var(--header-height) + 14px);
+      top: calc(var(--header-height) + 18px);
       display: block;
+    }
+
+    .railStack {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
 
     .railCard {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 18px;
       padding: 14px;
       box-shadow: var(--shadow);
     }
@@ -412,13 +474,16 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
+      max-height: calc(100vh - 150px);
+      overflow: auto;
+      padding-right: 2px;
     }
 
     .langButton {
       width: 100%;
       border: 1px solid var(--border);
       background: #fff;
-      border-radius: 10px;
+      border-radius: 12px;
       padding: 10px 12px;
       text-align: left;
       cursor: pointer;
@@ -427,6 +492,7 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
+      min-height: 42px;
     }
 
     .langButton.active {
@@ -434,6 +500,26 @@
       background: #eef4ff;
       color: var(--link);
       font-weight: 700;
+    }
+
+    .utilityLink {
+      width: 100%;
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      padding: 12px 14px;
+      text-align: center;
+      color: var(--text);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 46px;
+      font-weight: 700;
+    }
+
+    .utilityLink:hover {
+      background: #f9fbff;
+      color: var(--blue);
     }
 
     .feedColumn {
@@ -446,14 +532,15 @@
       padding: 10px 12px;
       background: var(--danger-bg);
       border: 1px solid var(--danger-border);
-      border-radius: 12px;
+      border-radius: 14px;
       color: var(--danger-text);
       white-space: pre-wrap;
+      box-shadow: var(--shadow);
     }
 
-.feedMeta {
-  display: none;
-}
+    .feedMeta {
+      display: none;
+    }
 
     #feed {
       display: flex;
@@ -461,10 +548,11 @@
       gap: 12px;
     }
 
-    .card {
+    .card,
+    .appPromoCard {
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 18px;
       padding: 14px;
       box-shadow: var(--shadow);
     }
@@ -478,7 +566,7 @@
 
     .jokeText {
       font-size: 16px;
-      line-height: 1.55;
+      line-height: 1.58;
       color: var(--text);
       white-space: pre-wrap;
       word-break: break-word;
@@ -502,7 +590,7 @@
       align-items: stretch;
       background: var(--panel);
       border: 1px solid #e6e6e6;
-      border-radius: 12px;
+      border-radius: 14px;
       overflow: hidden;
     }
 
@@ -516,13 +604,13 @@
       width: 1px;
     }
 
-.footerRight {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 10px;
-  padding: 8px;
-}
+    .footerRight {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px;
+    }
 
     .ratingRow {
       display: flex;
@@ -539,64 +627,49 @@
       font-weight: 600;
     }
 
-.ratingEmojiBtn,
-.iconBtn {
-  border: 1px solid #e5e5e5;
-  background: #f8f8f8;
-  border-radius: 12px;
-  cursor: pointer;
-  min-width: 38px;
-  height: 34px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  line-height: 1;
-  transition: background 0.15s ease, transform 0.05s ease;
-}
-    
+    .ratingEmojiBtn,
+    .iconBtn {
+      border: 1px solid #e5e5e5;
+      background: #f8f8f8;
+      border-radius: 12px;
+      cursor: pointer;
+      min-width: 38px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+
     .ratingEmojiBtn:hover,
-.iconBtn:hover {
-  background: #eaeaea;
-}
+    .iconBtn:hover {
+      background: #eaeaea;
+    }
 
-.ratingEmojiBtn:active,
-.iconBtn:active {
-  transform: scale(0.96);
-}
+    .ratingEmojiBtn:active,
+    .iconBtn:active {
+      transform: scale(0.96);
+    }
 
-    .desktopFavLink {
-  width: 100%;
-  border: 1px solid var(--border);
-  background: #fff;
-  border-radius: 10px;
-  padding: 10px 12px;
-  text-align: center;
-  cursor: pointer;
-  color: var(--text);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-}
+    .ratingEmojiBtn {
+      font-size: 20px;
+      width: 38px;
+      height: 34px;
+    }
 
-.ratingEmojiBtn {
-  font-size: 20px;
-  width: 38px;
-  height: 34px;
-}
+    .iconBtn {
+      font-size: 18px;
+      color: #333;
+      width: 38px;
+      height: 34px;
+      padding: 0;
+    }
 
-.iconBtn {
-  font-size: 18px;
-  color: #333;
-  width: 38px;
-  height: 34px;
-  padding: 0;
-}
-
-.iconBtn svg {
-  width: 18px;
-  height: 18px;
-}
+    .iconBtn svg {
+      width: 18px;
+      height: 18px;
+    }
 
     .iconBtn.activeFav {
       color: #d32f2f;
@@ -623,30 +696,31 @@
       position: fixed;
       left: 50%;
       transform: translateX(-50%);
-      bottom: 86px;
+      bottom: 24px;
       background: rgba(0,0,0,0.88);
       color: #fff;
       padding: 10px 16px;
       border-radius: 20px;
       font-size: 14px;
-      z-index: 10002;
+      z-index: 10004;
       white-space: nowrap;
       max-width: calc(100vw - 24px);
       overflow: hidden;
       text-overflow: ellipsis;
     }
 
-    .siteFooter {
-      margin-top: 16px;
-      padding: 14px 2px 0 2px;
-      color: var(--muted);
-      font-size: 13px;
-      text-align: center;
-      line-height: 1.6;
+    .appPromoCard {
+      display: none;
+      overflow: hidden;
+      padding: 0;
     }
 
-    .siteFooter a {
-      color: var(--link);
+    .appPromoCard img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 0;
+      border-radius: 18px;
     }
 
     .modalOverlay {
@@ -657,7 +731,7 @@
       justify-content: flex-start;
       padding-top: 60px;
       padding-inline: 12px;
-      z-index: 10003;
+      z-index: 10005;
     }
 
     .modalSheet {
@@ -665,7 +739,7 @@
       margin: 0 auto;
       background: var(--card);
       border: 1px solid var(--border);
-      border-radius: 14px;
+      border-radius: 16px;
       padding: 14px;
       box-shadow: var(--shadow);
     }
@@ -739,84 +813,124 @@
       font-weight: 700;
     }
 
-    @media (max-width: 980px) {
-      .layout {
-        grid-template-columns: 1fr;
+    @media (max-width: 1180px) {
+      .desktopNav {
+        gap: 12px;
+        font-size: 13px;
       }
 
-      .mobileFavButton {
-  display: flex;
-}
+      .searchWrap {
+        width: 260px;
+      }
+
+      .layout {
+        grid-template-columns:
+          200px
+          minmax(0, 1fr)
+          200px;
+      }
+    }
+
+    @media (max-width: 980px) {
+      .topBarInner {
+        padding: 12px;
+      }
+
+      .desktopNav {
+        display: none;
+      }
+
+      .menuButton {
+        display: inline-flex;
+      }
+
+      .brandText {
+        display: none;
+      }
+
+      .searchWrap {
+        width: auto;
+        flex: 1;
+      }
+
+      .layout {
+        grid-template-columns: 1fr;
+        padding: 0 12px;
+      }
 
       .desktopRail {
         display: none;
       }
 
-      .mobileLangWrap {
-        display: block;
-      }
-
       .feedColumn {
         width: 100%;
       }
+
+      .appPromoCard {
+        display: block;
+      }
     }
 
-@media (max-width: 640px) {
-  .topBarInner {
-    gap: 8px;
-  }
+    @media (max-width: 640px) {
+      :root {
+        --header-height: 70px;
+      }
 
-  .logoWrap {
-    width: 38px;
-    min-width: 38px;
-    height: 38px;
-  }
+      .topBarInner {
+        gap: 8px;
+      }
 
-  .logoWrap img {
-    width: 34px;
-    height: 34px;
-  }
+      .logoWrap {
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+      }
 
-  .searchWrap {
-    height: 42px;
-  }
+      .logoWrap img {
+        width: 38px;
+        height: 38px;
+      }
 
-  .mobileLangWrap {
-    min-width: 108px;
-    height: 42px;
-  }
+      .searchWrap {
+        height: 42px;
+      }
 
-  .card {
-    padding: 13px;
-  }
+      .menuButton {
+        height: 42px;
+        min-width: 42px;
+      }
 
-  .cardFooter {
-    grid-template-columns: 1fr;
-  }
+      .card {
+        padding: 13px;
+      }
 
-  .footerLeft {
-    display: flex;
-    justify-content: center;
-    padding-bottom: 6px;
-  }
+      .cardFooter {
+        grid-template-columns: 1fr;
+      }
 
-  .ratingRow {
-    justify-content: center;
-  }
+      .footerLeft {
+        display: flex;
+        justify-content: center;
+        padding-bottom: 6px;
+      }
 
-  .footerDivider {
-    display: none;
-  }
+      .ratingRow {
+        justify-content: center;
+      }
 
-  .footerRight {
-    justify-content: center;
-    border-top: 1px solid #e0e0e0;
-  }
+      .footerDivider {
+        display: none;
+      }
 
-  #copyToast {
-    bottom: 96px;
-  }
-}
+      .footerRight {
+        justify-content: center;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      #copyToast {
+        bottom: 18px;
+      }
+    }
   </style>
 </head>
 
@@ -838,8 +952,11 @@
 
   <header class="topBar">
     <div class="topBarInner">
-      <a href="/" class="logoWrap" aria-label="DonkeyApp home">
-        <img src="/icon-512.png" alt="DonkeyApp logo" />
+      <a href="/" class="brandLink" aria-label="DonkeyApp home">
+        <span class="logoWrap">
+          <img src="/icon-512.png" alt="DonkeyApp logo" />
+        </span>
+        <span class="brandText">Donkey App</span>
       </a>
 
       <div class="searchWrap">
@@ -855,26 +972,90 @@
         />
         <button id="searchClear" type="button" aria-label="Clear search">✕</button>
       </div>
-<a href="favourites.html" class="mobileFavButton">❤️</a>
-      <div class="mobileLangWrap">
-        <select id="mobileLanguageSelect" aria-label="Select language">
+
+      <nav class="desktopNav" aria-label="Primary">
+        <a id="navHome" href="/">Home</a>
+        <a id="navAbout" href="about.html">About</a>
+        <a id="navFavourites" href="favourites.html">Favourites</a>
+        <a id="navAddJoke" href="addajoke.html">Add a Joke</a>
+        <a id="navPrivacy" href="privacy.html">Privacy</a>
+        <a id="navTerms" href="conditions.html">Terms</a>
+        <a id="navCookies" href="cookies.html">Cookies</a>
+        <a id="navGuidelines" href="guidelines.html">Guidelines</a>
+        <a id="navContact" href="contact.html">Contact</a>
+      </nav>
+
+      <button id="menuButton" class="menuButton" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
+
+  <div id="mobileMenuOverlay" class="mobileMenuOverlay">
+    <div class="mobileMenuPanel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mobileMenuSection">
+        <div class="mobileMenuTitle" id="mobileMenuLangTitle">Language</div>
+        <select id="mobileLanguageSelect" class="mobileMenuSelect" aria-label="Select language">
           <option value="English">English</option>
           <option value="Polski">Polski</option>
           <option value="Deutsch">Deutsch</option>
-          <option value="Español">Español</option>
           <option value="Français">Français</option>
+          <option value="Español">Español</option>
+          <option value="Italiano">Italiano</option>
+          <option value="Nederlands">Nederlands</option>
+          <option value="Português">Português</option>
+          <option value="Svenska">Svenska</option>
+          <option value="Dansk">Dansk</option>
+          <option value="Suomi">Suomi</option>
+          <option value="Norsk">Norsk</option>
+          <option value="Čeština">Čeština</option>
+          <option value="Slovenčina">Slovenčina</option>
+          <option value="Magyar">Magyar</option>
+          <option value="Română">Română</option>
+          <option value="Hrvatski">Hrvatski</option>
+          <option value="Slovenščina">Slovenščina</option>
+          <option value="Eesti">Eesti</option>
+          <option value="Latviešu">Latviešu</option>
         </select>
       </div>
+
+      <div class="mobileMenuLinks">
+        <a id="menuLinkFavourites" class="mobileMenuLink" href="favourites.html">Favourites</a>
+        <a id="menuLinkAddJoke" class="mobileMenuLink" href="addajoke.html">Add a Joke</a>
+        <a id="menuLinkPrivacy" class="mobileMenuLink" href="privacy.html">Privacy</a>
+        <a id="menuLinkTerms" class="mobileMenuLink" href="conditions.html">Terms</a>
+        <a id="menuLinkCookies" class="mobileMenuLink" href="cookies.html">Cookies</a>
+        <a id="menuLinkGuidelines" class="mobileMenuLink" href="guidelines.html">Guidelines</a>
+        <a id="menuLinkAbout" class="mobileMenuLink" href="about.html">About</a>
+        <a id="menuLinkContact" class="mobileMenuLink" href="contact.html">Contact</a>
+      </div>
     </div>
-  </header>
+  </div>
 
   <div class="pageShell">
     <div class="layout">
       <aside class="desktopRail">
         <div class="railCard">
-          <div class="railTitle" id="leftRailTitle">Ad space</div>
-          <div class="adPlaceholder" id="leftAdPlaceholder">
-            Desktop ad placeholder
+          <div class="railTitle" id="showLangLabel">Language</div>
+          <div class="langButtonList">
+            <button class="langButton" type="button" data-lang="English"><span>English</span><span>🇬🇧</span></button>
+            <button class="langButton" type="button" data-lang="Polski"><span>Polski</span><span>🇵🇱</span></button>
+            <button class="langButton" type="button" data-lang="Deutsch"><span>Deutsch</span><span>🇩🇪</span></button>
+            <button class="langButton" type="button" data-lang="Français"><span>Français</span><span>🇫🇷</span></button>
+            <button class="langButton" type="button" data-lang="Español"><span>Español</span><span>🇪🇸</span></button>
+            <button class="langButton" type="button" data-lang="Italiano"><span>Italiano</span><span>🇮🇹</span></button>
+            <button class="langButton" type="button" data-lang="Nederlands"><span>Nederlands</span><span>🇳🇱</span></button>
+            <button class="langButton" type="button" data-lang="Português"><span>Português</span><span>🇵🇹</span></button>
+            <button class="langButton" type="button" data-lang="Svenska"><span>Svenska</span><span>🇸🇪</span></button>
+            <button class="langButton" type="button" data-lang="Dansk"><span>Dansk</span><span>🇩🇰</span></button>
+            <button class="langButton" type="button" data-lang="Suomi"><span>Suomi</span><span>🇫🇮</span></button>
+            <button class="langButton" type="button" data-lang="Norsk"><span>Norsk</span><span>🇳🇴</span></button>
+            <button class="langButton" type="button" data-lang="Čeština"><span>Čeština</span><span>🇨🇿</span></button>
+            <button class="langButton" type="button" data-lang="Slovenčina"><span>Slovenčina</span><span>🇸🇰</span></button>
+            <button class="langButton" type="button" data-lang="Magyar"><span>Magyar</span><span>🇭🇺</span></button>
+            <button class="langButton" type="button" data-lang="Română"><span>Română</span><span>🇷🇴</span></button>
+            <button class="langButton" type="button" data-lang="Hrvatski"><span>Hrvatski</span><span>🇭🇷</span></button>
+            <button class="langButton" type="button" data-lang="Slovenščina"><span>Slovenščina</span><span>🇸🇮</span></button>
+            <button class="langButton" type="button" data-lang="Eesti"><span>Eesti</span><span>🇪🇪</span></button>
+            <button class="langButton" type="button" data-lang="Latviešu"><span>Latviešu</span><span>🇱🇻</span></button>
           </div>
         </div>
       </aside>
@@ -891,50 +1072,21 @@
 
         <div id="feedLoading" class="feedLoading hidden"></div>
         <div id="feedEnd" class="feedEnd hidden"></div>
-
-        <div class="siteFooter">
-          <span id="termsText">By using this website you agree to these</span>
-          <a id="termsLinkConditions" href="conditions.html">Terms and Conditions</a>,
-          <a id="termsLinkCookies" href="cookies.html">Use of Cookies</a>
-          <span id="termsAnd">and</span>
-          <a id="termsLinkPrivacy" href="privacy.html">Privacy Policy</a>.
-          <br />
-          <a id="addJokeLink" href="addajoke.html">Want to add a joke?</a>
-        </div>
       </section>
 
-<aside class="desktopRail">
+      <aside class="desktopRail">
+        <div class="railStack">
+          <div class="railCard">
+            <a id="rightAddJokeLink" href="addajoke.html" class="utilityLink">➕ Add a Joke</a>
+          </div>
 
-  <div class="railCard" style="margin-bottom:12px;">
-    <a href="addajoke.html" class="desktopFavLink" style="justify-content:center; font-weight:700;">
-      ➕ Add a joke
-    </a>
-  </div>
+          <div class="railCard">
+            <a id="rightFavouritesLink" href="favourites.html" class="utilityLink">❤️ Favourites</a>
+          </div>
 
-  <div class="railCard" style="margin-bottom:12px;">
-    <a href="favourites.html" class="desktopFavLink" style="justify-content:center; font-weight:700;">
-      ❤️ Favourites
-    </a>
-  </div>
-        <div class="railCard">
-          
-          <div class="railTitle" id="showLangLabel">Language</div>
-          <div class="langButtonList">
-            <button class="langButton" type="button" data-lang="English">
-              <span>English</span><span>🇬🇧</span>
-            </button>
-            <button class="langButton" type="button" data-lang="Polski">
-              <span>Polski</span><span>🇵🇱</span>
-            </button>
-            <button class="langButton" type="button" data-lang="Deutsch">
-              <span>Deutsch</span><span>🇩🇪</span>
-            </button>
-            <button class="langButton" type="button" data-lang="Español">
-              <span>Español</span><span>🇪🇸</span>
-            </button>
-            <button class="langButton" type="button" data-lang="Français">
-              <span>Français</span><span>🇫🇷</span>
-            </button>
+          <div class="railCard">
+            <div class="railTitle" id="rightRailAdTitle">Ad space</div>
+            <div class="adPlaceholder" id="rightAdPlaceholder">Desktop ad placeholder</div>
           </div>
         </div>
       </aside>
@@ -942,24 +1094,6 @@
   </div>
 
   <div id="copyToast"></div>
-
-<div id="legalBar">
-  <div class="legalInner">
-    <div class="legalLinks">
-      <a href="addajoke.html">Add Joke</a>
-      <a href="conditions.html">Terms</a>
-      <a href="privacy.html">Privacy</a>
-      <a href="cookies.html">Cookies</a>
-      <a href="guidelines.html">Guidelines</a>
-      <a href="about.html">About</a>
-      <a href="contact.html">Contact Us</a>
-    </div>
-
-    <div class="legalText">
-      © DonkeyApp
-    </div>
-  </div>
-</div>
 
   <div id="reportModal" class="modalOverlay">
     <div class="modalSheet">
@@ -1001,37 +1135,37 @@
 
   <div id="appVersion" style="position:fixed; right:10px; bottom:8px; font-size:12px; opacity:0.35; z-index:9999;"></div>
 
-<div id="cookieConsent" class="cookieConsent">
-  <div class="cookieInner">
+  <div id="cookieConsent" class="cookieConsent">
+    <div class="cookieInner">
+      <div>
+        <div class="cookieTitle">
+          Entertainment Notice & Privacy Choices
+        </div>
 
-<div class="cookieTitle">
-      Entertainment Notice & Privacy Choices
-</div>
+        <div class="cookieText">
+          DonkeyApp is a humour platform created for entertainment purposes.
+          Some content may be considered offensive or controversial.
+          Please refer to our
+          <a href="conditions.html" target="_blank">Terms & Conditions</a>
+          and
+          <a href="guidelines.html" target="_blank">Community Guidelines</a>.
 
-    <div class="cookieText">
-      DonkeyApp is a humour platform created for entertainment purposes.
-Some content may be considered offensive or controversial.
-Please refer to our 
-<a href="conditions.html" target="_blank">Terms & Conditions</a> 
-and 
-<a href="guidelines.html" target="_blank">Community Guidelines</a>.
+          <br><br>
+          We and our partners use cookies and similar technologies to store and/or access information on your device.
+          This helps us improve the service and show relevant content and advertising.
+          See our
+          <a href="privacy.html" target="_blank">Privacy Policy</a>
+          and
+          <a href="cookies.html" target="_blank">Cookie Policy</a>.
+        </div>
+      </div>
 
-<br><br>
-      We and our partners use cookies and similar technologies to store and/or access information on your device. 
-      This helps us improve the service and show relevant content and advertising.
-      See our 
-      <a href="privacy.html" target="_blank">Privacy Policy</a> 
-      and 
-      <a href="cookies.html" target="_blank">Cookie Policy</a>.
+      <div class="cookieButtons">
+        <button id="cookieAccept">Accept All Cookies</button>
+        <button id="cookieReject">Reject All Cookies</button>
+      </div>
     </div>
-
-    <div class="cookieButtons">
-      <button id="cookieAccept">Accept All Cookies</button>
-      <button id="cookieReject">Reject All Cookies</button>
-    </div>
-
   </div>
-</div>
 
   <script src="/i18n.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
@@ -1044,15 +1178,39 @@ and
       const PAGE_SIZE = 20;
       const RECENT_INSERT_EVERY = 4;
       const RECENT_LIMIT = 20;
+      const MOBILE_PROMO_EVERY = 10;
       const FAVOURITES_KEY = "donkey:favourites:v1";
       const VOTES_KEY = "donkey:votes:v1";
       const FEED_DAY_KEY = "donkey:feed-day:v1";
 
       const ratingOptions = [
-        { vote: "bad", emoji: "😕" },
-        { vote: "meh", emoji: "😐" },
-        { vote: "good", emoji: "🙂" },
-        { vote: "great", emoji: "😂" }
+        { vote: "bad", emoji: "😕", title: "Vote bad" },
+        { vote: "meh", emoji: "😐", title: "Vote meh" },
+        { vote: "good", emoji: "🙂", title: "Vote good" },
+        { vote: "great", emoji: "😂", title: "Vote great" }
+      ];
+
+      const allLanguages = [
+        "English",
+        "Polski",
+        "Deutsch",
+        "Français",
+        "Español",
+        "Italiano",
+        "Nederlands",
+        "Português",
+        "Svenska",
+        "Dansk",
+        "Suomi",
+        "Norsk",
+        "Čeština",
+        "Slovenčina",
+        "Magyar",
+        "Română",
+        "Hrvatski",
+        "Slovenščina",
+        "Eesti",
+        "Latviešu"
       ];
 
       const searchInput = document.getElementById("searchInput");
@@ -1064,20 +1222,17 @@ and
       const copyToast = document.getElementById("copyToast");
       const showLangLabel = document.getElementById("showLangLabel");
       const mobileLanguageSelect = document.getElementById("mobileLanguageSelect");
-      const addJokeLink = document.getElementById("addJokeLink");
+      const rightRailAdTitle = document.getElementById("rightRailAdTitle");
+      const rightAdPlaceholder = document.getElementById("rightAdPlaceholder");
       const feedMetaLeft = document.getElementById("feedMetaLeft");
       const feedMetaRight = document.getElementById("feedMetaRight");
-      const termsText = document.getElementById("termsText");
-      const termsLinkConditions = document.getElementById("termsLinkConditions");
-      const termsLinkCookies = document.getElementById("termsLinkCookies");
-      const termsLinkPrivacy = document.getElementById("termsLinkPrivacy");
-      const termsAnd = document.getElementById("termsAnd");
-      const leftRailTitle = document.getElementById("leftRailTitle");
-      const leftAdPlaceholder = document.getElementById("leftAdPlaceholder");
       const reportModal = document.getElementById("reportModal");
       const reportSubmitButton = document.getElementById("reportSubmitButton");
       const reportCloseButton = document.getElementById("reportCloseButton");
       const appVersionDiv = document.getElementById("appVersion");
+      const menuButton = document.getElementById("menuButton");
+      const mobileMenuOverlay = document.getElementById("mobileMenuOverlay");
+      const mobileMenuLangTitle = document.getElementById("mobileMenuLangTitle");
 
       if (appVersionDiv) {
         appVersionDiv.textContent = "v" + APP_VERSION;
@@ -1107,15 +1262,16 @@ and
       let favouriteIds = new Set();
       let votesByJokeId = {};
       let reportedIds = new Set();
-      function getLocalFeedDay() {
-  const now = new Date();
-  const year = now.getFullYear();
-  const month = String(now.getMonth() + 1).padStart(2, "0");
-  const day = String(now.getDate()).padStart(2, "0");
-  return year + "-" + month + "-" + day;
-}
 
-let currentFeedDay = getLocalFeedDay();
+      function getLocalFeedDay() {
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, "0");
+        const day = String(now.getDate()).padStart(2, "0");
+        return year + "-" + month + "-" + day;
+      }
+
+      let currentFeedDay = getLocalFeedDay();
 
       if (!window.supabase || !window.supabase.createClient) {
         showError("Supabase library did not load. Check your internet connection or the CDN link.");
@@ -1191,7 +1347,11 @@ let currentFeedDay = getLocalFeedDay();
       }
 
       function updateLanguageUi() {
-        mobileLanguageSelect.value = currentLang;
+        if (allLanguages.includes(currentLang)) {
+          mobileLanguageSelect.value = currentLang;
+        } else {
+          mobileLanguageSelect.value = "English";
+        }
 
         document.querySelectorAll(".langButton").forEach((btn) => {
           btn.classList.toggle("active", btn.dataset.lang === currentLang);
@@ -1219,13 +1379,33 @@ let currentFeedDay = getLocalFeedDay();
 
         searchInput.placeholder = safeText("search_placeholder", "Search jokes…");
         showLangLabel.textContent = safeText("show_lang", "Language");
-        addJokeLink.textContent = safeText("add_joke", "Want to add a joke?");
-        termsText.textContent = safeText("terms_note_web", "By using this website you agree to these");
-        termsLinkConditions.textContent = safeText("terms_link_conditions", "Terms and Conditions");
-        termsLinkCookies.textContent = safeText("terms_link_cookies", "Use of Cookies");
-        termsLinkPrivacy.textContent = safeText("terms_link_privacy", "Privacy Policy");
-        leftRailTitle.textContent = safeText("ad_placeholder_title", "Ad space");
-        leftAdPlaceholder.textContent = safeText("ad_placeholder_text", "Desktop ad placeholder");
+        mobileMenuLangTitle.textContent = safeText("show_lang", "Language");
+
+        document.getElementById("navHome").textContent = safeText("home", "Home");
+        document.getElementById("navAbout").textContent = safeText("about", "About");
+        document.getElementById("navFavourites").textContent = safeText("favourites", "Favourites");
+        document.getElementById("navAddJoke").textContent = safeText("add_joke_nav", "Add a Joke");
+        document.getElementById("navPrivacy").textContent = safeText("privacy", "Privacy");
+        document.getElementById("navTerms").textContent = safeText("terms_short", "Terms");
+        document.getElementById("navCookies").textContent = safeText("cookies_short", "Cookies");
+        document.getElementById("navGuidelines").textContent = safeText("guidelines_short", "Guidelines");
+        document.getElementById("navContact").textContent = safeText("contact_short", "Contact");
+
+        document.getElementById("menuLinkFavourites").textContent = safeText("favourites", "Favourites");
+        document.getElementById("menuLinkAddJoke").textContent = safeText("add_joke_nav", "Add a Joke");
+        document.getElementById("menuLinkPrivacy").textContent = safeText("privacy", "Privacy");
+        document.getElementById("menuLinkTerms").textContent = safeText("terms_short", "Terms");
+        document.getElementById("menuLinkCookies").textContent = safeText("cookies_short", "Cookies");
+        document.getElementById("menuLinkGuidelines").textContent = safeText("guidelines_short", "Guidelines");
+        document.getElementById("menuLinkAbout").textContent = safeText("about", "About");
+        document.getElementById("menuLinkContact").textContent = safeText("contact_short", "Contact");
+
+        document.getElementById("rightAddJokeLink").textContent = "➕ " + safeText("add_joke_nav", "Add a Joke");
+        document.getElementById("rightFavouritesLink").textContent = "❤️ " + safeText("favourites", "Favourites");
+
+        rightRailAdTitle.textContent = safeText("ad_placeholder_title", "Ad space");
+        rightAdPlaceholder.textContent = safeText("ad_placeholder_text", "Desktop ad placeholder");
+
         reportSubmitButton.textContent = safeText("report_submit", "Report");
         reportCloseButton.textContent = safeText("close", "Close");
         document.getElementById("reportTitle").textContent = safeText("report_title", "Report joke");
@@ -1234,12 +1414,6 @@ let currentFeedDay = getLocalFeedDay();
         document.getElementById("reportOptionOther").textContent = safeText("report_other", "Other");
         feedLoading.textContent = safeText("loading_more", "Loading more jokes…");
         feedEnd.textContent = safeText("no_more_jokes", "No more jokes.");
-
-        termsAnd.textContent =
-          currentLang === "Polski" ? "i" :
-          currentLang === "Deutsch" ? "und" :
-          currentLang === "Español" ? "y" :
-          currentLang === "Français" ? "et" : "and";
 
         updateMeta();
         renderFeed();
@@ -1422,9 +1596,24 @@ let currentFeedDay = getLocalFeedDay();
           btn.type = "button";
           btn.className = "ratingEmojiBtn";
           btn.textContent = opt.emoji;
+          btn.title = opt.title;
+          btn.setAttribute("aria-label", opt.title);
           btn.addEventListener("click", () => onVote(jokeId, opt.vote, container));
           container.appendChild(btn);
         });
+      }
+
+      function createPromoCard() {
+        const promo = document.createElement("article");
+        promo.className = "appPromoCard";
+
+        const img = document.createElement("img");
+        img.src = "/appad.jpg";
+        img.alt = "Donkey App mobile app coming very soon";
+        img.loading = "lazy";
+
+        promo.appendChild(img);
+        return promo;
       }
 
       function createCard(item) {
@@ -1487,7 +1676,8 @@ let currentFeedDay = getLocalFeedDay();
         const copyBtn = document.createElement("button");
         copyBtn.type = "button";
         copyBtn.className = "iconBtn";
-        copyBtn.title = safeText("copy_joke", "Copy joke");
+        copyBtn.title = "Copy joke";
+        copyBtn.setAttribute("aria-label", "Copy joke");
         copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect><rect x="5" y="5" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect></svg>';
         copyBtn.addEventListener("click", () => onCopyJoke(item.content));
 
@@ -1495,7 +1685,8 @@ let currentFeedDay = getLocalFeedDay();
         reportBtn.type = "button";
         reportBtn.className = "iconBtn";
         if (reportedIds.has(item.id)) reportBtn.classList.add("activeReport");
-        reportBtn.title = safeText("report_title", "Report joke");
+        reportBtn.title = "Report joke";
+        reportBtn.setAttribute("aria-label", "Report joke");
         reportBtn.textContent = reportedIds.has(item.id) ? "⚑" : "⚐";
         reportBtn.addEventListener("click", () => openReportModal(item.id));
 
@@ -1503,7 +1694,8 @@ let currentFeedDay = getLocalFeedDay();
         favBtn.type = "button";
         favBtn.className = "iconBtn";
         if (favouriteIds.has(item.id)) favBtn.classList.add("activeFav");
-        favBtn.title = safeText("favourite", "Favourite");
+        favBtn.title = "Add to favourites";
+        favBtn.setAttribute("aria-label", "Add to favourites");
         favBtn.textContent = favouriteIds.has(item.id) ? "♥" : "♡";
         favBtn.addEventListener("click", () => toggleFavourite(item.id));
 
@@ -1523,8 +1715,12 @@ let currentFeedDay = getLocalFeedDay();
       function renderFeed() {
         feed.innerHTML = "";
 
-        finalFeed.forEach((item) => {
+        finalFeed.forEach((item, index) => {
           feed.appendChild(createCard(item));
+
+          if ((index + 1) % MOBILE_PROMO_EVERY === 0) {
+            feed.appendChild(createPromoCard());
+          }
         });
 
         updateMeta();
@@ -1683,6 +1879,16 @@ let currentFeedDay = getLocalFeedDay();
         loadInitial();
       }
 
+      function openMobileMenu() {
+        mobileMenuOverlay.style.display = "block";
+        menuButton.setAttribute("aria-expanded", "true");
+      }
+
+      function closeMobileMenu() {
+        mobileMenuOverlay.style.display = "none";
+        menuButton.setAttribute("aria-expanded", "false");
+      }
+
       searchInput.addEventListener("input", () => {
         updateSearchUi();
         if (searchInput.value === "") {
@@ -1717,6 +1923,26 @@ let currentFeedDay = getLocalFeedDay();
         });
       });
 
+      menuButton.addEventListener("click", () => {
+        if (mobileMenuOverlay.style.display === "block") {
+          closeMobileMenu();
+        } else {
+          openMobileMenu();
+        }
+      });
+
+      mobileMenuOverlay.addEventListener("click", (e) => {
+        if (e.target === mobileMenuOverlay) {
+          closeMobileMenu();
+        }
+      });
+
+      mobileMenuOverlay.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          closeMobileMenu();
+        });
+      });
+
       window.addEventListener("donkey:langchange", async (e) => {
         currentLang = normalizeFeedLanguage(e.detail.lang);
         applyStaticTranslations();
@@ -1739,43 +1965,43 @@ let currentFeedDay = getLocalFeedDay();
       reportSubmitButton.addEventListener("click", submitReport);
       reportCloseButton.addEventListener("click", closeReportModal);
 
-window.addEventListener("scroll", maybeLoadMoreOnScroll, { passive: true });
+      window.addEventListener("scroll", maybeLoadMoreOnScroll, { passive: true });
 
-document.addEventListener("visibilitychange", () => {
-  if (document.visibilityState !== "visible") return;
+      document.addEventListener("visibilitychange", () => {
+        if (document.visibilityState !== "visible") return;
 
-  const latestFeedDay = getLocalFeedDay();
-  const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
+        const latestFeedDay = getLocalFeedDay();
+        const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
 
-  if (savedFeedDay !== latestFeedDay) {
-    currentFeedDay = latestFeedDay;
-    localStorage.setItem(FEED_DAY_KEY, latestFeedDay);
-    loadInitial();
-  }
-});
+        if (savedFeedDay !== latestFeedDay) {
+          currentFeedDay = latestFeedDay;
+          localStorage.setItem(FEED_DAY_KEY, latestFeedDay);
+          loadInitial();
+        }
+      });
 
-setInterval(() => {
-  const latestFeedDay = getLocalFeedDay();
-  const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
+      setInterval(() => {
+        const latestFeedDay = getLocalFeedDay();
+        const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
 
-  if (savedFeedDay !== latestFeedDay) {
-    currentFeedDay = latestFeedDay;
-    localStorage.setItem(FEED_DAY_KEY, latestFeedDay);
-    loadInitial();
-  }
-}, 60000);      
+        if (savedFeedDay !== latestFeedDay) {
+          currentFeedDay = latestFeedDay;
+          localStorage.setItem(FEED_DAY_KEY, latestFeedDay);
+          loadInitial();
+        }
+      }, 60000);
 
-loadLocalState();
-updateSearchUi();
-applyStaticTranslations();
+      loadLocalState();
+      updateSearchUi();
+      applyStaticTranslations();
 
-const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
+      const savedFeedDay = localStorage.getItem(FEED_DAY_KEY);
 
-if (savedFeedDay !== currentFeedDay) {
-  localStorage.setItem(FEED_DAY_KEY, currentFeedDay);
-}
+      if (savedFeedDay !== currentFeedDay) {
+        localStorage.setItem(FEED_DAY_KEY, currentFeedDay);
+      }
 
-loadInitial();
+      loadInitial();
     });
   </script>
 
@@ -1832,57 +2058,54 @@ loadInitial();
       });
     }
   </script>
- <script>
-document.addEventListener("DOMContentLoaded", function(){
 
-const consent = localStorage.getItem("donkey_cookie");
-const cookieBox = document.getElementById("cookieConsent");
-const acceptBtn = document.getElementById("cookieAccept");
-const rejectBtn = document.getElementById("cookieReject");
+  <script>
+    document.addEventListener("DOMContentLoaded", function(){
+      const consent = localStorage.getItem("donkey_cookie");
+      const cookieBox = document.getElementById("cookieConsent");
+      const acceptBtn = document.getElementById("cookieAccept");
+      const rejectBtn = document.getElementById("cookieReject");
 
-if (consent === "accepted") {
-  gtag("consent", "update", {
-    ad_storage: "granted",
-    analytics_storage: "granted",
-    ad_user_data: "granted",
-    ad_personalization: "granted"
-  });
-} else if (consent === "rejected") {
-  gtag("consent", "update", {
-    ad_storage: "denied",
-    analytics_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied"
-  });
-} else {
-  cookieBox.style.display = "block";
-}
+      if (consent === "accepted") {
+        gtag("consent", "update", {
+          ad_storage: "granted",
+          analytics_storage: "granted",
+          ad_user_data: "granted",
+          ad_personalization: "granted"
+        });
+      } else if (consent === "rejected") {
+        gtag("consent", "update", {
+          ad_storage: "denied",
+          analytics_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied"
+        });
+      } else {
+        cookieBox.style.display = "block";
+      }
 
-acceptBtn.onclick = function(){
-  localStorage.setItem("donkey_cookie","accepted");
-  gtag("consent", "update", {
-    ad_storage: "granted",
-    analytics_storage: "granted",
-    ad_user_data: "granted",
-    ad_personalization: "granted"
-  });
-  cookieBox.style.display = "none";
-};
+      acceptBtn.onclick = function(){
+        localStorage.setItem("donkey_cookie","accepted");
+        gtag("consent", "update", {
+          ad_storage: "granted",
+          analytics_storage: "granted",
+          ad_user_data: "granted",
+          ad_personalization: "granted"
+        });
+        cookieBox.style.display = "none";
+      };
 
-rejectBtn.onclick = function(){
-  localStorage.setItem("donkey_cookie","rejected");
-  gtag("consent", "update", {
-    ad_storage: "denied",
-    analytics_storage: "denied",
-    ad_user_data: "denied",
-    ad_personalization: "denied"
-  });
-  cookieBox.style.display = "none";
-};
-
-});
-</script>
-
-
+      rejectBtn.onclick = function(){
+        localStorage.setItem("donkey_cookie","rejected");
+        gtag("consent", "update", {
+          ad_storage: "denied",
+          analytics_storage: "denied",
+          ad_user_data: "denied",
+          ad_personalization: "denied"
+        });
+        cookieBox.style.display = "none";
+      };
+    });
+  </script>
 </body>
 </html>
