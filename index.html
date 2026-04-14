@@ -470,14 +470,20 @@
       padding: 20px;
     }
 
-    .langButtonList {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      max-height: calc(100vh - 150px);
-      overflow: auto;
-      padding-right: 2px;
-    }
+.langButtonList {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-height: calc(100vh - 150px);
+  overflow: auto;
+  padding-right: 2px;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.langButtonList::-webkit-scrollbar {
+  display: none;
+}
 
     .langButton {
       width: 100%;
