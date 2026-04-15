@@ -3,181 +3,520 @@
 <head>
   <meta charset="UTF-8" />
   <title>Donkey App — Terms and Conditions</title>
+
+  <meta
+    name="description"
+    content="Read the Terms and Conditions for using Donkey App and DonkeyApp.com."
+  />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.donkeyapp.com/terms.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.donkeyapp.com/terms.html" />
+  <meta property="og:title" content="Donkey App — Terms and Conditions" />
+  <meta
+    property="og:description"
+    content="Read the Terms and Conditions for using Donkey App and DonkeyApp.com."
+  />
+  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Donkey App — Terms and Conditions" />
+  <meta
+    name="twitter:description"
+    content="Read the Terms and Conditions for using Donkey App and DonkeyApp.com."
+  />
+  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
 
   <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1e2430;
+      --muted: #5c667a;
+      --accent: #0b3d91;
+      --accent-2: #1f5fd1;
+      --border: #dfe5f0;
+      --shadow: 0 10px 30px rgba(11, 61, 145, 0.08);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
     body {
-      font-family: Arial, sans-serif;
-      background: #ffffff;
-      color: #111;
       margin: 0;
-      padding: 40px 20px;
-      line-height: 1.6;
-    }
-
-    .container {
-      max-width: 800px;
-      margin: 0 auto;
-    }
-
-    h1 {
-      margin-bottom: 10px;
-    }
-
-    h2 {
-      margin-top: 28px;
-    }
-
-    p {
-      margin: 10px 0;
-    }
-
-    ul {
-      margin: 10px 0 10px 20px;
-    }
-
-    .small {
-      color: #666;
-      font-size: 14px;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      line-height: 1.65;
     }
 
     a {
-      color: #0000ee;
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
       text-decoration: underline;
+    }
+
+    .topbar {
+      width: 100%;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 20px 32px;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 0;
+    }
+
+    .hero-left {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      padding: 40px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .hero-left p {
+      margin: 0 0 16px;
+      font-size: 17px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-right {
+      padding: 40px 34px;
+    }
+
+    .hero-right h2 {
+      margin: 0 0 16px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .hero-right p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px 28px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+    }
+
+    .section h3 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section ul {
+      margin: 0 0 16px 20px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section li {
+      margin-bottom: 8px;
+    }
+
+    .quote-box {
+      background: linear-gradient(135deg, #eef4ff 0%, #f7fbff 100%);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-top: 10px;
+      font-size: 18px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .mini-card {
+      background: #f9fbff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-top: 18px;
+    }
+
+    .mini-card h4 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .mini-card p {
+      margin: 0;
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 18px 20px 46px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left h1 {
+        font-size: 34px;
+      }
+
+      .hero-right h2,
+      .section h3 {
+        font-size: 24px;
+      }
+
+      .hero-left,
+      .hero-right,
+      .section-card {
+        padding: 28px 22px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand {
+        font-size: 18px;
+      }
+
+      .nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-left h1 {
+        font-size: 30px;
+      }
     }
   </style>
 </head>
-
 <body>
-  <div class="container">
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="icon-192.png" alt="Donkey App logo" />
+        <span>Donkey App</span>
+      </div>
 
-<body>
-  <div class="container">
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="favourites.html">Favourites</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="guidelines.html">Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
 
-<h1>Terms and Conditions</h1>
-<p class="small">Last updated: April 2026</p>
+  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <h1>Terms &amp; Conditions</h1>
+            <p>
+              The basic rules for using Donkey App without unnecessary confusion.
+            </p>
+            <p>
+              Donkey App is built for humour and entertainment, but it still needs a few rules so the platform can function properly.
+            </p>
 
-<p>
-These Terms and Conditions govern your use of DonkeyApp.com and the Donkey App.
-By using the platform, you agree to these Terms. If you do not agree, please do not use DonkeyApp.
-</p>
+            <div class="badge-row">
+              <span class="badge">Humour Platform</span>
+              <span class="badge">User Content</span>
+              <span class="badge">Moderation</span>
+              <span class="badge">Platform Rules</span>
+            </div>
+          </div>
 
-<h2>1. Purpose of the Platform</h2>
+          <div class="hero-right">
+            <h2>Before you use the platform</h2>
+            <p>
+              These Terms and Conditions govern your use of DonkeyApp.com and the Donkey App.
+              By using the platform, you agree to these Terms. If you do not agree, please do not use Donkey App.
+            </p>
+            <p>
+              The platform is designed for jokes, humour, satire, and entertainment.
+              That does not remove the need for rules around content, moderation, accounts, and platform use.
+            </p>
+            <p>
+              In plain English: enjoy the jokes, use the platform properly, and do not treat common sense as an optional extra.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
 
-<p>
-DonkeyApp is a platform where users can submit and read jokes. The goal
-of the platform is to promote humour and allow users to share funny content
-with others.
-</p>
+    <section class="section">
+      <div class="section-card">
+        <h3>1. Purpose of the platform</h3>
+        <p>
+          Donkey App is a platform where users can submit and read jokes.
+          The goal of the platform is to promote humour and allow users to share funny content with others.
+        </p>
 
-<h2>2. Entertainment Disclaimer</h2>
+        <div class="quote-box">
+          Donkey App exists for entertainment. It is a humour platform, not a source of factual, legal, medical, political, or professional advice.
+        </div>
+      </div>
+    </section>
 
-<p>
-DonkeyApp is a humour and entertainment platform. Content may include satire,
-exaggeration, or controversial humour. All content is intended for entertainment
-purposes only and should not be interpreted as factual, educational, political,
-or professional advice.
-</p>
+    <section class="section">
+      <div class="section-card">
+        <h3>2. Entertainment disclaimer</h3>
+        <p>
+          Donkey App is a humour and entertainment platform. Content may include satire,
+          exaggeration, or controversial humour. All content is intended for entertainment
+          purposes only and should not be interpreted as factual, educational, political,
+          or professional advice.
+        </p>
+        <p>
+          Some users may find certain jokes offensive or inappropriate. Due to the nature
+          of humour and user-generated content, it is not possible to prevent all content
+          that may offend individuals. If you are likely to be offended by humour, satire,
+          or controversial topics, you should not use the platform.
+        </p>
+      </div>
+    </section>
 
-<p>
-Some users may find certain jokes offensive or inappropriate. Due to the nature
-of humour and user-generated content, it is not possible to prevent all content
-that may offend individuals. If you are likely to be offended by humour, satire,
-or controversial topics, you should not use the platform.
-</p>
+    <section class="section">
+      <div class="section-card">
+        <h3>3. User accounts</h3>
+        <p>
+          Some features require creating an account. When using an account you are
+          responsible for maintaining the security of your login and for any content
+          submitted through your account.
+        </p>
 
-<h2>3. User Accounts</h2>
+        <h3>4. User-generated content and moderation</h3>
+        <p>
+          Content on Donkey App is primarily user-generated. While moderation is applied,
+          we cannot guarantee that all content will be suitable for all audiences.
+        </p>
+        <p>
+          Donkey App reserves the right to review, reject, remove, or restrict any content
+          at its sole discretion. Content may be removed if deemed inappropriate,
+          offensive, harmful, or inconsistent with platform guidelines.
+        </p>
 
-<p>
-Some features require creating an account. When using an account you are
-responsible for maintaining the security of your login and for any content
-submitted through your account.
-</p>
+        <h3>5. Submitting jokes</h3>
+        <p>
+          Users may submit jokes to be published on Donkey App. Jokes that comply with
+          these Terms and the Community Guidelines may be published on the platform.
+        </p>
+      </div>
+    </section>
 
-<h2>4. User-Generated Content and Moderation</h2>
+    <section class="section">
+      <div class="section-card">
+        <h3>6. Acceptable content</h3>
+        <p>
+          Content submitted to Donkey App must comply with the Community Guidelines.
+          Content that violates these guidelines may be removed.
+        </p>
 
-<p>
-Content on DonkeyApp is primarily user-generated. While moderation is applied,
-we cannot guarantee that all content will be suitable for all audiences.
-</p>
+        <h3>7. Account suspension</h3>
+        <p>
+          Donkey App reserves the right to suspend or remove accounts that repeatedly
+          violate platform rules or misuse the platform.
+        </p>
 
-<p>
-DonkeyApp reserves the right to review, reject, remove, or restrict any content
-at its sole discretion. Content may be removed if deemed inappropriate,
-offensive, harmful, or inconsistent with platform guidelines.
-</p>
+        <h3>8. Reporting content</h3>
+        <p>
+          Users may report content using the report button available on jokes.
+          Reported content will be reviewed and may be removed if it violates
+          platform rules or guidelines.
+        </p>
+      </div>
+    </section>
 
-<h2>5. Submitting Jokes</h2>
+    <section class="section">
+      <div class="section-card">
+        <h3>9. Ownership of content</h3>
+        <p>
+          When you submit a joke to Donkey App, you confirm that the joke is either
+          your original creation or a commonly known joke without enforceable copyright.
+        </p>
+        <p>
+          By submitting content, you grant Donkey App a non-exclusive, worldwide,
+          royalty-free licence to display, store, and distribute that content.
+        </p>
 
-<p>
-Users may submit jokes to be published on DonkeyApp. Jokes that comply with
-these Terms and the Community Guidelines may be published on the platform.
-</p>
+        <h3>10. Sharing content</h3>
+        <p>
+          You are free to share jokes found on Donkey App for personal use. Automated
+          scraping or bulk copying is not permitted.
+        </p>
 
-<h2>6. Acceptable Content</h2>
+        <h3>11. Advertising</h3>
+        <p>
+          Donkey App may display advertising to support platform operation.
+        </p>
+      </div>
+    </section>
 
-<p>
-Content submitted to DonkeyApp must comply with the Community Guidelines.
-Content that violates these guidelines may be removed.
-</p>
+    <section class="section">
+      <div class="section-card">
+        <h3>12. Changes to these terms</h3>
+        <p>
+          These Terms and Conditions may change from time to time. Continued use
+          of Donkey App constitutes acceptance of any changes.
+        </p>
 
-<h2>7. Account Suspension</h2>
+        <h3>13. Contact us</h3>
+        <p>
+          If you have questions about these Terms and Conditions, please visit:
+          <a href="contact.html">Contact Us</a>.
+        </p>
 
-<p>
-DonkeyApp reserves the right to suspend or remove accounts that repeatedly
-violate platform rules or misuse the platform.
-</p>
+        <div class="mini-card">
+          <h4>Last updated</h4>
+          <p>April 2026</p>
+        </div>
+      </div>
+    </section>
+  </main>
 
-<h2>8. Reporting Content</h2>
-
-<p>
-Users may report content using the report button available on jokes.
-Reported content will be reviewed and may be removed if it violates
-platform rules or guidelines.
-</p>
-
-<h2>9. Ownership of Content</h2>
-
-<p>
-When you submit a joke to DonkeyApp, you confirm that the joke is either
-your original creation or a commonly known joke without enforceable copyright.
-</p>
-
-<p>
-By submitting content, you grant DonkeyApp a non-exclusive, worldwide,
-royalty-free licence to display, store, and distribute that content.
-</p>
-
-<h2>10. Sharing Content</h2>
-
-<p>
-You are free to share jokes found on DonkeyApp for personal use. Automated
-scraping or bulk copying is not permitted.
-</p>
-
-<h2>11. Advertising</h2>
-
-<p>
-DonkeyApp may display advertising to support platform operation.
-</p>
-
-<h2>12. Changes to These Terms</h2>
-
-<p>
-These Terms and Conditions may change from time to time. Continued use
-of DonkeyApp constitutes acceptance of any changes.
-</p>
-
-<h2>13. Contact Us</h2>
-
-<p>
-If you have questions about these Terms and Conditions, please visit:
-</p>
-
-<p>
-<a href="contact.html">Contact Us</a>
-</p>
-
-  </div>
+  <footer class="footer">
+    <div class="footer-card">
+      <div>© 2026 Donkey App. Comedy first.</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="guidelines.html">Community Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
 </body>
 </html>
