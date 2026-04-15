@@ -2,83 +2,254 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Donkey App — Contact Us</title>
-  <meta name="description" content="Contact Donkey App support." />
+
+  <meta
+    name="description"
+    content="Contact Donkey App support using the secure contact form."
+  />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.donkeyapp.com/contact.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.donkeyapp.com/contact.html" />
+  <meta property="og:title" content="Donkey App — Contact Us" />
+  <meta
+    property="og:description"
+    content="Contact Donkey App support using the secure contact form."
+  />
+  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Donkey App — Contact Us" />
+  <meta
+    name="twitter:description"
+    content="Contact Donkey App support using the secure contact form."
+  />
+  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" async defer></script>
+
   <style>
     :root {
-      --bg: #efefef;
+      --bg: #f5f7fb;
       --card: #ffffff;
-      --text: #111111;
-      --muted: #555555;
-      --border: #dddddd;
-      --primary: #2f71d3;
-      --primary-disabled: #9bb6e6;
+      --text: #1e2430;
+      --muted: #5c667a;
+      --accent: #0b3d91;
+      --accent-2: #1f5fd1;
+      --border: #dfe5f0;
+      --shadow: 0 10px 30px rgba(11, 61, 145, 0.08);
+      --max: 1180px;
       --error: #c62828;
+      --success: #2e7d32;
     }
 
-    * { box-sizing: border-box; }
+    * {
+      box-sizing: border-box;
+    }
 
     body {
       margin: 0;
       font-family: Arial, Helvetica, sans-serif;
-      background: var(--bg);
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
       color: var(--text);
+      line-height: 1.65;
     }
 
-    .wrap {
-      max-width: 760px;
-      margin: 0 auto;
-      padding: 16px;
-    }
-
-    .back-button {
-      display: inline-block;
+    a {
+      color: var(--accent);
       text-decoration: none;
-      background: var(--card);
-      color: var(--text);
-      font-weight: 600;
-      border: 1px solid #e2e2e2;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 16px;
     }
 
-    h1 {
-      margin: 0 0 12px;
-      font-size: 24px;
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .topbar {
+      width: 100%;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
       font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 20px 32px;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+    }
+
+    .hero-left {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      padding: 40px 34px;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .hero-left p {
+      margin: 0 0 16px;
+      color: rgba(255,255,255,0.92);
+      font-size: 17px;
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-right {
+      padding: 40px 34px;
+    }
+
+    .hero-right h2 {
+      margin: 0 0 16px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .hero-right p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px 28px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+    }
+
+    .section h3 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .quote-box {
+      background: #eef4ff;
+      border-left: 5px solid var(--accent);
+      border-radius: 18px;
+      padding: 20px;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .form-wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
     }
 
     label {
       display: block;
-      font-size: 13px;
+      font-size: 14px;
       color: var(--muted);
-      margin: 10px 0 6px;
+      margin: 0 0 6px;
+      font-weight: 700;
     }
 
     label.error-label {
       color: var(--error);
-      font-weight: 700;
     }
 
     input,
     textarea {
       width: 100%;
       border: 1px solid var(--border);
-      border-radius: 12px;
-      padding: 12px;
+      border-radius: 14px;
+      padding: 14px;
       font-size: 15px;
       color: var(--text);
-      background: var(--card);
+      background: #fff;
       outline: none;
+      font-family: inherit;
     }
 
     textarea {
       min-height: 220px;
       resize: vertical;
-      font-family: inherit;
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
     .error-input {
@@ -88,207 +259,433 @@
     .counter {
       margin-top: 6px;
       text-align: right;
-      color: #777777;
+      color: var(--muted);
       font-size: 12px;
     }
 
     .button {
       width: 100%;
-      margin-top: 20px;
+      margin-top: 8px;
       border: 0;
-      border-radius: 12px;
-      background: var(--primary);
+      border-radius: 14px;
+      background: var(--accent);
       color: #ffffff;
-      padding: 14px;
+      padding: 15px;
       font-size: 15px;
       font-weight: 700;
       cursor: pointer;
     }
 
     .button:disabled {
-      background: var(--primary-disabled);
+      opacity: 0.65;
       cursor: default;
     }
 
     .thank-you-box {
-      background: var(--card);
+      background: #f9fbff;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px;
-      margin: 8px 0 20px;
+      border-radius: 18px;
+      padding: 22px;
+      margin-top: 10px;
     }
 
     .thank-you-box p {
       margin: 0 0 12px;
-      color: #333333;
-      line-height: 1.45;
+      color: var(--text);
     }
 
-    .hidden { display: none; }
+    .hidden {
+      display: none !important;
+    }
 
-    @media (prefers-color-scheme: dark) {
-      :root {
-        --bg: #101010;
-        --card: #1b1b1b;
-        --text: #f3f3f3;
-        --muted: #bdbdbd;
-        --border: #333333;
+    .hp-wrap {
+      position: absolute;
+      left: -9999px;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+    }
+
+    .status-note {
+      font-size: 14px;
+      color: var(--muted);
+      margin-top: 6px;
+    }
+
+    .error-box {
+      display: none;
+      margin-top: 10px;
+      background: #fff4f4;
+      border: 1px solid #ffd2d2;
+      color: var(--error);
+      border-radius: 14px;
+      padding: 12px 14px;
+      font-size: 14px;
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+      box-shadow: var(--shadow);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
       }
 
-      .back-button { border-color: #333333; }
-      .counter { color: #bdbdbd; }
-      .thank-you-box p { color: #e5e5e5; }
+      .hero-left h1 {
+        font-size: 34px;
+      }
+
+      .hero-right h2,
+      .section h3 {
+        font-size: 24px;
+      }
+
+      .hero-left,
+      .hero-right,
+      .section-card {
+        padding: 28px 22px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand {
+        font-size: 18px;
+      }
+
+      .nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-left h1 {
+        font-size: 30px;
+      }
     }
   </style>
 </head>
 <body>
-  <div class="wrap">
-    <a class="back-button" href="/">← Back</a>
 
-    <section id="form-screen">
-      <h1>Donkey App Support Request</h1>
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <img src="icon-192.png" alt="Donkey App logo" />
+      <span>Donkey App</span>
+    </div>
 
-      <form id="contact-form" novalidate>
-        <label for="message" id="message-label">Message</label>
-        <textarea
-          id="message"
-          name="message"
-          placeholder="Write your message here..."
-          maxlength="3000"
-        ></textarea>
-        <div class="counter"><span id="message-count">0</span> / 3000 (minimum 20)</div>
-
-        <label for="name" id="name-label">Name (Minimum 1 Character)</label>
-        <input id="name" name="name" type="text" placeholder="Your name" maxlength="100" />
-
-        <label for="email" id="email-label">Email (optional)</label>
-        <input id="email" name="email" type="email" placeholder="Your email" maxlength="200" />
-
-        <button id="send-button" class="button" type="submit">Send message</button>
-      </form>
-    </section>
-
-    <section id="thank-you-screen" class="hidden">
-      <h1>Thank you</h1>
-      <div class="thank-you-box">
-        <p>Thank you for submitting your message.</p>
-        <p>If you left your email address, we aim to respond within 72 hours.</p>
-      </div>
-      <button id="send-another-button" class="button" type="button">Send another message</button>
-    </section>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="favourites.html">Favourites</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="conditions.html">Terms</a>
+      <a href="guidelines.html">Guidelines</a>
+      <a href="contact.html">Contact</a>
+    </nav>
   </div>
+</header>
 
-  <script type="module">
-    import { createClient } from 'https://cdn.jsdelivr.net/npm/@supabase/supabase-js/+esm';
+<main>
+  <section class="hero">
+    <div class="hero-card">
+      <div class="hero-grid">
+        <div class="hero-left">
+          <h1>Contact Us</h1>
+          <p>
+            Need help, spotted an issue, or want to get in touch with Donkey App?
+          </p>
+          <p>
+            Use the form and send your message directly. If you leave an email address, a reply is possible.
+          </p>
 
-    const supabaseUrl = 'https://mknsvxajrvdlwqywvlrf.supabase.co';
-    const supabaseKey = 'sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw';
-    const supabase = createClient(supabaseUrl, supabaseKey);
+          <div class="badge-row">
+            <span class="badge">Support</span>
+            <span class="badge">Feedback</span>
+            <span class="badge">Bug Reports</span>
+            <span class="badge">Secure Form</span>
+          </div>
+        </div>
 
-    const formScreen = document.getElementById('form-screen');
-    const thankYouScreen = document.getElementById('thank-you-screen');
-    const form = document.getElementById('contact-form');
-    const messageInput = document.getElementById('message');
-    const nameInput = document.getElementById('name');
-    const emailInput = document.getElementById('email');
-    const messageCount = document.getElementById('message-count');
-    const sendButton = document.getElementById('send-button');
-    const sendAnotherButton = document.getElementById('send-another-button');
-    const nameLabel = document.getElementById('name-label');
-    const emailLabel = document.getElementById('email-label');
+        <div class="hero-right">
+          <h2>Send a message</h2>
+          <p>
+            This form is for support requests, feedback, technical issues, and general contact.
+          </p>
+          <p>
+            Please describe the issue clearly. If you include your email address, Donkey App aims to respond within 72 hours.
+          </p>
+          <p>
+            Spam protection is enabled, so automated junk submissions should have a much harder time getting through.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
 
-    const resetErrors = () => {
+  <section class="section">
+    <div class="section-card">
+      <section id="form-screen">
+        <h3>Donkey App Support Request</h3>
+        <p>
+          Write your message below.
+        </p>
+
+        <form id="contact-form" class="form-wrap" novalidate>
+          <div class="hp-wrap" aria-hidden="true">
+            <label for="website">Website</label>
+            <input id="website" name="website" type="text" autocomplete="off" tabindex="-1" />
+          </div>
+
+          <div>
+            <label for="message" id="message-label">Message</label>
+            <textarea
+              id="message"
+              name="message"
+              placeholder="Write your message here..."
+              maxlength="3000"
+            ></textarea>
+            <div class="counter"><span id="message-count">0</span> / 3000 (minimum 20)</div>
+          </div>
+
+          <div>
+            <label for="name" id="name-label">Name (minimum 1 character)</label>
+            <input id="name" name="name" type="text" placeholder="Your name" maxlength="100" />
+          </div>
+
+          <div>
+            <label for="email" id="email-label">Email (optional)</label>
+            <input id="email" name="email" type="email" placeholder="Your email" maxlength="200" />
+          </div>
+
+          <div
+            class="cf-turnstile"
+            data-sitekey="0x4AAAAAAC-Ep-LIjA6T39I6"
+            data-theme="light"
+          ></div>
+
+          <div class="status-note">
+            Please complete the security check before sending.
+          </div>
+
+          <div id="error-box" class="error-box"></div>
+
+          <button id="send-button" class="button" type="submit">Send message</button>
+        </form>
+      </section>
+
+      <section id="thank-you-screen" class="hidden">
+        <h3>Thank you</h3>
+        <div class="thank-you-box">
+          <p>Thank you for submitting your message.</p>
+          <p>If you left your email address, we aim to respond within 72 hours.</p>
+        </div>
+        <button id="send-another-button" class="button" type="button">Send another message</button>
+      </section>
+
+      <div class="quote-box">
+        Genuine messages are welcome. Spam is not.
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  <div class="footer-card">
+    <div>© 2026 Donkey App. Comedy first.</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy Policy</a>
+      <a href="conditions.html">Terms &amp; Conditions</a>
+      <a href="guidelines.html">Community Guidelines</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const CONTACT_FUNCTION_URL = "https://mknsvxajrvdlwqywvlrf.supabase.co/functions/v1/contact-submit";
+  const formStartedAt = Date.now();
+
+  const formScreen = document.getElementById('form-screen');
+  const thankYouScreen = document.getElementById('thank-you-screen');
+  const form = document.getElementById('contact-form');
+  const messageInput = document.getElementById('message');
+  const nameInput = document.getElementById('name');
+  const emailInput = document.getElementById('email');
+  const websiteInput = document.getElementById('website');
+  const messageCount = document.getElementById('message-count');
+  const sendButton = document.getElementById('send-button');
+  const sendAnotherButton = document.getElementById('send-another-button');
+  const nameLabel = document.getElementById('name-label');
+  const emailLabel = document.getElementById('email-label');
+  const errorBox = document.getElementById('error-box');
+
+  const resetErrors = () => {
+    nameLabel.classList.remove('error-label');
+    emailLabel.classList.remove('error-label');
+    nameInput.classList.remove('error-input');
+    emailInput.classList.remove('error-input');
+    emailLabel.textContent = 'Email (optional)';
+    errorBox.style.display = 'none';
+    errorBox.textContent = '';
+  };
+
+  const showError = (message) => {
+    errorBox.style.display = 'block';
+    errorBox.textContent = message;
+  };
+
+  const showThankYou = () => {
+    formScreen.classList.add('hidden');
+    thankYouScreen.classList.remove('hidden');
+  };
+
+  const showForm = () => {
+    thankYouScreen.classList.add('hidden');
+    formScreen.classList.remove('hidden');
+  };
+
+  messageInput.addEventListener('input', () => {
+    messageCount.textContent = messageInput.value.length;
+  });
+
+  nameInput.addEventListener('input', () => {
+    if (nameInput.value.trim().length >= 1) {
       nameLabel.classList.remove('error-label');
-      emailLabel.classList.remove('error-label');
       nameInput.classList.remove('error-input');
+    }
+  });
+
+  emailInput.addEventListener('input', () => {
+    const value = emailInput.value.trim();
+    const valid = value.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+    if (valid) {
+      emailLabel.classList.remove('error-label');
       emailInput.classList.remove('error-input');
       emailLabel.textContent = 'Email (optional)';
-    };
+    }
+  });
 
-    const showThankYou = () => {
-      formScreen.classList.add('hidden');
-      thankYouScreen.classList.remove('hidden');
-    };
-
-    const showForm = () => {
-      thankYouScreen.classList.add('hidden');
-      formScreen.classList.remove('hidden');
-    };
-
-    messageInput.addEventListener('input', () => {
-      messageCount.textContent = messageInput.value.length;
-    });
-
-    nameInput.addEventListener('input', () => {
-      if (nameInput.value.trim().length >= 1) {
-        nameLabel.classList.remove('error-label');
-        nameInput.classList.remove('error-input');
+  sendAnotherButton.addEventListener('click', () => {
+    form.reset();
+    messageCount.textContent = '0';
+    resetErrors();
+    if (window.turnstile) {
+      const widget = document.querySelector('.cf-turnstile');
+      if (widget) {
+        window.turnstile.reset(widget);
       }
-    });
+    }
+    showForm();
+  });
 
-    emailInput.addEventListener('input', () => {
-      const value = emailInput.value.trim();
-      const valid = value.length === 0 || /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
-      if (valid) {
-        emailLabel.classList.remove('error-label');
-        emailInput.classList.remove('error-input');
-        emailLabel.textContent = 'Email (optional)';
-      }
-    });
+  form.addEventListener('submit', async (event) => {
+    event.preventDefault();
+    resetErrors();
 
-    sendAnotherButton.addEventListener('click', () => {
-      showForm();
-    });
+    const cleanMessage = messageInput.value.trim();
+    const cleanName = nameInput.value.trim();
+    const cleanEmail = emailInput.value.trim();
+    const honeypotValue = websiteInput.value.trim();
+    const tokenInput = document.querySelector('input[name="cf-turnstile-response"]');
+    const turnstileToken = tokenInput ? tokenInput.value : '';
 
-    form.addEventListener('submit', async (event) => {
-      event.preventDefault();
-      resetErrors();
+    if (honeypotValue !== '') {
+      return;
+    }
 
-      const cleanMessage = messageInput.value.trim();
-      const cleanName = nameInput.value.trim();
-      const cleanEmail = emailInput.value.trim();
+    if (Date.now() - formStartedAt < 4000) {
+      return;
+    }
 
-      if (cleanMessage.length < 20) {
-        alert('Please write at least 20 characters.');
-        return;
-      }
+    if (cleanMessage.length < 20) {
+      showError('Please write at least 20 characters.');
+      return;
+    }
 
-      if (cleanName.length < 1) {
-        nameLabel.classList.add('error-label');
-        nameInput.classList.add('error-input');
-        return;
-      }
+    if (cleanName.length < 1) {
+      nameLabel.classList.add('error-label');
+      nameInput.classList.add('error-input');
+      return;
+    }
 
-      if (cleanEmail.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
-        emailLabel.classList.add('error-label');
-        emailInput.classList.add('error-input');
-        emailLabel.textContent = 'Please enter a valid email address';
-        return;
-      }
+    if (cleanEmail.length > 0 && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(cleanEmail)) {
+      emailLabel.classList.add('error-label');
+      emailInput.classList.add('error-input');
+      emailLabel.textContent = 'Please enter a valid email address';
+      return;
+    }
 
-      try {
-        sendButton.disabled = true;
-        sendButton.textContent = 'Sending...';
+    if (!turnstileToken) {
+      showError('Please complete the security check.');
+      return;
+    }
 
-        const { error } = await supabase.from('contact_messages').insert({
+    try {
+      sendButton.disabled = true;
+      sendButton.textContent = 'Sending...';
+
+      const response = await fetch(CONTACT_FUNCTION_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
           name: cleanName,
           email: cleanEmail || null,
-          reason: 'Other',
           message: cleanMessage,
-        });
+          honeypot: honeypotValue,
+          token: turnstileToken,
+          started_at: formStartedAt
+        })
+      });
 
-        if (error) throw error;
-
-        form.reset();
-        messageCount.textContent = '0';
-        showThankYou();
-      } catch (error) {
-        alert(error?.message || 'Something went wrong.');
-      } finally {
-        sendButton.disabled = false;
-        sendButton.textContent = 'Send message';
+      if (!response.ok) {
+        throw new Error('Something went wrong.');
       }
-    });
-  </script>
+
+      form.reset();
+      messageCount.textContent = '0';
+
+      if (window.turnstile) {
+        const widget = document.querySelector('.cf-turnstile');
+        if (widget) {
+          window.turnstile.reset(widget);
+        }
+      }
+
+      showThankYou();
+    } catch (error) {
+      showError(error?.message || 'Something went wrong.');
+    } finally {
+      sendButton.disabled = false;
+      sendButton.textContent = 'Send message';
+    }
+  });
+</script>
+
 </body>
 </html>
