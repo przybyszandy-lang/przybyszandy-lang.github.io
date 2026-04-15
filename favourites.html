@@ -1,283 +1,1258 @@
 <!DOCTYPE html>
-
 <html lang="en">
 <head>
-<meta charset="UTF-8" />
-<title>DonkeyApp — Favourites</title>
-<meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta charset="UTF-8" />
+  <title>DonkeyApp — Favourites</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="robots" content="noindex,follow" />
+  <meta name="theme-color" content="#0b3d91" />
 
-<style>
-body {
-margin:0;
-font-family: Arial, Helvetica, sans-serif;
-background: linear-gradient(180deg,#f7f9fd 0%,#eef3fb 100%);
-color:#111;
-}
+  <style>
+    :root {
+      --bg: #efefef;
+      --bg-soft: #f5f7fb;
+      --card: #ffffff;
+      --border: #e2e2e2;
+      --border-soft: #dfe5f0;
+      --text: #111111;
+      --muted: #666666;
+      --link: #2f71d3;
+      --panel: #fafafa;
+      --blue: #0b3d91;
+      --blue-2: #1f5fd1;
+      --danger-bg: #fff4f4;
+      --danger-border: #ffd2d2;
+      --danger-text: #a40000;
+      --shadow: 0 6px 18px rgba(0,0,0,0.07);
+      --header-height: 74px;
+      --feed-width: 760px;
+      --max: 1240px;
+    }
 
-.topBar {
-position:sticky;
-top:0;
-background:#fff;
-border-bottom:1px solid #e2e2e2;
-padding:12px 16px;
-display:flex;
-align-items:center;
-gap:12px;
-z-index:10;
-}
+    * {
+      box-sizing: border-box;
+    }
 
-.searchWrap {
-flex:1;
-display:flex;
-align-items:center;
-border:1px solid #e2e2e2;
-border-radius:12px;
-padding:8px 10px;
-background:#fff;
-}
+    html, body {
+      margin: 0;
+      padding: 0;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
 
-.searchWrap input {
-flex:1;
-border:0;
-outline:none;
-}
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
 
-.page {
-max-width:760px;
-margin:0 auto;
-padding:16px;
-}
+    button, input, select {
+      font: inherit;
+    }
 
-.card {
-background:#fff;
-border:1px solid #e2e2e2;
-border-radius:16px;
-padding:14px;
-margin-bottom:12px;
-}
+    .topBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      min-height: var(--header-height);
+      background: rgba(255,255,255,0.92);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border-soft);
+      z-index: 10001;
+    }
 
-.jokeText {
-font-size:16px;
-line-height:1.5;
-white-space:pre-wrap;
-}
+    .topBarInner {
+      max-width: var(--max);
+      margin: 0 auto;
+      min-height: var(--header-height);
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
 
-.addedBy {
-margin-top:8px;
-font-size:13px;
-color:#666;
-}
+    .brandLink {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: var(--blue);
+      font-weight: 700;
+      min-width: 0;
+      flex-shrink: 0;
+    }
 
-.cardFooter {
-margin-top:12px;
-display:flex;
-justify-content:space-between;
-align-items:center;
-border-top:1px solid #eee;
-padding-top:8px;
-}
+    .logoWrap {
+      width: 42px;
+      min-width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-button {
-border:1px solid #e5e5e5;
-background:#f8f8f8;
-border-radius:10px;
-cursor:pointer;
-padding:6px 8px;
-}
+    .logoWrap img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: block;
+      object-fit: cover;
+    }
 
-button.active {
-color:#d32f2f;
-}
+    .brandText {
+      font-size: 20px;
+      line-height: 1;
+      white-space: nowrap;
+    }
 
-.smallNote {
-text-align:center;
-color:#666;
-padding:20px 0;
-}
-</style>
+    .searchWrap {
+      width: 320px;
+      max-width: 100%;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 0 10px;
+      min-width: 0;
+      box-shadow: 0 2px 8px rgba(11,61,145,0.04);
+      flex-shrink: 1;
+    }
 
+    .searchIcon {
+      color: var(--muted);
+      font-size: 18px;
+      margin-right: 8px;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    #searchInput {
+      flex: 1;
+      min-width: 0;
+      border: 0;
+      outline: none;
+      background: transparent;
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    #searchClear {
+      border: 0;
+      background: transparent;
+      color: var(--muted);
+      cursor: pointer;
+      font-size: 16px;
+      padding: 2px 4px;
+      display: none;
+      flex-shrink: 0;
+    }
+
+    .desktopNav {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-left: auto;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      font-size: 14px;
+    }
+
+    .desktopNav a {
+      color: var(--text);
+    }
+
+    .desktopNav a:hover {
+      color: var(--blue);
+      text-decoration: underline;
+    }
+
+    .menuButton {
+      display: none;
+      border: 1px solid var(--border);
+      background: var(--card);
+      color: var(--text);
+      height: 44px;
+      min-width: 44px;
+      border-radius: 12px;
+      cursor: pointer;
+      font-size: 20px;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .mobileMenuOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.22);
+      display: none;
+      z-index: 10000;
+    }
+
+    .mobileMenuPanel {
+      position: absolute;
+      top: calc(var(--header-height) + 8px);
+      right: 12px;
+      width: min(320px, calc(100vw - 24px));
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      padding: 14px;
+    }
+
+    .mobileMenuLinks {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mobileMenuLink {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 12px;
+      min-height: 44px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      color: var(--text);
+    }
+
+    .pageShell {
+      width: 100%;
+      min-height: 100vh;
+      padding-top: calc(var(--header-height) + 18px);
+      padding-bottom: 28px;
+    }
+
+    .singleColumnWrap {
+      max-width: var(--feed-width);
+      margin: 0 auto;
+      padding: 0 20px;
+    }
+
+    .pageIntroCard {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+      margin-bottom: 12px;
+    }
+
+    .pageTitle {
+      font-size: 24px;
+      font-weight: 700;
+      margin: 0 0 4px 0;
+    }
+
+    .pageSubtitle {
+      font-size: 14px;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    #errorBox {
+      display: none;
+      margin-bottom: 12px;
+      padding: 10px 12px;
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      border-radius: 14px;
+      color: var(--danger-text);
+      white-space: pre-wrap;
+      box-shadow: var(--shadow);
+    }
+
+    #feed {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .card,
+    .appPromoCard {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .jokeText {
+      font-size: 16px;
+      line-height: 1.58;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+
+    .addedBy {
+      margin-top: 8px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .addedByLink {
+      color: var(--link);
+      font-weight: 700;
+    }
+
+    .cardFooter {
+      margin-top: 12px;
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 1px auto;
+      align-items: stretch;
+      background: var(--panel);
+      border: 1px solid #e6e6e6;
+      border-radius: 14px;
+      overflow: hidden;
+    }
+
+    .footerLeft {
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .footerDivider {
+      background: #e0e0e0;
+      width: 1px;
+    }
+
+    .footerRight {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px;
+    }
+
+    .ratingRow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 34px;
+    }
+
+    .footerLabelInline {
+      font-size: 14px;
+      color: #555;
+      margin-right: 6px;
+      font-weight: 600;
+    }
+
+    .ratingEmojiBtn,
+    .iconBtn {
+      border: 1px solid #e5e5e5;
+      background: #f8f8f8;
+      border-radius: 12px;
+      cursor: pointer;
+      min-width: 38px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+
+    .ratingEmojiBtn:hover,
+    .iconBtn:hover {
+      background: #eaeaea;
+    }
+
+    .ratingEmojiBtn:active,
+    .iconBtn:active {
+      transform: scale(0.96);
+    }
+
+    .ratingEmojiBtn {
+      font-size: 20px;
+      width: 38px;
+      height: 34px;
+    }
+
+    .iconBtn {
+      font-size: 18px;
+      color: #333;
+      width: 38px;
+      height: 34px;
+      padding: 0;
+    }
+
+    .iconBtn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .iconBtn.activeFav {
+      color: #d32f2f;
+    }
+
+    .iconBtn.activeReport {
+      color: var(--link);
+    }
+
+    .feedLoading,
+    .feedEnd {
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+      padding: 14px 0;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    #copyToast {
+      display: none;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 24px;
+      background: rgba(0,0,0,0.88);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 10004;
+      white-space: nowrap;
+      max-width: calc(100vw - 24px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .appPromoCard {
+      display: none;
+      overflow: hidden;
+      padding: 0;
+    }
+
+    .appPromoCard img {
+      display: block;
+      width: 100%;
+      height: auto;
+      border: 0;
+      border-radius: 18px;
+    }
+
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.30);
+      display: none;
+      justify-content: flex-start;
+      padding-top: 60px;
+      padding-inline: 12px;
+      z-index: 10005;
+    }
+
+    .modalSheet {
+      width: min(520px, 100%);
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .modalTitle {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 10px 0;
+    }
+
+    .modalItem {
+      padding: 12px 0;
+      border-top: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .modalItemRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modalItemText {
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .modalCheck {
+      color: #2e7d32;
+      font-weight: 700;
+    }
+
+    .reportDivider {
+      height: 1px;
+      background: #ddd;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .reportButtons {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .reportButton,
+    .reportCloseButton {
+      flex: 1;
+      border: 0;
+      min-height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .reportButton {
+      background: #2f71d3;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .reportButton:disabled {
+      background: #ccc;
+      cursor: default;
+    }
+
+    .reportCloseButton {
+      background: #eee;
+      color: #333;
+      font-weight: 700;
+    }
+
+    #appVersion {
+      position: fixed;
+      right: 10px;
+      bottom: 8px;
+      font-size: 12px;
+      opacity: 0.35;
+      z-index: 9999;
+    }
+
+    @media (max-width: 980px) {
+      .topBarInner {
+        padding: 12px;
+      }
+
+      .desktopNav {
+        display: none;
+      }
+
+      .menuButton {
+        display: inline-flex;
+      }
+
+      .brandText {
+        display: none;
+      }
+
+      .searchWrap {
+        width: auto;
+        flex: 1;
+      }
+
+      .singleColumnWrap {
+        padding: 0 12px;
+      }
+
+      .appPromoCard {
+        display: block;
+      }
+    }
+
+    @media (max-width: 640px) {
+      :root {
+        --header-height: 70px;
+      }
+
+      .topBarInner {
+        gap: 8px;
+      }
+
+      .logoWrap {
+        width: 38px;
+        min-width: 38px;
+        height: 38px;
+      }
+
+      .logoWrap img {
+        width: 38px;
+        height: 38px;
+      }
+
+      .searchWrap {
+        height: 42px;
+      }
+
+      .menuButton {
+        height: 42px;
+        min-width: 42px;
+      }
+
+      .card {
+        padding: 13px;
+      }
+
+      .cardFooter {
+        grid-template-columns: 1fr;
+      }
+
+      .footerLeft {
+        display: flex;
+        justify-content: center;
+        padding-bottom: 6px;
+      }
+
+      .ratingRow {
+        justify-content: center;
+      }
+
+      .footerDivider {
+        display: none;
+      }
+
+      .footerRight {
+        justify-content: center;
+        border-top: 1px solid #e0e0e0;
+      }
+
+      #copyToast {
+        bottom: 18px;
+      }
+    }
+  </style>
 </head>
 
 <body>
+  <header class="topBar">
+    <div class="topBarInner">
+      <a href="/" class="brandLink" aria-label="DonkeyApp home">
+        <span class="logoWrap">
+          <img src="/icon-512.png" alt="DonkeyApp logo" />
+        </span>
+        <span class="brandText">Donkey App</span>
+      </a>
 
-<div class="topBar">
-<strong>❤️ Favourites</strong>
-<div class="searchWrap">
-<input id="searchInput" placeholder="Search favourites..." />
-</div>
-</div>
+      <div class="searchWrap">
+        <span class="searchIcon">⌕</span>
+        <input
+          id="searchInput"
+          type="text"
+          autocomplete="off"
+          autocapitalize="none"
+          autocorrect="off"
+          enterkeyhint="search"
+          placeholder="Search favourites…"
+        />
+        <button id="searchClear" type="button" aria-label="Clear search">✕</button>
+      </div>
 
-<div class="page">
-<div id="jokesList"></div>
-<div id="emptyState" class="smallNote" style="display:none;">
-No favourites yet.
-</div>
-</div>
+      <nav class="desktopNav" aria-label="Primary">
+        <a href="/">Home</a>
+        <a href="about.html">About</a>
+        <a href="favourites.html">Favourites</a>
+        <a href="addajoke.html">Add a Joke</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="conditions.html">Terms</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="guidelines.html">Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </nav>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+      <button id="menuButton" class="menuButton" type="button" aria-label="Open menu" aria-expanded="false">☰</button>
+    </div>
+  </header>
 
-<script>
-document.addEventListener("DOMContentLoaded", async () => {
+  <div id="mobileMenuOverlay" class="mobileMenuOverlay">
+    <div class="mobileMenuPanel" role="dialog" aria-modal="true" aria-label="Menu">
+      <div class="mobileMenuLinks">
+        <a class="mobileMenuLink" href="/">Home</a>
+        <a class="mobileMenuLink" href="favourites.html">Favourites</a>
+        <a class="mobileMenuLink" href="addajoke.html">Add a Joke</a>
+        <a class="mobileMenuLink" href="privacy.html">Privacy</a>
+        <a class="mobileMenuLink" href="conditions.html">Terms</a>
+        <a class="mobileMenuLink" href="cookies.html">Cookies</a>
+        <a class="mobileMenuLink" href="guidelines.html">Guidelines</a>
+        <a class="mobileMenuLink" href="about.html">About</a>
+        <a class="mobileMenuLink" href="contact.html">Contact</a>
+      </div>
+    </div>
+  </div>
 
-const FAV_KEY = "donkey:favourites:v1";
-const VOTE_KEY = "donkey:votes:v1";
-const MOBILE_PROMO_EVERY = 10;
+  <div class="pageShell">
+    <div class="singleColumnWrap">
+      <div class="pageIntroCard">
+        <h1 class="pageTitle">Favourites</h1>
+        <p id="favCount" class="pageSubtitle">0 jokes</p>
+      </div>
 
-const list = document.getElementById("jokesList");
-const empty = document.getElementById("emptyState");
-const searchInput = document.getElementById("searchInput");
+      <div id="errorBox"></div>
+      <div id="feed"></div>
+      <div id="feedLoading" class="feedLoading hidden">Loading…</div>
+      <div id="feedEnd" class="feedEnd hidden">No favourites yet.</div>
+    </div>
+  </div>
 
-function getFav() {
-try { return JSON.parse(localStorage.getItem(FAV_KEY) || "[]"); }
-catch { return []; }
-}
+  <div id="copyToast"></div>
 
-function getVotes() {
-try { return JSON.parse(localStorage.getItem(VOTE_KEY) || "{}"); }
-catch { return {}; }
-}
+  <div id="reportModal" class="modalOverlay">
+    <div class="modalSheet">
+      <h2 class="modalTitle">Report joke</h2>
 
-let favIds = getFav();
-let votes = getVotes();
-let allJokes = [];
+      <div class="modalItem" data-report-reason="offensive">
+        <div class="modalItemRow">
+          <span class="modalItemText">This joke appears to be offensive</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
 
-if (!favIds.length) {
-empty.style.display = "block";
-return;
-}
+      <div class="modalItem" data-report-reason="illegal">
+        <div class="modalItemRow">
+          <span class="modalItemText">This joke is clearly illegal</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
 
-const { createClient } = window.supabase;
+      <div class="modalItem" data-report-reason="other">
+        <div class="modalItemRow">
+          <span class="modalItemText">Other</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
 
-// ✅ SAME KEY AS YOUR MAIN SITE
-const client = createClient(
-"https://mknsvxajrvdlwqywvlrf.supabase.co",
-"eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo"
-);
+      <div class="reportDivider"></div>
 
-const { data } = await client
-.from("jokes")
-.select("id, content, user_id")
-.in("id", favIds);
+      <div class="reportButtons">
+        <button id="reportSubmitButton" class="reportButton" type="button" disabled>Report</button>
+        <button id="reportCloseButton" class="reportCloseButton" type="button">Close</button>
+      </div>
+    </div>
+  </div>
 
-allJokes = data || [];
+  <div id="appVersion">v2.0.4</div>
 
-function saveFav() {
-localStorage.setItem(FAV_KEY, JSON.stringify(favIds));
-}
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-function saveVotes() {
-localStorage.setItem(VOTE_KEY, JSON.stringify(votes));
-}
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const APP_VERSION = "2.0.4";
+      const FAVOURITES_KEY = "donkey:favourites:v1";
+      const VOTES_KEY = "donkey:votes:v1";
+      const MOBILE_PROMO_EVERY = 10;
 
-function createPromoCard() {
-const promo = document.createElement("div");
-promo.className = "card";
-promo.innerHTML = '<img src="/appad.jpg" style="width:100%; border-radius:12px;">';
-return promo;
-}
+      const ratingOptions = [
+        { vote: "bad", emoji: "😕", title: "Vote bad" },
+        { vote: "meh", emoji: "😐", title: "Vote meh" },
+        { vote: "good", emoji: "🙂", title: "Vote good" },
+        { vote: "great", emoji: "😂", title: "Vote great" }
+      ];
 
-function render(items) {
+      const searchInput = document.getElementById("searchInput");
+      const searchClear = document.getElementById("searchClear");
+      const favCount = document.getElementById("favCount");
+      const feed = document.getElementById("feed");
+      const feedLoading = document.getElementById("feedLoading");
+      const feedEnd = document.getElementById("feedEnd");
+      const errorBox = document.getElementById("errorBox");
+      const copyToast = document.getElementById("copyToast");
+      const reportModal = document.getElementById("reportModal");
+      const reportSubmitButton = document.getElementById("reportSubmitButton");
+      const reportCloseButton = document.getElementById("reportCloseButton");
+      const menuButton = document.getElementById("menuButton");
+      const mobileMenuOverlay = document.getElementById("mobileMenuOverlay");
+      const appVersionDiv = document.getElementById("appVersion");
 
-list.innerHTML = "";
+      if (appVersionDiv) {
+        appVersionDiv.textContent = "v" + APP_VERSION;
+      }
 
-if (!items.length) {
-empty.style.display = "block";
-return;
-}
+      if (!window.supabase || !window.supabase.createClient) {
+        showError("Supabase library did not load.");
+        return;
+      }
 
-empty.style.display = "none";
+      const { createClient } = window.supabase;
+      const client = createClient(
+        "https://mknsvxajrvdlwqywvlrf.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo"
+      );
 
-items.forEach((j, index) => {
+      let favouriteIds = [];
+      let favouritesSet = new Set();
+      let votesByJokeId = {};
+      let allFavouriteJokes = [];
+      let filteredFavouriteJokes = [];
+      let reportReason = null;
+      let reportJokeId = null;
+      let reportedIds = new Set();
 
-const card = document.createElement("div");
-card.className = "card";
+      function showError(msg) {
+        errorBox.style.display = "block";
+        errorBox.textContent = String(msg);
+      }
 
-const text = document.createElement("div");
-text.className = "jokeText";
-text.textContent = j.content;
-card.appendChild(text);
+      function clearError() {
+        errorBox.style.display = "none";
+        errorBox.textContent = "";
+      }
 
-const added = document.createElement("div");
-added.className = "addedBy";
-added.textContent = "Added by Anonymous";
-card.appendChild(added);
+      function showToast(msg) {
+        copyToast.textContent = msg;
+        copyToast.style.display = "block";
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => {
+          copyToast.style.display = "none";
+        }, 2200);
+      }
 
-const footer = document.createElement("div");
-footer.className = "cardFooter";
+      function updateSearchUi() {
+        searchClear.style.display = searchInput.value.trim() ? "inline-flex" : "none";
+      }
 
-const left = document.createElement("div");
+      function loadLocalState() {
+        try {
+          favouriteIds = JSON.parse(localStorage.getItem(FAVOURITES_KEY) || "[]");
+        } catch {
+          favouriteIds = [];
+        }
 
-// voting
-if (votes[j.id]) {
-left.textContent = "Your vote: " + votes[j.id];
-} else {
-["😕","😐","🙂","😂"].forEach((emoji, i)=>{
-const types = ["bad","meh","good","great"];
-const b = document.createElement("button");
-b.textContent = emoji;
-b.onclick = ()=>{
-if (votes[j.id]) return;
-votes[j.id]=types[i];
-saveVotes();
-render(allJokes);
-};
-left.appendChild(b);
-});
-}
+        favouritesSet = new Set(favouriteIds);
 
-const right = document.createElement("div");
+        try {
+          votesByJokeId = JSON.parse(localStorage.getItem(VOTES_KEY) || "{}");
+        } catch {
+          votesByJokeId = {};
+        }
+      }
 
-// copy
-const copy = document.createElement("button");
-copy.textContent = "📋";
-copy.onclick = ()=>{
-navigator.clipboard.writeText(j.content);
-};
+      function saveFavourites() {
+        localStorage.setItem(FAVOURITES_KEY, JSON.stringify(Array.from(favouritesSet)));
+      }
 
-// remove favourite
-const fav = document.createElement("button");
-fav.textContent = "♥";
-fav.className = "active";
-fav.onclick = ()=>{
-favIds = favIds.filter(id=>id!==j.id);
-saveFav();
-allJokes = allJokes.filter(x=>x.id!==j.id);
-render(allJokes);
-};
+      function saveVotes() {
+        localStorage.setItem(VOTES_KEY, JSON.stringify(votesByJokeId));
+      }
 
-right.appendChild(copy);
-right.appendChild(fav);
+      function updateCount() {
+        const count = filteredFavouriteJokes.length;
+        favCount.textContent = count === 1 ? "1 joke" : count + " jokes";
+      }
 
-footer.appendChild(left);
-footer.appendChild(right);
+      function applySearchFilter() {
+        const q = searchInput.value.trim().toLowerCase();
 
-card.appendChild(footer);
+        if (!q) {
+          filteredFavouriteJokes = [...allFavouriteJokes];
+        } else {
+          filteredFavouriteJokes = allFavouriteJokes.filter((item) => {
+            const jokeText = (item.content || "").toLowerCase();
+            const displayName = (item.display_name || "").toLowerCase();
+            return jokeText.includes(q) || displayName.includes(q);
+          });
+        }
 
-list.appendChild(card);
+        updateCount();
+        renderFeed();
+      }
 
-// ✅ mobile promo every 10
-if ((index + 1) % MOBILE_PROMO_EVERY === 0) {
-list.appendChild(createPromoCard());
-}
+      function createPromoCard() {
+        const promo = document.createElement("article");
+        promo.className = "appPromoCard";
+        const img = document.createElement("img");
+        img.src = "/appad.jpg";
+        img.alt = "Donkey App mobile app";
+        img.loading = "lazy";
+        promo.appendChild(img);
+        return promo;
+      }
 
-});
+      function renderVoteArea(container, jokeId) {
+        container.innerHTML = "";
 
-}
+        if (votesByJokeId[jokeId]) {
+          const label = document.createElement("span");
+          label.className = "footerLabelInline";
+          label.textContent = "Your vote:";
 
-render(allJokes);
+          const emoji = document.createElement("span");
+          emoji.textContent =
+            votesByJokeId[jokeId] === "bad" ? "😕" :
+            votesByJokeId[jokeId] === "meh" ? "😐" :
+            votesByJokeId[jokeId] === "good" ? "🙂" : "😂";
+          emoji.style.fontSize = "22px";
 
-// search inside favourites only
-searchInput.addEventListener("input", ()=>{
-const q = searchInput.value.toLowerCase();
-const filtered = allJokes.filter(j =>
-(j.content || "").toLowerCase().includes(q)
-);
-render(filtered);
-});
+          container.appendChild(label);
+          container.appendChild(emoji);
+          return;
+        }
 
-});
-</script>
+        ratingOptions.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ratingEmojiBtn";
+          btn.textContent = opt.emoji;
+          btn.title = opt.title;
+          btn.setAttribute("aria-label", opt.title);
+          btn.addEventListener("click", () => onVote(jokeId, opt.vote, container));
+          container.appendChild(btn);
+        });
+      }
 
+      async function onVote(jokeId, vote, voteArea) {
+        if (votesByJokeId[jokeId]) return;
 
+        votesByJokeId[jokeId] = vote;
+        saveVotes();
+        renderVoteArea(voteArea, jokeId);
+
+        const { error } = await client.rpc("rate_joke", {
+          p_id: jokeId,
+          p_vote: vote
+        });
+
+        if (error) {
+          showToast("Vote saved locally, but failed to sync.");
+        }
+      }
+
+      function copyText(textToCopy) {
+        const finalText = textToCopy.trim() + "\n\nFound at donkeyapp.com";
+
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(finalText);
+        }
+
+        return new Promise((resolve, reject) => {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = finalText;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            ta.style.top = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            ta.setSelectionRange(0, ta.value.length);
+            const ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            if (ok) resolve();
+            else reject(new Error("Copy failed"));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      async function onCopyJoke(content) {
+        try {
+          await copyText(content);
+          showToast("Joke copied. Share it however you want!");
+        } catch {
+          showToast("Copy failed.");
+        }
+      }
+
+      function openReportModal(jokeId) {
+        if (reportedIds.has(jokeId)) {
+          reportedIds.delete(jokeId);
+          renderFeed();
+          return;
+        }
+
+        reportJokeId = jokeId;
+        reportReason = null;
+        updateReportSelectionUi();
+        reportModal.style.display = "flex";
+      }
+
+      function closeReportModal() {
+        reportModal.style.display = "none";
+        reportJokeId = null;
+        reportReason = null;
+        updateReportSelectionUi();
+      }
+
+      function updateReportSelectionUi() {
+        reportModal.querySelectorAll(".modalItem").forEach((item) => {
+          const active = item.dataset.reportReason === reportReason;
+          item.querySelector(".modalCheck").classList.toggle("hidden", !active);
+        });
+
+        reportSubmitButton.disabled = !reportReason;
+      }
+
+      async function submitReport() {
+        if (!reportJokeId || !reportReason) return;
+
+        const { error } = await client.rpc("report_joke", {
+          p_joke_id: reportJokeId,
+          p_reason: reportReason
+        });
+
+        if (error) {
+          showToast("Report failed. Please try again.");
+          return;
+        }
+
+        reportedIds.add(reportJokeId);
+        closeReportModal();
+        renderFeed();
+        showToast("Thank you. Report submitted.");
+      }
+
+      function removeFromFavourites(jokeId) {
+        favouritesSet.delete(jokeId);
+        favouriteIds = Array.from(favouritesSet);
+        saveFavourites();
+
+        allFavouriteJokes = allFavouriteJokes.filter((item) => item.id !== jokeId);
+        filteredFavouriteJokes = filteredFavouriteJokes.filter((item) => item.id !== jokeId);
+
+        updateCount();
+        renderFeed();
+      }
+
+      function createCard(item) {
+        const card = document.createElement("article");
+        card.className = "card";
+
+        const jokeText = document.createElement("div");
+        jokeText.className = "jokeText";
+        jokeText.textContent = item.content || "";
+        card.appendChild(jokeText);
+
+        const addedBy = document.createElement("div");
+        addedBy.className = "addedBy";
+
+        const nameToShow =
+          item.display_name && item.display_name.trim() !== ""
+            ? item.display_name
+            : "Anonymous";
+
+        if (nameToShow !== "Anonymous" && item.user_id) {
+          addedBy.append(document.createTextNode("Added by "));
+          const link = document.createElement("a");
+          link.className = "addedByLink";
+          link.href = "userID.html?userId=" + encodeURIComponent(item.user_id);
+          link.textContent = nameToShow;
+          addedBy.appendChild(link);
+        } else {
+          addedBy.textContent = "Added by " + nameToShow;
+        }
+
+        card.appendChild(addedBy);
+
+        const footer = document.createElement("div");
+        footer.className = "cardFooter";
+
+        const footerLeft = document.createElement("div");
+        footerLeft.className = "footerLeft";
+
+        const ratingRow = document.createElement("div");
+        ratingRow.className = "ratingRow";
+        renderVoteArea(ratingRow, item.id);
+        footerLeft.appendChild(ratingRow);
+
+        const footerDivider = document.createElement("div");
+        footerDivider.className = "footerDivider";
+
+        const footerRight = document.createElement("div");
+        footerRight.className = "footerRight";
+
+        const copyBtn = document.createElement("button");
+        copyBtn.type = "button";
+        copyBtn.className = "iconBtn";
+        copyBtn.title = "Copy joke";
+        copyBtn.setAttribute("aria-label", "Copy joke");
+        copyBtn.innerHTML = '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="9" y="9" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect><rect x="5" y="5" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect></svg>';
+        copyBtn.addEventListener("click", () => onCopyJoke(item.content || ""));
+
+        const reportBtn = document.createElement("button");
+        reportBtn.type = "button";
+        reportBtn.className = "iconBtn";
+        if (reportedIds.has(item.id)) reportBtn.classList.add("activeReport");
+        reportBtn.title = "Report joke";
+        reportBtn.setAttribute("aria-label", "Report joke");
+        reportBtn.textContent = reportedIds.has(item.id) ? "⚑" : "⚐";
+        reportBtn.addEventListener("click", () => openReportModal(item.id));
+
+        const favBtn = document.createElement("button");
+        favBtn.type = "button";
+        favBtn.className = "iconBtn activeFav";
+        favBtn.title = "Remove from favourites";
+        favBtn.setAttribute("aria-label", "Remove from favourites");
+        favBtn.textContent = "♥";
+        favBtn.addEventListener("click", () => removeFromFavourites(item.id));
+
+        footerRight.appendChild(copyBtn);
+        footerRight.appendChild(reportBtn);
+        footerRight.appendChild(favBtn);
+
+        footer.appendChild(footerLeft);
+        footer.appendChild(footerDivider);
+        footer.appendChild(footerRight);
+
+        card.appendChild(footer);
+
+        return card;
+      }
+
+      function renderFeed() {
+        feed.innerHTML = "";
+
+        if (!filteredFavouriteJokes.length) {
+          feedEnd.classList.remove("hidden");
+          feedEnd.textContent = searchInput.value.trim() ? "No matching favourites." : "No favourites yet.";
+          return;
+        }
+
+        feedEnd.classList.add("hidden");
+
+        filteredFavouriteJokes.forEach((item, index) => {
+          feed.appendChild(createCard(item));
+
+          if ((index + 1) % MOBILE_PROMO_EVERY === 0) {
+            feed.appendChild(createPromoCard());
+          }
+        });
+      }
+
+      async function loadFavourites() {
+        loadLocalState();
+        clearError();
+        feedLoading.classList.remove("hidden");
+        feedEnd.classList.add("hidden");
+
+        if (!favouriteIds.length) {
+          allFavouriteJokes = [];
+          filteredFavouriteJokes = [];
+          updateCount();
+          renderFeed();
+          feedLoading.classList.add("hidden");
+          return;
+        }
+
+        try {
+          const { data: jokesData, error: jokesError } = await client
+            .from("jokes")
+            .select("id, content, user_id")
+            .in("id", favouriteIds);
+
+          if (jokesError) throw jokesError;
+
+          const jokesRows = Array.isArray(jokesData) ? jokesData : [];
+          const userIds = [...new Set(jokesRows.map((item) => item.user_id).filter(Boolean))];
+
+          let profileMap = new Map();
+
+          if (userIds.length) {
+            const { data: profilesData, error: profilesError } = await client
+              .from("public_profiles")
+              .select("id, display_name")
+              .in("id", userIds);
+
+            if (!profilesError && Array.isArray(profilesData)) {
+              profileMap = new Map(
+                profilesData.map((item) => [item.id, item.display_name || ""])
+              );
+            }
+          }
+
+          const orderMap = new Map(favouriteIds.map((id, index) => [id, index]));
+
+          allFavouriteJokes = jokesRows
+            .map((item) => ({
+              ...item,
+              display_name: item.user_id ? (profileMap.get(item.user_id) || "") : ""
+            }))
+            .sort((a, b) => (orderMap.get(a.id) ?? 999999) - (orderMap.get(b.id) ?? 999999));
+
+          applySearchFilter();
+        } catch (e) {
+          showError((e && e.message) ? e.message : "Failed to load favourites.");
+        } finally {
+          feedLoading.classList.add("hidden");
+        }
+      }
+
+      function openMobileMenu() {
+        mobileMenuOverlay.style.display = "block";
+        menuButton.setAttribute("aria-expanded", "true");
+      }
+
+      function closeMobileMenu() {
+        mobileMenuOverlay.style.display = "none";
+        menuButton.setAttribute("aria-expanded", "false");
+      }
+
+      searchInput.addEventListener("input", () => {
+        updateSearchUi();
+        applySearchFilter();
+      });
+
+      searchInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") {
+          e.preventDefault();
+          applySearchFilter();
+        }
+      });
+
+      searchClear.addEventListener("click", () => {
+        searchInput.value = "";
+        updateSearchUi();
+        applySearchFilter();
+      });
+
+      menuButton.addEventListener("click", () => {
+        if (mobileMenuOverlay.style.display === "block") {
+          closeMobileMenu();
+        } else {
+          openMobileMenu();
+        }
+      });
+
+      mobileMenuOverlay.addEventListener("click", (e) => {
+        if (e.target === mobileMenuOverlay) {
+          closeMobileMenu();
+        }
+      });
+
+      mobileMenuOverlay.querySelectorAll("a").forEach((link) => {
+        link.addEventListener("click", () => {
+          closeMobileMenu();
+        });
+      });
+
+      reportModal.addEventListener("click", (e) => {
+        if (e.target === reportModal) {
+          closeReportModal();
+        }
+      });
+
+      reportModal.querySelectorAll(".modalItem").forEach((item) => {
+        item.addEventListener("click", () => {
+          reportReason = item.dataset.reportReason;
+          updateReportSelectionUi();
+        });
+      });
+
+      reportSubmitButton.addEventListener("click", submitReport);
+      reportCloseButton.addEventListener("click", closeReportModal);
+
+      updateSearchUi();
+      await loadFavourites();
+    });
+  </script>
 </body>
 </html>
