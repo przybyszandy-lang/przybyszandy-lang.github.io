@@ -2,131 +2,346 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Community Guidelines – DonkeyApp</title>
+  <title>Community Guidelines – Donkey App</title>
+
+  <meta
+    name="description"
+    content="Read the Community Guidelines for Donkey App and understand what content is allowed on the platform."
+  />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.donkeyapp.com/guidelines.html" />
+
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.donkeyapp.com/guidelines.html" />
+  <meta property="og:title" content="Community Guidelines – Donkey App" />
+  <meta
+    property="og:description"
+    content="Understand what content is allowed on Donkey App and how moderation works."
+  />
+  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Community Guidelines – Donkey App" />
+  <meta
+    name="twitter:description"
+    content="Understand what content is allowed on Donkey App and how moderation works."
+  />
+  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
 
   <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1e2430;
+      --muted: #5c667a;
+      --accent: #0b3d91;
+      --accent-2: #1f5fd1;
+      --border: #dfe5f0;
+      --shadow: 0 10px 30px rgba(11, 61, 145, 0.08);
+      --max: 1180px;
+    }
+
+    * { box-sizing: border-box; }
+
     body {
-      background-color: #efefef;
-      font-family: Arial, sans-serif;
       margin: 0;
-      padding: 40px 20px;
-      max-width: 800px;
-      line-height: 1.6;
-      color: #111;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      line-height: 1.65;
     }
 
-    .card {
-      background: #ffffff;
-      border: 1px solid #e2e2e2;
-      border-radius: 14px;
-      padding: 24px;
+    a {
+      color: var(--accent);
+      text-decoration: none;
     }
 
-    h1 {
-      margin-top: 0;
-      margin-bottom: 6px;
-      font-size: 32px;
+    a:hover {
+      text-decoration: underline;
     }
 
-    .small-note {
-      color: #555;
+    .topbar {
+      width: 100%;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 20px 32px;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+    }
+
+    .hero-left {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      padding: 40px 34px;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: 42px;
+    }
+
+    .hero-left p {
+      margin: 0 0 16px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge-row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .badge {
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
       font-size: 13px;
-      margin-bottom: 18px;
+      font-weight: 700;
     }
 
-    h2 {
-      margin-top: 22px;
-      margin-bottom: 8px;
-      font-size: 22px;
+    .hero-right {
+      padding: 40px 34px;
     }
 
-    p {
-      margin: 0 0 12px 0;
+    .hero-right h2 {
+      margin-bottom: 16px;
+    }
+
+    .hero-right p {
+      color: var(--muted);
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px 28px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+    }
+
+    .section h3 {
+      margin-bottom: 16px;
+    }
+
+    .section p {
+      color: var(--muted);
+    }
+
+    .quote-box {
+      background: #eef4ff;
+      border-left: 5px solid var(--accent);
+      border-radius: 18px;
+      padding: 20px;
+      margin-top: 10px;
+      font-weight: 700;
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 20px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 20px;
+      text-align: center;
+      color: var(--muted);
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: 10px;
+      flex-wrap: wrap;
     }
   </style>
 </head>
 
 <body>
 
-  <div class="card">
+<header class="topbar">
+  <div class="topbar-inner">
+    <div class="brand">
+      <img src="icon-192.png" />
+      <span>Donkey App</span>
+    </div>
 
-    <h1>Community Guidelines</h1>
-    <p class="small-note">Last updated: March 2026</p>
+    <nav class="nav">
+      <a href="index.html">Home</a>
+      <a href="favourites.html">Favourites</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="conditions.html">Terms</a>
+      <a href="guidelines.html">Guidelines</a>
+      <a href="contact.html">Contact</a>
+    </nav>
+  </div>
+</header>
 
+<main>
+
+<section class="hero">
+  <div class="hero-card">
+    <div class="hero-grid">
+      <div class="hero-left">
+        <h1>Community Guidelines</h1>
+        <p>Keep it funny. Keep it respectful. Keep it sane.</p>
+
+        <div class="badge-row">
+          <span class="badge">Humour First</span>
+          <span class="badge">No Abuse</span>
+          <span class="badge">No Hate</span>
+          <span class="badge">Moderated</span>
+        </div>
+      </div>
+
+      <div class="hero-right">
+        <h2>How to use Donkey App properly</h2>
+        <p>
+          Donkey App is built for humour. The goal is to share jokes and entertainment,
+          not to create conflict or hostility.
+        </p>
+        <p>
+          Comedy can push boundaries, but this platform is not a place for abuse,
+          harassment, or harmful content.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="section-card">
+
+    <h3>1. Humour first</h3>
     <p>
-      DonkeyApp is a platform created for humour. The goal of this community
-      is to share jokes and entertainment. The platform is not intended to be
-      used for abuse, harassment, or derogatory political messaging.
+      Content should be intended as humour. The platform exists to make people laugh.
     </p>
 
-    <h2>1. Humour First</h2>
-
+    <h3>2. Respect the community</h3>
     <p>
-      Content on DonkeyApp should be intended as humour. The platform exists
-      to make people laugh and enjoy jokes shared by others.
+      Bold humour is fine. Content meant to harass or attack others is not.
     </p>
 
-    <h2>2. Respect the Community</h2>
+    <div class="quote-box">
+      Comedy is allowed. Abuse is not.
+    </div>
 
+    <h3>3. Prohibited content</h3>
     <p>
-      While humour can be bold and sometimes controversial, content that is
-      primarily intended to harass, threaten, or abuse others is not allowed.
+      The following is not allowed:
+    </p>
+    <p>
+      • child exploitation or abuse<br>
+      • encouragement of violence<br>
+      • direct harassment<br>
+      • hate speech or racism<br>
+      • jokes about tragedies in a derogatory way
     </p>
 
-    <h2>3. Prohibited Content</h2>
-
+    <h3>4. Context matters</h3>
     <p>
-      The following types of content are not allowed on DonkeyApp:
+      Some humour approaches sensitive topics. However, content crossing into
+      clear abuse or discrimination will be removed.
     </p>
 
+    <h3>5. Moderation</h3>
     <p>
-      • content involving child exploitation or abuse<br/>
-      • explicit encouragement of violence<br/>
-      • direct harassment of individuals<br/>
-      • hate speech or racist content<br/>
-      • jokes about genocides or human tragedies presented in a derogatory way
+      Donkey App may remove content at its discretion.
+      Repeated violations may lead to account removal.
     </p>
 
-    <h2>4. Context Matters</h2>
-
+    <h3>6. Reporting</h3>
     <p>
-      We understand that humour can sometimes approach sensitive topics.
-      However, content that crosses into clear abuse or discrimination will
-      be removed.
+      Use the report function to flag problematic content.
     </p>
 
+    <h3>7. Contact</h3>
     <p>
-      Even if a joke may sound humorous to some audiences, it may still be
-      removed if it violates these guidelines.
-    </p>
-
-    <h2>5. Moderation</h2>
-
-    <p>
-      DonkeyApp reserves the right to remove content that violates these
-      guidelines or harms the community experience.
-    </p>
-
-    <p>
-      Repeated violations may lead to account restrictions or removal.
-    </p>
-
-    <h2>6. Reporting Issues</h2>
-
-    <p>
-      If you encounter content that violates these guidelines, please report
-      it through the app so it can be reviewed.
-    </p>
-
-    <h2>7. Contact Us</h2>
-
-    <p>
-      If you have questions about these guidelines, please use the Contact Us
-      page within the app.
+      Questions? Use the <a href="contact.html">Contact page</a>.
     </p>
 
   </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  <div class="footer-card">
+    <div>© 2026 Donkey App</div>
+    <div class="footer-links">
+      <a href="index.html">Home</a>
+      <a href="privacy.html">Privacy</a>
+      <a href="conditions.html">Terms</a>
+      <a href="contact.html">Contact</a>
+    </div>
+  </div>
+</footer>
 
 </body>
 </html>
