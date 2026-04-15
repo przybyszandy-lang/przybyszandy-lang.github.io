@@ -666,9 +666,10 @@
         })
       });
 
-      if (!response.ok) {
-        throw new Error('Something went wrong.');
-      }
+if (!response.ok) {
+  const errorText = await response.text();
+  throw new Error(errorText || 'Something went wrong.');
+}
 
       form.reset();
       messageCount.textContent = '0';
