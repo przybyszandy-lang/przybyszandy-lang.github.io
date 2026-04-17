@@ -729,6 +729,38 @@
       border-radius: 18px;
     }
 
+        .appStoreFooter {
+      margin-top: 14px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .appStoreFooter a {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0.92;
+      transition: opacity 0.15s ease, transform 0.15s ease;
+    }
+
+    .appStoreFooter a:hover {
+      opacity: 1;
+      transform: translateY(-1px);
+    }
+
+    .appStoreFooter img {
+      height: 40px;
+      width: auto;
+      display: block;
+      border: 0;
+    }
+
+    @media (max-width: 640px) {
+      .appStoreFooter img {
+        height: 36px;
+      }
+    }
+
     .modalOverlay {
       position: fixed;
       inset: 0;
@@ -1065,7 +1097,6 @@
           </div>
         </div>
       </aside>
-
       <section class="feedColumn">
         <div id="errorBox"></div>
 
@@ -1078,6 +1109,21 @@
 
         <div id="feedLoading" class="feedLoading hidden"></div>
         <div id="feedEnd" class="feedEnd hidden"></div>
+
+        <div class="appStoreFooter">
+          <a
+            href="https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120"
+            target="_blank"
+            rel="noopener noreferrer"
+            aria-label="Download Donkey App on the App Store"
+          >
+            <img
+              src="/appstoredownload-en.webp"
+              alt="Download on the App Store"
+              loading="lazy"
+            />
+          </a>
+        </div>
       </section>
 
       <aside class="desktopRail">
