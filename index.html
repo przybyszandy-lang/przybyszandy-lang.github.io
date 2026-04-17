@@ -1612,14 +1612,18 @@
       function createPromoCard() {
         const promo = document.createElement("article");
         promo.className = "appPromoCard";
+const link = document.createElement("a");
+link.href = "/download.html";
+link.setAttribute("aria-label", "Download Donkey App");
 
-        const img = document.createElement("img");
-        img.src = "/appad.jpg";
-        img.alt = "Donkey App mobile app coming very soon";
-        img.loading = "lazy";
+const img = document.createElement("img");
+img.src = "/appad.jpg";
+img.alt = "Download Donkey App on iOS";
+img.loading = "lazy";
 
-        promo.appendChild(img);
-        return promo;
+link.appendChild(img);
+promo.appendChild(link);
+return promo;
       }
 
       function createCard(item) {
