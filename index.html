@@ -405,12 +405,12 @@
       color: var(--text);
     }
 
-    .pageShell {
-      width: 100%;
-      min-height: 100vh;
-      padding-top: calc(var(--header-height) + 18px);
-      padding-bottom: 28px;
-    }
+.pageShell {
+  width: 100%;
+  min-height: 100vh;
+  padding-top: calc(var(--header-height) + 18px);
+  padding-bottom: 96px;
+}
 
     .layout {
       max-width: var(--max);
@@ -730,11 +730,18 @@
     }
 
 .appStoreFooter {
-  margin-top: 24px;
-  padding: 20px 0;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 64px;
   display: flex;
+  align-items: center;
   justify-content: center;
+  background: rgba(255,255,255,0.96);
   border-top: 1px solid #ddd;
+  z-index: 9998;
+  backdrop-filter: blur(8px);
 }
 
     .appStoreFooter a {
@@ -1185,7 +1192,7 @@
     </div>
   </div>
 
-  <div id="appVersion" style="position:fixed; right:10px; bottom:8px; font-size:12px; opacity:0.35; z-index:9999;"></div>
+<div id="appVersion" style="position:fixed; right:10px; bottom:72px; font-size:12px; opacity:0.35; z-index:9999;"></div>
 
   <div id="cookieConsent" class="cookieConsent">
     <div class="cookieInner">
