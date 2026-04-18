@@ -2,34 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>DonkeyApp — Jokes</title>
+    <title>Funny Jokes Online in 20 Languages | DonkeyApp Comedy</title>
 
   <meta
     name="description"
-    content="Donkey App comedy feed with jokes in multiple languages, user pages, favourites, voting and reporting."
+    content="Read funny jokes online in 20 languages. Browse a live comedy feed, vote on jokes, save favourites, copy jokes, submit your own and discover new humour every day."
   />
-  <meta name="robots" content="index,follow" />
-  <link rel="canonical" href="https://www.donkeyapp.com/" />
+    <meta name="robots" content="index,follow,max-image-preview:large" />
+    <link rel="canonical" href="https://donkeyapp.com/" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <meta name="theme-color" content="#0b3d91" />
 
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://www.donkeyapp.com/" />
-  <meta property="og:title" content="DonkeyApp — Jokes" />
+  <meta property="og:url" content="https://donkeyapp.com/" />
+  <meta property="og:site_name" content="DonkeyApp Comedy" />
+  <meta property="og:title" content="Funny Jokes Online in 20 Languages | DonkeyApp Comedy" />
   <meta
     property="og:description"
-    content="A simple multi-language joke feed with favourites, voting and reporting."
+    content="Browse funny jokes online in 20 languages. Vote, save favourites, copy jokes, submit your own and enjoy a fresh comedy feed."
   />
-  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
+  <meta property="og:image" content="https://donkeyapp.com/icon-512.png" />
 
   <meta name="twitter:card" content="summary_large_image" />
-  <meta name="twitter:title" content="DonkeyApp — Jokes" />
+  <meta name="twitter:title" content="Funny Jokes Online in 20 Languages | DonkeyApp Comedy" />
   <meta
     name="twitter:description"
-    content="A simple multi-language joke feed."
+    content="Browse funny jokes online in 20 languages. Vote, save favourites, copy jokes and submit your own."
   />
-  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
+  <meta name="twitter:image" content="https://donkeyapp.com/icon-512.png" />
 
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3866370568277471"
      crossorigin="anonymous"></script>
@@ -59,13 +60,58 @@
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
-    "@type": "WebApplication",
-    "name": "DonkeyApp",
-    "url": "https://www.donkeyapp.com/",
-    "applicationCategory": "EntertainmentApplication",
-    "operatingSystem": "Web",
-    "description": "A public joke feed with multi-language jokes, favourites, voting and reporting.",
-    "image": "https://www.donkeyapp.com/icon-512.png"
+    "@graph": [
+      {
+        "@type": "WebSite",
+        "@id": "https://donkeyapp.com/#website",
+        "name": "DonkeyApp Comedy",
+        "alternateName": "Donkey App",
+        "url": "https://donkeyapp.com/",
+        "description": "A multi-language comedy website for reading, voting, saving, copying and submitting jokes.",
+        "inLanguage": [
+          "en", "pl", "de", "fr", "es", "it", "nl", "pt", "sv", "da",
+          "fi", "no", "cs", "sk", "hu", "ro", "hr", "sl", "et", "lv"
+        ],
+        "publisher": {
+          "@id": "https://donkeyapp.com/#organization"
+        }
+      },
+      {
+        "@type": "Organization",
+        "@id": "https://donkeyapp.com/#organization",
+        "name": "DonkeyApp",
+        "url": "https://donkeyapp.com/",
+        "logo": "https://donkeyapp.com/icon-512.png"
+      },
+      {
+        "@type": "WebApplication",
+        "@id": "https://donkeyapp.com/#webapp",
+        "name": "DonkeyApp Comedy",
+        "url": "https://donkeyapp.com/",
+        "applicationCategory": "EntertainmentApplication",
+        "operatingSystem": "Web",
+        "description": "Read funny jokes online in 20 languages. Vote on jokes, save favourites, copy jokes, submit your own and report unsuitable content.",
+        "image": "https://donkeyapp.com/icon-512.png",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "GBP"
+        }
+      },
+      {
+        "@type": "MobileApplication",
+        "@id": "https://donkeyapp.com/#iosapp",
+        "name": "Donkey App Comedy",
+        "operatingSystem": "iOS",
+        "applicationCategory": "EntertainmentApplication",
+        "url": "https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120",
+        "offers": {
+          "@type": "Offer",
+          "price": "0",
+          "priceCurrency": "GBP"
+        }
+      }
+    ]
   }
   </script>
 
@@ -532,6 +578,46 @@
       min-width: 0;
     }
 
+        .seoIntro {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 16px;
+      margin-bottom: 12px;
+      box-shadow: var(--shadow);
+    }
+
+    .seoIntro h1 {
+      margin: 0 0 8px 0;
+      font-size: 24px;
+      line-height: 1.2;
+      color: var(--text);
+    }
+
+    .seoIntro p {
+      margin: 0;
+      font-size: 15px;
+      line-height: 1.55;
+      color: var(--muted);
+    }
+
+    .seoIntroLinks {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+    }
+
+    .seoIntroLinks a {
+      border: 1px solid var(--border);
+      background: #fff;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 14px;
+      color: var(--link);
+      font-weight: 700;
+    }
+
     #errorBox {
       display: none;
       margin-bottom: 12px;
@@ -982,13 +1068,6 @@
 </head>
 
 <body>
-  <main class="sr-only">
-    <h1>DonkeyApp Joke Feed</h1>
-    <p>
-      DonkeyApp is a multi-language public joke feed with favourites, voting,
-      reporting and user pages.
-    </p>
-  </main>
 
   <div id="updateBanner">
     <div id="updateBannerInner">
@@ -1107,6 +1186,22 @@
         </div>
       </aside>
       <section class="feedColumn">
+        <div class="seoIntro">
+          <h1>Funny jokes online in 20 languages</h1>
+          <p>
+            DonkeyApp Comedy is a live joke feed where you can read short jokes,
+            vote on the funniest ones, save favourites, copy jokes to share,
+            submit your own joke and browse comedy in English, Polish, German,
+            French, Spanish, Italian, Dutch, Portuguese and more.
+          </p>
+          <div class="seoIntroLinks">
+            <a href="addajoke.html">Submit a joke</a>
+            <a href="favourites.html">Saved jokes</a>
+            <a href="about.html">About DonkeyApp</a>
+            <a href="download.html">Download the app</a>
+          </div>
+        </div>
+
         <div id="errorBox"></div>
 
         <div class="feedMeta">
