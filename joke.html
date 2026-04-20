@@ -1027,8 +1027,6 @@
             .from("jokes")
             .select("id, content, user_id")
             .eq("id", jokeId)
-            .eq("is_visible", true)
-            .eq("is_new", false)
             .maybeSingle();
 
           if (error || !data || !data.content) {
