@@ -8,7 +8,7 @@
     name="description"
     content="Read a shared joke from Donkey App Comedy. Vote, copy, share or report the joke."
   />
-  <meta name="robots" content="index,follow" />
+  <meta name="robots" content="noindex,nofollow" />
   <link rel="canonical" href="https://www.donkeyapp.com/joke.html" />
 
   <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -145,17 +145,12 @@
 
     .hero-grid {
       display: grid;
-      grid-template-columns: 0.85fr 1.15fr;
+      grid-template-columns: 1fr;
       gap: 0;
     }
-
+    
     .hero-left {
-      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-      color: #fff;
-      padding: 40px 34px;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
+      display: none;
     }
 
     .hero-left h1 {
@@ -324,6 +319,13 @@
     .iconBtn svg {
       width: 18px;
       height: 18px;
+    }
+
+        #reportBtn {
+      font-size: 24px;
+      width: 44px;
+      height: 38px;
+      font-weight: 700;
     }
 
     .iconBtn.activeReport {
