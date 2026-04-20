@@ -1,0 +1,1100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Shared Joke | Donkey App Comedy</title>
+
+  <meta
+    name="description"
+    content="Read a shared joke from Donkey App Comedy. Vote, copy, share or report the joke."
+  />
+  <meta name="robots" content="index,follow" />
+  <link rel="canonical" href="https://www.donkeyapp.com/joke.html" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
+
+  <meta property="og:type" content="website" />
+  <meta property="og:url" content="https://www.donkeyapp.com/joke.html" />
+  <meta property="og:title" content="Shared Joke | Donkey App Comedy" />
+  <meta
+    property="og:description"
+    content="Read a shared joke from Donkey App Comedy."
+  />
+  <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:title" content="Shared Joke | Donkey App Comedy" />
+  <meta
+    name="twitter:description"
+    content="Read a shared joke from Donkey App Comedy."
+  />
+  <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
+
+  <script>
+    (function () {
+      const params = new URLSearchParams(window.location.search);
+      const jokeId = params.get("id");
+
+      if (!jokeId || !jokeId.trim()) {
+        window.location.replace("/");
+      }
+    })();
+  </script>
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1e2430;
+      --muted: #5c667a;
+      --accent: #0b3d91;
+      --accent-2: #1f5fd1;
+      --border: #dfe5f0;
+      --danger-bg: #fff4f4;
+      --danger-border: #ffd2d2;
+      --danger-text: #a40000;
+      --shadow: 0 10px 30px rgba(11, 61, 145, 0.08);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    button {
+      font: inherit;
+    }
+
+    .topbar {
+      width: 100%;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 20px 32px;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 0.85fr 1.15fr;
+      gap: 0;
+    }
+
+    .hero-left {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      padding: 40px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .hero-left p {
+      margin: 0 0 16px;
+      font-size: 17px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-right {
+      padding: 40px 34px;
+    }
+
+    .hero-right h2 {
+      margin: 0 0 16px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .loadingText,
+    .unavailableText {
+      margin: 0;
+      color: var(--muted);
+      font-size: 17px;
+    }
+
+    .unavailableBox {
+      background: var(--danger-bg);
+      border: 1px solid var(--danger-border);
+      color: var(--danger-text);
+      border-radius: 18px;
+      padding: 18px;
+      display: none;
+    }
+
+    .jokeBox {
+      display: none;
+    }
+
+    .jokeText {
+      font-size: 20px;
+      line-height: 1.62;
+      color: var(--text);
+      white-space: pre-wrap;
+      word-break: break-word;
+      margin-bottom: 16px;
+    }
+
+    .addedBy {
+      margin-top: 8px;
+      font-size: 14px;
+      color: var(--muted);
+    }
+
+    .addedByLink {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .cardFooter {
+      margin-top: 18px;
+      display: grid;
+      grid-template-columns: minmax(0,1fr) 1px auto;
+      align-items: stretch;
+      background: #f9fbff;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .footerLeft {
+      padding: 10px;
+      min-width: 0;
+    }
+
+    .footerDivider {
+      background: var(--border);
+      width: 1px;
+    }
+
+    .footerRight {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      padding: 8px;
+    }
+
+    .ratingRow {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      min-height: 34px;
+    }
+
+    .footerLabelInline {
+      font-size: 14px;
+      color: #555;
+      margin-right: 6px;
+      font-weight: 600;
+    }
+
+    .ratingEmojiBtn,
+    .iconBtn {
+      border: 1px solid #e5e5e5;
+      background: #fff;
+      border-radius: 12px;
+      cursor: pointer;
+      min-width: 38px;
+      height: 34px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+      transition: background 0.15s ease, transform 0.05s ease;
+    }
+
+    .ratingEmojiBtn:hover,
+    .iconBtn:hover {
+      background: #eaeaea;
+    }
+
+    .ratingEmojiBtn:active,
+    .iconBtn:active {
+      transform: scale(0.96);
+    }
+
+    .ratingEmojiBtn {
+      font-size: 20px;
+      width: 38px;
+      height: 34px;
+    }
+
+    .iconBtn {
+      font-size: 18px;
+      color: #333;
+      width: 38px;
+      height: 34px;
+      padding: 0;
+    }
+
+    .iconBtn svg {
+      width: 18px;
+      height: 18px;
+    }
+
+    .iconBtn.activeReport {
+      color: var(--accent);
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px 28px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 30px 34px;
+      text-align: center;
+    }
+
+    .section-card h3 {
+      margin: 0 0 12px;
+      font-size: 26px;
+      line-height: 1.2;
+    }
+
+    .section-card p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .ctaRow {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 18px;
+    }
+
+    .ctaButton {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 44px;
+      padding: 10px 16px;
+      border-radius: 999px;
+      border: 1px solid var(--border);
+      background: #fff;
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    .ctaButton.primary {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--accent);
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 18px 20px 46px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    #copyToast {
+      display: none;
+      position: fixed;
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 24px;
+      background: rgba(0,0,0,0.88);
+      color: #fff;
+      padding: 10px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      z-index: 10004;
+      white-space: nowrap;
+      max-width: calc(100vw - 24px);
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    .modalOverlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.30);
+      display: none;
+      justify-content: flex-start;
+      padding-top: 60px;
+      padding-inline: 12px;
+      z-index: 10005;
+    }
+
+    .modalSheet {
+      width: min(520px, 100%);
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 14px;
+      box-shadow: var(--shadow);
+    }
+
+    .modalTitle {
+      font-size: 16px;
+      font-weight: 700;
+      color: var(--text);
+      margin: 0 0 10px 0;
+    }
+
+    .modalItem {
+      padding: 12px 0;
+      border-top: 1px solid #eee;
+      cursor: pointer;
+    }
+
+    .modalItemRow {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .modalItemText {
+      font-size: 15px;
+      color: var(--text);
+    }
+
+    .modalCheck {
+      color: #2e7d32;
+      font-weight: 700;
+    }
+
+    .reportDivider {
+      height: 1px;
+      background: #ddd;
+      margin-top: 8px;
+      margin-bottom: 4px;
+    }
+
+    .reportButtons {
+      display: flex;
+      gap: 12px;
+      margin-top: 10px;
+    }
+
+    .reportButton,
+    .reportCloseButton {
+      flex: 1;
+      border: 0;
+      min-height: 44px;
+      border-radius: 10px;
+      cursor: pointer;
+    }
+
+    .reportButton {
+      background: #2f71d3;
+      color: #fff;
+      font-weight: 700;
+    }
+
+    .reportButton:disabled {
+      background: #ccc;
+      cursor: default;
+    }
+
+    .reportCloseButton {
+      background: #eee;
+      color: #333;
+      font-weight: 700;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left h1 {
+        font-size: 34px;
+      }
+
+      .hero-right h2,
+      .section-card h3 {
+        font-size: 24px;
+      }
+
+      .hero-left,
+      .hero-right,
+      .section-card {
+        padding: 28px 22px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand {
+        font-size: 18px;
+      }
+
+      .nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-left h1 {
+        font-size: 30px;
+      }
+
+      .jokeText {
+        font-size: 18px;
+      }
+
+      .cardFooter {
+        grid-template-columns: 1fr;
+      }
+
+      .footerLeft {
+        display: flex;
+        justify-content: center;
+        padding-bottom: 6px;
+      }
+
+      .ratingRow {
+        justify-content: center;
+      }
+
+      .footerDivider {
+        display: none;
+      }
+
+      .footerRight {
+        justify-content: center;
+        border-top: 1px solid var(--border);
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <a href="/" class="brand" aria-label="Donkey App home">
+        <img src="icon-192.png" alt="Donkey App logo" />
+        <span>Donkey App</span>
+      </a>
+
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="about.html">About</a>
+        <a href="favourites.html">Favourites</a>
+        <a href="addajoke.html">Add a Joke</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="conditions.html">Terms</a>
+        <a href="cookies.html">Cookies</a>
+        <a href="guidelines.html">Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero">
+      <div class="hero-card">
+        <div class="hero-grid">
+          <div class="hero-left">
+            <h1>Shared Joke</h1>
+            <p>
+              Someone found this joke on Donkey App Comedy and thought it was worth sharing.
+            </p>
+
+            <div class="badge-row">
+              <span class="badge">Vote</span>
+              <span class="badge">Copy</span>
+              <span class="badge">Share</span>
+              <span class="badge">Report</span>
+            </div>
+          </div>
+
+          <div class="hero-right">
+            <h2 id="jokeHeading">Loading joke…</h2>
+
+            <p id="loadingText" class="loadingText">
+              Please wait while the joke loads.
+            </p>
+
+            <div id="unavailableBox" class="unavailableBox">
+              <p class="unavailableText">
+                This joke is no longer available.
+              </p>
+            </div>
+
+            <div id="jokeBox" class="jokeBox">
+              <div id="jokeText" class="jokeText"></div>
+              <div id="addedBy" class="addedBy"></div>
+
+              <div class="cardFooter">
+                <div class="footerLeft">
+                  <div id="ratingRow" class="ratingRow"></div>
+                </div>
+
+                <div class="footerDivider"></div>
+
+                <div class="footerRight">
+                  <button id="copyBtn" type="button" class="iconBtn" title="Copy joke" aria-label="Copy joke">
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+                      <rect x="9" y="9" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect>
+                      <rect x="5" y="5" width="10" height="10" rx="2" stroke="currentColor" stroke-width="2"></rect>
+                    </svg>
+                  </button>
+
+                  <button id="shareBtn" type="button" class="iconBtn" title="Share joke" aria-label="Share joke">
+                    ↗
+                  </button>
+
+                  <button id="reportBtn" type="button" class="iconBtn" title="Report joke" aria-label="Report joke">
+                    ⚐
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    
+    <section class="section">
+      <div class="section-card">
+        <h3>Want more jokes?</h3>
+        <p>
+          Browse the full Donkey App Comedy feed, save favourites, submit your own joke, or download the app.
+        </p>
+
+        <div class="ctaRow">
+          <a class="ctaButton primary" href="index.html">Browse jokes</a>
+          <a class="ctaButton" href="download.html">Download the app</a>
+          <a class="ctaButton" href="addajoke.html">Add a joke</a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-card">
+      <div>© 2026 Donkey App. Comedy first.</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="conditions.html">Terms &amp; Conditions</a>
+        <a href="guidelines.html">Community Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+
+  <div id="copyToast"></div>
+
+  <div id="reportModal" class="modalOverlay">
+    <div class="modalSheet">
+      <h2 class="modalTitle" id="reportTitle">Report joke</h2>
+
+      <div class="modalItem" data-report-reason="offensive">
+        <div class="modalItemRow">
+          <span class="modalItemText">This joke appears to be offensive</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
+
+      <div class="modalItem" data-report-reason="illegal">
+        <div class="modalItemRow">
+          <span class="modalItemText">This joke is clearly illegal</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
+
+      <div class="modalItem" data-report-reason="other">
+        <div class="modalItemRow">
+          <span class="modalItemText">Other</span>
+          <span class="modalCheck hidden">✓</span>
+        </div>
+      </div>
+
+      <div class="reportDivider"></div>
+
+      <div class="reportButtons">
+        <button id="reportSubmitButton" class="reportButton" type="button" disabled>
+          Report
+        </button>
+        <button id="reportCloseButton" class="reportCloseButton" type="button">
+          Close
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", async () => {
+      const params = new URLSearchParams(window.location.search);
+      const jokeId = params.get("id");
+
+      if (!jokeId || !jokeId.trim()) {
+        window.location.replace("/");
+        return;
+      }
+
+      const VOTES_KEY = "donkey:votes:v1";
+
+      const ratingOptions = [
+        { vote: "bad", emoji: "😕", title: "Vote bad" },
+        { vote: "meh", emoji: "😐", title: "Vote meh" },
+        { vote: "good", emoji: "🙂", title: "Vote good" },
+        { vote: "great", emoji: "😂", title: "Vote great" }
+      ];
+
+      const jokeHeading = document.getElementById("jokeHeading");
+      const loadingText = document.getElementById("loadingText");
+      const unavailableBox = document.getElementById("unavailableBox");
+      const jokeBox = document.getElementById("jokeBox");
+      const jokeText = document.getElementById("jokeText");
+      const addedBy = document.getElementById("addedBy");
+      const ratingRow = document.getElementById("ratingRow");
+      const copyBtn = document.getElementById("copyBtn");
+      const shareBtn = document.getElementById("shareBtn");
+      const reportBtn = document.getElementById("reportBtn");
+      const copyToast = document.getElementById("copyToast");
+      const reportModal = document.getElementById("reportModal");
+      const reportSubmitButton = document.getElementById("reportSubmitButton");
+      const reportCloseButton = document.getElementById("reportCloseButton");
+
+      let currentJoke = null;
+      let reportReason = null;
+      let reportJokeId = null;
+      let votesByJokeId = {};
+      let reportedIds = new Set();
+
+      if (!window.supabase || !window.supabase.createClient) {
+        showUnavailable();
+        return;
+      }
+
+      const { createClient } = window.supabase;
+      const client = createClient(
+        "https://mknsvxajrvdlwqywvlrf.supabase.co",
+        "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo"
+      );
+
+      function showToast(msg) {
+        copyToast.textContent = msg;
+        copyToast.style.display = "block";
+        clearTimeout(showToast._t);
+        showToast._t = setTimeout(() => {
+          copyToast.style.display = "none";
+        }, 2200);
+      }
+
+      function loadLocalState() {
+        try {
+          const rawVotes = localStorage.getItem(VOTES_KEY);
+          votesByJokeId = rawVotes ? JSON.parse(rawVotes) : {};
+        } catch {
+          votesByJokeId = {};
+        }
+      }
+
+      function saveVotes() {
+        localStorage.setItem(VOTES_KEY, JSON.stringify(votesByJokeId));
+      }
+
+      function copyPlainText(textToCopy) {
+        if (navigator.clipboard && window.isSecureContext) {
+          return navigator.clipboard.writeText(textToCopy);
+        }
+
+        return new Promise((resolve, reject) => {
+          try {
+            const ta = document.createElement("textarea");
+            ta.value = textToCopy;
+            ta.setAttribute("readonly", "");
+            ta.style.position = "fixed";
+            ta.style.left = "-9999px";
+            ta.style.top = "0";
+            document.body.appendChild(ta);
+            ta.select();
+            ta.setSelectionRange(0, ta.value.length);
+            const ok = document.execCommand("copy");
+            document.body.removeChild(ta);
+            if (ok) resolve();
+            else reject(new Error("Copy failed"));
+          } catch (e) {
+            reject(e);
+          }
+        });
+      }
+
+      function copyText(textToCopy) {
+        const finalText = textToCopy.trim() + "\n\nFound at donkeyapp.com";
+        return copyPlainText(finalText);
+      }
+
+      async function onCopyJoke(content) {
+        try {
+          await copyText(content);
+          showToast("Joke copied. Share it however you want!");
+        } catch {
+          showToast("Copy failed.");
+        }
+      }
+
+      function getShareUrl() {
+        return window.location.origin + "/joke.html?id=" + encodeURIComponent(jokeId);
+      }
+
+      async function onShareJoke() {
+        if (!currentJoke) return;
+
+        const shareUrl = getShareUrl();
+        const shareText =
+          "Found this joke on Donkey App Comedy:\n\n" +
+          currentJoke.content.trim() +
+          "\n\nRead it here:";
+
+        if (navigator.share) {
+          try {
+            await navigator.share({
+              title: "Donkey App Comedy",
+              text: shareText,
+              url: shareUrl
+            });
+            return;
+          } catch (e) {
+            if (e && e.name === "AbortError") return;
+          }
+        }
+
+        try {
+          await copyPlainText(shareUrl);
+          showToast("Share link copied.");
+        } catch {
+          showToast("Share failed.");
+        }
+      }
+
+      async function onVote(jokeIdValue, vote, voteArea) {
+        if (votesByJokeId[jokeIdValue]) return;
+
+        votesByJokeId[jokeIdValue] = vote;
+        saveVotes();
+
+        renderVoteArea(voteArea, jokeIdValue);
+
+        const { error } = await client.rpc("rate_joke", {
+          p_id: jokeIdValue,
+          p_vote: vote
+        });
+
+        if (error) {
+          console.log("Vote failed:", error);
+          showToast("Vote saved locally, but failed to sync.");
+        }
+      }
+
+      function renderVoteArea(container, jokeIdValue) {
+        container.innerHTML = "";
+
+        if (votesByJokeId[jokeIdValue]) {
+          const label = document.createElement("span");
+          label.className = "footerLabelInline";
+          label.textContent = "Your vote:";
+
+          const emoji = document.createElement("span");
+          emoji.textContent =
+            votesByJokeId[jokeIdValue] === "bad" ? "😕" :
+            votesByJokeId[jokeIdValue] === "meh" ? "😐" :
+            votesByJokeId[jokeIdValue] === "good" ? "🙂" : "😂";
+          emoji.style.fontSize = "22px";
+
+          container.appendChild(label);
+          container.appendChild(emoji);
+          return;
+        }
+
+        ratingOptions.forEach((opt) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "ratingEmojiBtn";
+          btn.textContent = opt.emoji;
+          btn.title = opt.title;
+          btn.setAttribute("aria-label", opt.title);
+          btn.addEventListener("click", () => onVote(jokeIdValue, opt.vote, container));
+          container.appendChild(btn);
+        });
+      }
+
+      function openReportModal(jokeIdValue) {
+        if (reportedIds.has(jokeIdValue)) {
+          reportedIds.delete(jokeIdValue);
+          reportBtn.classList.remove("activeReport");
+          reportBtn.textContent = "⚐";
+          return;
+        }
+
+        reportJokeId = jokeIdValue;
+        reportReason = null;
+        updateReportSelectionUi();
+        reportModal.style.display = "flex";
+      }
+
+      function closeReportModal() {
+        reportModal.style.display = "none";
+        reportJokeId = null;
+        reportReason = null;
+        updateReportSelectionUi();
+      }
+
+      function updateReportSelectionUi() {
+        reportModal.querySelectorAll(".modalItem").forEach((item) => {
+          const active = item.dataset.reportReason === reportReason;
+          item.querySelector(".modalCheck").classList.toggle("hidden", !active);
+        });
+
+        reportSubmitButton.disabled = !reportReason;
+      }
+
+      async function submitReport() {
+        if (!reportJokeId || !reportReason) return;
+
+        const { error } = await client.rpc("report_joke", {
+          p_joke_id: reportJokeId,
+          p_reason: reportReason
+        });
+
+        if (error) {
+          console.log("Report failed:", error);
+          showToast("Report failed. Please try again.");
+          return;
+        }
+
+        reportedIds.add(reportJokeId);
+        reportBtn.classList.add("activeReport");
+        reportBtn.textContent = "⚑";
+        closeReportModal();
+        showToast("Thank you. Report submitted.");
+      }
+
+      function showUnavailable() {
+        jokeHeading.textContent = "Joke unavailable";
+        loadingText.style.display = "none";
+        jokeBox.style.display = "none";
+        unavailableBox.style.display = "block";
+      }
+
+      async function loadProfileName(userId) {
+        if (!userId) return null;
+
+        try {
+          const { data, error } = await client
+            .from("public_profiles")
+            .select("display_name")
+            .eq("id", userId)
+            .maybeSingle();
+
+          if (error || !data || !data.display_name) return null;
+          return data.display_name;
+        } catch {
+          return null;
+        }
+      }
+
+      async function loadJoke() {
+        try {
+          const { data, error } = await client
+            .from("jokes")
+            .select("id, content, user_id")
+            .eq("id", jokeId)
+            .eq("is_visible", true)
+            .eq("is_new", false)
+            .maybeSingle();
+
+          if (error || !data || !data.content) {
+            showUnavailable();
+            return;
+          }
+
+          currentJoke = data;
+
+          const profileName = await loadProfileName(data.user_id);
+          const nameToShow =
+            profileName && profileName.trim() !== ""
+              ? profileName
+              : "Anonymous";
+
+          jokeHeading.textContent = "Here is the joke";
+          loadingText.style.display = "none";
+          unavailableBox.style.display = "none";
+          jokeBox.style.display = "block";
+
+          jokeText.textContent = data.content || "";
+
+          addedBy.innerHTML = "";
+
+          if (nameToShow !== "Anonymous" && data.user_id) {
+            addedBy.append(document.createTextNode("Added by "));
+
+            const link = document.createElement("a");
+            link.className = "addedByLink";
+            link.href = "userID.html?userId=" + encodeURIComponent(data.user_id);
+            link.textContent = nameToShow;
+            addedBy.appendChild(link);
+          } else {
+            addedBy.textContent = "Added by " + nameToShow;
+          }
+
+          renderVoteArea(ratingRow, data.id);
+
+          copyBtn.addEventListener("click", () => onCopyJoke(data.content));
+          shareBtn.addEventListener("click", onShareJoke);
+          reportBtn.addEventListener("click", () => openReportModal(data.id));
+        } catch (e) {
+          console.log("Load joke failed:", e);
+          showUnavailable();
+        }
+      }
+
+      reportModal.addEventListener("click", (e) => {
+        if (e.target === reportModal) {
+          closeReportModal();
+        }
+      });
+
+      reportModal.querySelectorAll(".modalItem").forEach((item) => {
+        item.addEventListener("click", () => {
+          reportReason = item.dataset.reportReason;
+          updateReportSelectionUi();
+        });
+      });
+
+      reportSubmitButton.addEventListener("click", submitReport);
+      reportCloseButton.addEventListener("click", closeReportModal);
+
+      loadLocalState();
+      loadJoke();
+    });
+  </script>
+</body>
+</html>
