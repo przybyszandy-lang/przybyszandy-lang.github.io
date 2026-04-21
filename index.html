@@ -1226,10 +1226,15 @@
             <a id="rightFavouritesLink" href="favourites.html" class="utilityLink">❤️ Favourites</a>
           </div>
 
-          <div class="railCard">
-            <div class="railTitle" id="rightRailAdTitle">Ad space</div>
-            <div class="adPlaceholder" id="rightAdPlaceholder">Desktop ad placeholder</div>
-          </div>
+<div class="railCard">
+  <a href="download.html" aria-label="Download Donkey App">
+    <img
+      src="/appadpt.jpg"
+      alt="Download Donkey App"
+      style="width:100%; border-radius:12px; display:block;"
+    />
+  </a>
+</div>
         </div>
       </aside>
     </div>
@@ -1376,8 +1381,6 @@
       const copyToast = document.getElementById("copyToast");
       const showLangLabel = document.getElementById("showLangLabel");
       const mobileLanguageSelect = document.getElementById("mobileLanguageSelect");
-      const rightRailAdTitle = document.getElementById("rightRailAdTitle");
-      const rightAdPlaceholder = document.getElementById("rightAdPlaceholder");
       const feedMetaLeft = document.getElementById("feedMetaLeft");
       const feedMetaRight = document.getElementById("feedMetaRight");
       const reportModal = document.getElementById("reportModal");
@@ -1556,9 +1559,6 @@
 
         document.getElementById("rightAddJokeLink").textContent = "➕ " + safeText("add_joke_nav", "Add a Joke");
         document.getElementById("rightFavouritesLink").textContent = "❤️ " + safeText("favourites", "Favourites");
-
-        rightRailAdTitle.textContent = safeText("ad_placeholder_title", "Ad space");
-        rightAdPlaceholder.textContent = safeText("ad_placeholder_text", "Desktop ad placeholder");
 
         reportSubmitButton.textContent = safeText("report_submit", "Report");
         reportCloseButton.textContent = safeText("close", "Close");
