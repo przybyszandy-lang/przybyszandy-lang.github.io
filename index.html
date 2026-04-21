@@ -816,18 +816,24 @@
     }
 
 .appStoreFooter {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 64px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(255,255,255,0.96);
-  border-top: 1px solid #ddd;
-  z-index: 9998;
-  backdrop-filter: blur(8px);
+  display: none;
+}
+
+@media (max-width: 980px) {
+  .appStoreFooter {
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    height: 64px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255,255,255,0.96);
+    border-top: 1px solid #ddd;
+    z-index: 9998;
+    backdrop-filter: blur(8px);
+  }
 }
 
     .appStoreFooter a {
