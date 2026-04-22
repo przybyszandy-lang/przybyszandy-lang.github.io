@@ -825,10 +825,12 @@
     left: 0;
     right: 0;
     bottom: 0;
-    height: 64px;
+    min-height: 72px;
     display: flex;
     align-items: center;
     justify-content: center;
+    gap: 10px;
+    padding: 8px 10px;
     background: rgba(255,255,255,0.96);
     border-top: 1px solid #ddd;
     z-index: 9998;
@@ -836,31 +838,41 @@
   }
 }
 
-    .appStoreFooter a {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      opacity: 0.92;
-      transition: opacity 0.15s ease, transform 0.15s ease;
-    }
+.appStoreFooter a {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.92;
+  transition: opacity 0.15s ease, transform 0.15s ease;
+  flex: 0 1 auto;
+}
 
-    .appStoreFooter a:hover {
-      opacity: 1;
-      transform: translateY(-1px);
-    }
+.appStoreFooter a:hover {
+  opacity: 1;
+  transform: translateY(-1px);
+}
 
-    .appStoreFooter img {
-      height: 40px;
-      width: auto;
-      display: block;
-      border: 0;
-    }
+.appStoreFooter img {
+  height: 40px;
+  width: auto;
+  max-width: 44vw;
+  display: block;
+  border: 0;
+  object-fit: contain;
+}
 
-    @media (max-width: 640px) {
-      .appStoreFooter img {
-        height: 36px;
-      }
-    }
+@media (max-width: 640px) {
+  .appStoreFooter {
+    gap: 8px;
+    padding: 8px;
+    min-height: 68px;
+  }
+
+  .appStoreFooter img {
+    height: 36px;
+    max-width: 43vw;
+  }
+}
 
     .modalOverlay {
       position: fixed;
@@ -1251,10 +1263,23 @@
     href="https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120"
     target="_blank"
     rel="noopener noreferrer"
+    aria-label="Download on the App Store"
   >
     <img
-      src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+      src="appstore.svg"
       alt="Download on the App Store"
+    />
+  </a>
+
+  <a
+    href="https://play.google.com/store/apps/details?id=com.donkeyapp.app"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Get it on Google Play"
+  >
+    <img
+      src="googleplay.svg"
+      alt="Get it on Google Play"
     />
   </a>
 </div>
