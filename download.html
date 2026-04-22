@@ -6,7 +6,7 @@
 
   <meta
     name="description"
-    content="Download Donkey App on iOS now. Android version coming soon."
+    content="Download Donkey App on iPhone and Android. Scan QR codes on desktop or use the store buttons."
   />
   <meta name="robots" content="index,follow" />
   <link rel="canonical" href="https://www.donkeyapp.com/download.html" />
@@ -19,7 +19,7 @@
   <meta property="og:title" content="Download Donkey App" />
   <meta
     property="og:description"
-    content="Get Donkey App on iOS now. Android version launching soon."
+    content="Get Donkey App on iPhone and Android."
   />
   <meta property="og:image" content="https://www.donkeyapp.com/icon-512.png" />
 
@@ -31,7 +31,6 @@
   />
   <meta name="twitter:image" content="https://www.donkeyapp.com/icon-512.png" />
 
-  <!-- SAME STYLE (UNCHANGED) -->
   <style>
     :root {
       --bg: #f5f7fb;
@@ -139,6 +138,13 @@
       color: rgba(255,255,255,0.92);
     }
 
+    .badges {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
     .badge {
       display: inline-block;
       padding: 9px 12px;
@@ -168,14 +174,53 @@
       align-items: center;
     }
 
-    .store-buttons img {
+    .store-buttons img.store-badge {
       height: 60px;
+      width: auto;
+      display: block;
     }
 
-    .coming-soon {
-      margin-top: 12px;
+    .qr-wrap {
+      margin-top: 26px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 22px;
+      align-items: start;
+    }
+
+    .qr-card {
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px 16px 14px;
+      background: #fafcff;
+      box-shadow: 0 6px 18px rgba(11, 61, 145, 0.06);
+    }
+
+    .qr-card h3 {
+      margin: 0 0 10px;
+      font-size: 18px;
+    }
+
+    .qr-card img.qr-code {
+      width: 180px;
+      max-width: 100%;
+      height: auto;
+      display: block;
+      margin: 0 auto 10px;
+      border-radius: 12px;
+      background: #fff;
+    }
+
+    .qr-card p {
+      margin: 0;
+      font-size: 14px;
       color: var(--muted);
-      font-size: 15px;
+    }
+
+    .mobile-note {
+      margin-top: 14px;
+      color: var(--muted);
+      font-size: 14px;
     }
 
     .section {
@@ -221,6 +266,12 @@
     @media (max-width: 900px) {
       .hero-grid { grid-template-columns: 1fr; }
       .hero-left h1 { font-size: 34px; }
+      .qr-wrap { display: none; }
+      .mobile-note { display: block; }
+    }
+
+    @media (min-width: 901px) {
+      .mobile-note { display: none; }
     }
   </style>
 </head>
@@ -261,21 +312,49 @@
             simpler comedy experience built for actual humans.
           </p>
 
-          <span class="badge">iOS Available</span>
-          <span class="badge">Android Coming Soon</span>
+          <div class="badges">
+            <span class="badge">iPhone Available</span>
+            <span class="badge">Android Available</span>
+          </div>
         </div>
 
         <div class="hero-right">
           <h2>Get the app</h2>
 
           <div class="store-buttons">
-            <a href="https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120" target="_blank">
-              <img src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg" alt="Download on the App Store">
+            <a href="https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120" target="_blank" rel="noopener noreferrer">
+              <img
+                class="store-badge"
+                src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
+                alt="Download on the App Store"
+              >
             </a>
 
-            <div class="coming-soon">
-              Android version is currently being prepared and will be available soon.
+            <a href="https://play.google.com/store/apps/details?id=com.donkeyapp.app" target="_blank" rel="noopener noreferrer">
+              <img
+                class="store-badge"
+                src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
+                alt="Get it on Google Play"
+              >
+            </a>
+          </div>
+
+          <div class="qr-wrap">
+            <div class="qr-card">
+              <h3>Scan for iPhone</h3>
+              <img class="qr-code" src="donkey_app_ios_qr.png" alt="iPhone QR code for Donkey App">
+              <p>Open the App Store page on your iPhone.</p>
             </div>
+
+            <div class="qr-card">
+              <h3>Scan for Android</h3>
+              <img class="qr-code" src="donkey_app_qr.png" alt="Android QR code for Donkey App">
+              <p>Open the Google Play page on your Android device.</p>
+            </div>
+          </div>
+
+          <div class="mobile-note">
+            Open this page on desktop if you want to scan QR codes.
           </div>
         </div>
       </div>
