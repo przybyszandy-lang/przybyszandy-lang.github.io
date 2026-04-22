@@ -166,22 +166,8 @@
       font-size: 30px;
     }
 
-    .store-buttons {
-      margin-top: 20px;
-      display: flex;
-      flex-direction: column;
-      gap: 18px;
-      align-items: center;
-    }
-
-    .store-buttons img.store-badge {
-      height: 60px;
-      width: auto;
-      display: block;
-    }
-
     .qr-wrap {
-      margin-top: 26px;
+      margin-top: 24px;
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 22px;
@@ -191,17 +177,32 @@
     .qr-card {
       border: 1px solid var(--border);
       border-radius: 20px;
-      padding: 18px 16px 14px;
+      padding: 18px 16px 16px;
       background: #fafcff;
       box-shadow: 0 6px 18px rgba(11, 61, 145, 0.06);
+      text-align: center;
     }
 
     .qr-card h3 {
-      margin: 0 0 10px;
+      margin: 0 0 12px;
       font-size: 18px;
     }
 
-    .qr-card img.qr-code {
+    .store-link {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+
+    .store-badge {
+      width: 220px;
+      height: 66px;
+      object-fit: contain;
+      display: block;
+    }
+
+    .qr-code {
       width: 180px;
       max-width: 100%;
       height: auto;
@@ -218,9 +219,17 @@
     }
 
     .mobile-note {
-      margin-top: 14px;
+      margin-top: 18px;
       color: var(--muted);
       font-size: 14px;
+    }
+
+    .store-buttons-mobile {
+      margin-top: 20px;
+      display: none;
+      flex-direction: column;
+      gap: 16px;
+      align-items: center;
     }
 
     .section {
@@ -267,10 +276,12 @@
       .hero-grid { grid-template-columns: 1fr; }
       .hero-left h1 { font-size: 34px; }
       .qr-wrap { display: none; }
+      .store-buttons-mobile { display: flex; }
       .mobile-note { display: block; }
     }
 
     @media (min-width: 901px) {
+      .store-buttons-mobile { display: none; }
       .mobile-note { display: none; }
     }
   </style>
@@ -321,36 +332,50 @@
         <div class="hero-right">
           <h2>Get the app</h2>
 
-          <div class="store-buttons">
-            <a href="https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120" target="_blank" rel="noopener noreferrer">
-              <img
-                class="store-badge"
-                src="https://developer.apple.com/assets/elements/badges/download-on-the-app-store.svg"
-                alt="Download on the App Store"
-              >
-            </a>
-
-            <a href="https://play.google.com/store/apps/details?id=com.donkeyapp.app" target="_blank" rel="noopener noreferrer">
-              <img
-                class="store-badge"
-                src="https://play.google.com/intl/en_us/badges/static/images/badges/en_badge_web_generic.png"
-                alt="Get it on Google Play"
-              >
-            </a>
-          </div>
-
           <div class="qr-wrap">
             <div class="qr-card">
-              <h3>Scan for iPhone</h3>
+              <h3>App Store</h3>
+              <a class="store-link" href="https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120" target="_blank" rel="noopener noreferrer">
+                <img
+                  class="store-badge"
+                  src="appstore.svg"
+                  alt="Download on the App Store"
+                >
+              </a>
               <img class="qr-code" src="donkey_app_ios_qr.png" alt="iPhone QR code for Donkey App">
               <p>Open the App Store page on your iPhone.</p>
             </div>
 
             <div class="qr-card">
-              <h3>Scan for Android</h3>
+              <h3>Google Play</h3>
+              <a class="store-link" href="https://play.google.com/store/apps/details?id=com.donkeyapp.app" target="_blank" rel="noopener noreferrer">
+                <img
+                  class="store-badge"
+                  src="plastore.svg"
+                  alt="Get it on Google Play"
+                >
+              </a>
               <img class="qr-code" src="donkey_app_qr.png" alt="Android QR code for Donkey App">
               <p>Open the Google Play page on your Android device.</p>
             </div>
+          </div>
+
+          <div class="store-buttons-mobile">
+            <a class="store-link" href="https://apps.apple.com/gb/app/donkey-app-comedy/id6760846120" target="_blank" rel="noopener noreferrer">
+              <img
+                class="store-badge"
+                src="appstore.svg"
+                alt="Download on the App Store"
+              >
+            </a>
+
+            <a class="store-link" href="https://play.google.com/store/apps/details?id=com.donkeyapp.app" target="_blank" rel="noopener noreferrer">
+              <img
+                class="store-badge"
+                src="plastore.svg"
+                alt="Get it on Google Play"
+              >
+            </a>
           </div>
 
           <div class="mobile-note">
