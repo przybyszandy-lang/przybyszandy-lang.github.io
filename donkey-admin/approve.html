@@ -169,7 +169,7 @@
     table {
       width: 100%;
       border-collapse: collapse;
-      min-width: 1100px;
+      min-width: 1200px;
     }
 
     th, td {
@@ -207,9 +207,25 @@
     }
 
     .joke-cell {
-      min-width: 420px;
+      min-width: 380px;
       white-space: pre-wrap;
       line-height: 1.45;
+    }
+
+    .similarity-cell {
+      min-width: 80px;
+      white-space: nowrap;
+    }
+
+    .similarity-ok {
+      color: var(--ok-text);
+      font-weight: 600;
+    }
+
+    .similarity-link {
+      color: var(--danger);
+      font-weight: 600;
+      text-decoration: underline;
     }
 
     .small {
@@ -227,6 +243,11 @@
     .count-box {
       font-size: 14px;
       color: var(--muted);
+    }
+
+    .spam-label {
+      color: var(--danger);
+      font-weight: 600;
     }
 
     @media (max-width: 800px) {
@@ -257,7 +278,7 @@
         <div class="row">
           <button id="send-code-btn" type="button">Send code</button>
         </div>
- 
+
         <div id="verify-block" class="hidden">
           <label for="otp-input">One-time code</label>
           <input id="otp-input" type="text" placeholder="Enter the code from your email" autocomplete="one-time-code" />
@@ -299,6 +320,7 @@
                 <th>Decision</th>
                 <th>Language</th>
                 <th>Joke</th>
+                <th>Similarity</th>
                 <th>Created</th>
                 <th>ID</th>
                 <th>Author</th>
@@ -306,7 +328,7 @@
             </thead>
             <tbody id="jokes-body">
               <tr>
-                <td colspan="6" class="muted">No data loaded yet.</td>
+                <td colspan="7" class="muted">No data loaded yet.</td>
               </tr>
             </tbody>
           </table>
@@ -315,7 +337,7 @@
 
       <div class="card" translate="no">
         <h3>Generated SQL</h3>
-        <p class="muted">Only rows with Approve or Reject selected will appear here.</p>
+        <p class="muted">Only rows with Approve, Reject, or Spam selected will appear here.</p>
         <textarea id="sql-output" readonly placeholder="Generated SQL will appear here..."></textarea>
       </div>
     </div>
@@ -329,6 +351,8 @@
 
     const pendingJokes = [];
     const decisionMap = {};
+    let comparisonJokes = [];
+    let similarityLoadFailed = false;
 
     function setMessage(elementId, type, text) {
       const el = document.getElementById(elementId);
@@ -375,41 +399,118 @@
       return "Anonymous";
     }
 
-   async function sendCode() {
-  hideMessage("auth-message");
+    // --- Similarity helpers ---
 
-  const email = document.getElementById("email-input").value.trim().toLowerCase();
-
-  if (!email) {
-    setMessage("auth-message", "error", "Please enter your email first.");
-    return;
-  }
-
-  const sendButton = document.getElementById("send-code-btn");
-  sendButton.disabled = true;
-  sendButton.textContent = "Sending...";
-
-  try {
-    const { error } = await supabaseClient.auth.signInWithOtp({
-      email: email
-    });
-
-    if (error) {
-      console.log("Send code failed:", error);
-      setMessage("auth-message", "error", error.message || "Failed to send code.");
-      return;
+    function normaliseText(text) {
+      return String(text || "")
+        .toLowerCase()
+        .replace(/[^a-z0-9\u00C0-\u024F]/g, ""); // remove spaces, punctuation, symbols; keep letters+digits incl. accented
     }
 
-    document.getElementById("verify-block").classList.remove("hidden");
-    setMessage("auth-message", "success", "Code sent. Check your email and enter the code below.");
-  } catch (err) {
-    console.log("Send code failed:", err);
-    setMessage("auth-message", "error", "Unexpected error while sending the code.");
-  } finally {
-    sendButton.disabled = false;
-    sendButton.textContent = "Send code";
-  }
-}
+    function simpleSimilarity(a, b) {
+      // Returns a score 0..1 using bigram overlap
+      if (!a || !b) return 0;
+      if (a === b) return 1;
+
+      function bigrams(str) {
+        const set = new Set();
+        for (let i = 0; i < str.length - 1; i++) {
+          set.add(str.slice(i, i + 2));
+        }
+        return set;
+      }
+
+      const ba = bigrams(a);
+      const bb = bigrams(b);
+      if (ba.size === 0 || bb.size === 0) return 0;
+
+      let intersection = 0;
+      for (const bg of ba) {
+        if (bb.has(bg)) intersection++;
+      }
+
+      return (2 * intersection) / (ba.size + bb.size);
+    }
+
+    function findSimilarJoke(pending, comparisonList) {
+      const pendingLang = (pending.language || "").toLowerCase();
+      const pendingNorm = normaliseText(pending.content);
+      const pendingId = pending.id;
+
+      for (const existing of comparisonList) {
+        if (existing.id === pendingId) continue;
+        if ((existing.language || "").toLowerCase() !== pendingLang) continue;
+
+        const existingNorm = normaliseText(existing.content);
+
+        // Exact normalised match
+        if (pendingNorm === existingNorm) {
+          return existing;
+        }
+
+        // One contains the other (both must be reasonably long — at least 20 normalised chars)
+        if (pendingNorm.length >= 20 && existingNorm.length >= 20) {
+          if (pendingNorm.includes(existingNorm) || existingNorm.includes(pendingNorm)) {
+            return existing;
+          }
+        }
+
+        // Bigram similarity >= 0.85
+        if (simpleSimilarity(pendingNorm, existingNorm) >= 0.85) {
+          return existing;
+        }
+      }
+
+      return null;
+    }
+
+    // --- Auto-select decision for a joke ---
+
+    function autoDecision(row) {
+      const content = row.content || "";
+      const isShort = content.length < 50;
+      const hasChuck = content.toLowerCase().includes("chuck");
+      if (isShort && !hasChuck) {
+        return "spam";
+      }
+      return "approve";
+    }
+
+    async function sendCode() {
+      hideMessage("auth-message");
+
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+
+      if (!email) {
+        setMessage("auth-message", "error", "Please enter your email first.");
+        return;
+      }
+
+      const sendButton = document.getElementById("send-code-btn");
+      sendButton.disabled = true;
+      sendButton.textContent = "Sending...";
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({
+          email: email
+        });
+
+        if (error) {
+          console.log("Send code failed:", error);
+          setMessage("auth-message", "error", error.message || "Failed to send code.");
+          return;
+        }
+
+        document.getElementById("verify-block").classList.remove("hidden");
+        setMessage("auth-message", "success", "Code sent. Check your email and enter the code below.");
+      } catch (err) {
+        console.log("Send code failed:", err);
+        setMessage("auth-message", "error", "Unexpected error while sending the code.");
+      } finally {
+        sendButton.disabled = false;
+        sendButton.textContent = "Send code";
+      }
+    }
 
     async function verifyCode() {
       hideMessage("auth-message");
@@ -432,18 +533,18 @@
       verifyButton.textContent = "Verifying...";
 
       try {
-const { data, error } = await supabaseClient.auth.verifyOtp({
-  email: email,
-  token: token,
-  type: "email"
-});
+        const { data, error } = await supabaseClient.auth.verifyOtp({
+          email: email,
+          token: token,
+          type: "email"
+        });
 
-console.log("verifyOtp result:", { data, error });
+        console.log("verifyOtp result:", { data, error });
 
-if (error || !data?.user) {
-  setMessage("auth-message", "error", error?.message || "Code verification failed.");
-  return;
-}
+        if (error || !data?.user) {
+          setMessage("auth-message", "error", error?.message || "Code verification failed.");
+          return;
+        }
 
         const isAdmin = await checkAdmin(data.user.id);
 
@@ -457,27 +558,28 @@ if (error || !data?.user) {
         document.getElementById("dashboard-section").classList.remove("hidden");
         setMessage("dashboard-message", "success", "Admin access confirmed.");
         await loadPendingJokes();
-} catch (err) {
-  console.log("Verify code crashed:", err);
-  setMessage("auth-message", "error", "Unexpected error during verification. Check console.");
-} finally {
+      } catch (err) {
+        console.log("Verify code crashed:", err);
+        setMessage("auth-message", "error", "Unexpected error during verification. Check console.");
+      } finally {
         verifyButton.disabled = false;
         verifyButton.textContent = "Verify code";
       }
     }
-async function checkAdmin(userId) {
-  const { data, error } = await supabaseClient
-    .from("profiles")
-    .select("is_admin")
-    .eq("id", userId)
-    .single();
 
-  if (error || !data || data.is_admin !== true) {
-    return false;
-  }
+    async function checkAdmin(userId) {
+      const { data, error } = await supabaseClient
+        .from("profiles")
+        .select("is_admin")
+        .eq("id", userId)
+        .single();
 
-  return true;
-}
+      if (error || !data || data.is_admin !== true) {
+        return false;
+      }
+
+      return true;
+    }
 
     async function loadPendingJokes() {
       hideMessage("dashboard-message");
@@ -486,45 +588,78 @@ async function checkAdmin(userId) {
       const countBox = document.getElementById("pending-count");
       const sqlBox = document.getElementById("sql-output");
 
-      tbody.innerHTML = '<tr><td colspan="6" class="muted">Loading pending jokes...</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="7" class="muted">Loading pending jokes...</td></tr>';
       countBox.textContent = "Loading...";
       sqlBox.value = "";
 
       pendingJokes.length = 0;
+      comparisonJokes = [];
+      similarityLoadFailed = false;
+
       for (const key of Object.keys(decisionMap)) {
         delete decisionMap[key];
       }
 
+      // Load pending jokes
+      let pendingData = null;
       try {
-const { data, error } = await supabaseClient
-  .from("jokes")
-  .select("id, content, language, created_at, user_id")
-  .eq("is_visible", false)
-  .eq("is_new", true)
-  .order("created_at", { ascending: false })
-  .limit(100);
+        const { data, error } = await supabaseClient
+          .from("jokes")
+          .select("id, content, language, created_at, user_id")
+          .eq("is_visible", false)
+          .eq("is_new", true)
+          .order("created_at", { ascending: false })
+          .limit(100);
 
         if (error) {
-          tbody.innerHTML = '<tr><td colspan="6" class="muted">Failed to load jokes.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="7" class="muted">Failed to load jokes.</td></tr>';
           countBox.textContent = "Load failed.";
           setMessage("dashboard-message", "error", error.message || "Failed to load jokes.");
           return;
         }
 
-        if (!data || data.length === 0) {
-          tbody.innerHTML = '<tr><td colspan="6" class="muted">No pending jokes found.</td></tr>';
-          countBox.textContent = "0 pending jokes.";
-          setMessage("dashboard-message", "info", "There are no jokes waiting for review.");
-          return;
-        }
-
-        pendingJokes.push(...data);
-        renderJokes();
-        countBox.textContent = pendingJokes.length + " pending joke(s) loaded.";
+        pendingData = data;
       } catch (err) {
-        tbody.innerHTML = '<tr><td colspan="6" class="muted">Unexpected error while loading jokes.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="muted">Unexpected error while loading jokes.</td></tr>';
         countBox.textContent = "Load failed.";
         setMessage("dashboard-message", "error", "Unexpected error while loading jokes.");
+        return;
+      }
+
+      if (!pendingData || pendingData.length === 0) {
+        tbody.innerHTML = '<tr><td colspan="7" class="muted">No pending jokes found.</td></tr>';
+        countBox.textContent = "0 pending jokes.";
+        setMessage("dashboard-message", "info", "There are no jokes waiting for review.");
+        return;
+      }
+
+      pendingJokes.push(...pendingData);
+
+      // Load comparison jokes (latest 1000 visible/moderated jokes)
+      try {
+        const { data: cmpData, error: cmpError } = await supabaseClient
+          .from("jokes")
+          .select("id, content, language, created_at")
+          .eq("is_visible", true)
+          .order("created_at", { ascending: false })
+          .limit(1000);
+
+        if (cmpError) {
+          similarityLoadFailed = true;
+          console.warn("Similarity comparison load failed:", cmpError);
+        } else {
+          comparisonJokes = cmpData || [];
+        }
+      } catch (err) {
+        similarityLoadFailed = true;
+        console.warn("Similarity comparison load failed:", err);
+      }
+
+      renderJokes();
+      countBox.textContent = pendingJokes.length + " pending joke(s) loaded.";
+
+      if (similarityLoadFailed) {
+        setMessage("dashboard-message", "info", "Pending jokes loaded, but similarity comparison could not be fetched. Similarity column will show OK for all rows.");
       }
     }
 
@@ -532,9 +667,12 @@ const { data, error } = await supabaseClient
       const tbody = document.getElementById("jokes-body");
 
       if (pendingJokes.length === 0) {
-        tbody.innerHTML = '<tr><td colspan="6" class="muted">No pending jokes found.</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="7" class="muted">No pending jokes found.</td></tr>';
         return;
       }
+
+      // Build a combined pool for similarity: comparison jokes + pending jokes (so pending-vs-pending works too)
+      const allForComparison = [...comparisonJokes, ...pendingJokes];
 
       tbody.innerHTML = pendingJokes.map((row) => {
         const safeId = escapeHtml(row.id);
@@ -542,28 +680,50 @@ const { data, error } = await supabaseClient
         const safeContent = escapeHtml(row.content || "");
         const safeCreated = escapeHtml(formatDate(row.created_at));
         const safeAuthor = escapeHtml(getAuthorText(row));
-                decisionMap[row.id] = "approve";
+
+        const decision = autoDecision(row);
+        decisionMap[row.id] = decision;
+
+        const approveChecked = decision === "approve" ? "checked" : "";
+        const rejectChecked = decision === "reject" ? "checked" : "";
+        const spamChecked = decision === "spam" ? "checked" : "";
+        const skipChecked = decision === "skip" ? "checked" : "";
+
+        // Similarity
+        let similarityHtml = '<span class="similarity-ok">OK</span>';
+        if (!similarityLoadFailed) {
+          const similarJoke = findSimilarJoke(row, allForComparison);
+          if (similarJoke) {
+            const link = "https://www.donkeyapp.com/joke.html?id=" + encodeURIComponent(similarJoke.id);
+            similarityHtml = '<a class="similarity-link" href="' + escapeHtml(link) + '" target="_blank" rel="noopener noreferrer">Similar</a>';
+          }
+        }
 
         return `
           <tr>
             <td translate="no">
               <div class="decision-group">
                 <label>
-                  <input type="radio" name="decision-${safeId}" value="approve" onchange="setDecision('${safeId}', 'approve')" checked />
+                  <input type="radio" name="decision-${safeId}" value="approve" onchange="setDecision('${safeId}', 'approve')" ${approveChecked} />
                   <span>Approve</span>
                 </label>
                 <label>
-                  <input type="radio" name="decision-${safeId}" value="reject" onchange="setDecision('${safeId}', 'reject')" />
+                  <input type="radio" name="decision-${safeId}" value="reject" onchange="setDecision('${safeId}', 'reject')" ${rejectChecked} />
                   <span>Reject</span>
                 </label>
                 <label>
-                  <input type="radio" name="decision-${safeId}" value="skip" onchange="setDecision('${safeId}', '')" />
+                  <input type="radio" name="decision-${safeId}" value="spam" onchange="setDecision('${safeId}', 'spam')" ${spamChecked} />
+                  <span class="spam-label">Spam</span>
+                </label>
+                <label>
+                  <input type="radio" name="decision-${safeId}" value="skip" onchange="setDecision('${safeId}', 'skip')" ${skipChecked} />
                   <span>Skip</span>
                 </label>
               </div>
             </td>
             <td translate="no">${safeLanguage}</td>
             <td class="joke-cell" translate="yes" lang="${safeLanguage || "auto"}">${safeContent}</td>
+            <td class="similarity-cell" translate="no">${similarityHtml}</td>
             <td translate="no">${safeCreated}</td>
             <td class="small" translate="no">${safeId}</td>
             <td class="small" translate="no">${safeAuthor}</td>
@@ -573,7 +733,7 @@ const { data, error } = await supabaseClient
     }
 
     function setDecision(id, value) {
-      if (!value) {
+      if (!value || value === "skip") {
         delete decisionMap[id];
         return;
       }
@@ -585,7 +745,6 @@ const { data, error } = await supabaseClient
 
       for (const row of pendingJokes) {
         const decision = decisionMap[row.id];
-        const safeAuthor = escapeHtml(getAuthorText(row));
         if (!decision) continue;
 
         if (decision === "approve") {
@@ -605,6 +764,14 @@ const { data, error } = await supabaseClient
             "set is_visible = false,",
             "    is_new = false,",
             "    updated_at = now()",
+            "where id = '" + row.id + "';",
+            ""
+          );
+        }
+
+        if (decision === "spam") {
+          sqlLines.push(
+            "delete from public.jokes",
             "where id = '" + row.id + "';",
             ""
           );
@@ -645,7 +812,7 @@ const { data, error } = await supabaseClient
       document.getElementById("verify-block").classList.add("hidden");
       document.getElementById("otp-input").value = "";
       document.getElementById("sql-output").value = "";
-      document.getElementById("jokes-body").innerHTML = '<tr><td colspan="6" class="muted">No data loaded yet.</td></tr>';
+      document.getElementById("jokes-body").innerHTML = '<tr><td colspan="7" class="muted">No data loaded yet.</td></tr>';
       document.getElementById("pending-count").textContent = "Not loaded yet.";
 
       hideMessage("dashboard-message");
@@ -674,9 +841,9 @@ const { data, error } = await supabaseClient
 
     restoreSession();
     document
-  .getElementById("send-code-btn")
-  .addEventListener("click", sendCode);
-    
+      .getElementById("send-code-btn")
+      .addEventListener("click", sendCode);
+
   </script>
 </body>
 </html>
