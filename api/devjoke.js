@@ -72,6 +72,11 @@ module.exports = async function handler(req, res) {
     "<meta property=\"og:title\" content=\"" + escapeHtml(ogTitle) + "\" />\n" +
     "<meta property=\"og:description\" content=\"" + escapeHtml(ogDescription) + "\" />\n" +
     "<meta property=\"og:image\" content=\"" + escapeHtml(ogImage) + "\" />\n" +
+    "<meta property=\"og:image:secure_url\" content=\"" + escapeHtml(ogImage) + "\" />\n" +
+    "<meta property=\"og:image:type\" content=\"" + (isMeme ? "image/jpeg" : "image/png") + "\" />\n" +
+    "<meta property=\"og:image:width\" content=\"" + (isMeme ? "1024" : "512") + "\" />\n" +
+    "<meta property=\"og:image:height\" content=\"" + (isMeme ? "1024" : "512") + "\" />\n" +
+    "<meta property=\"og:image:alt\" content=\"Donkey App meme\" />\n" +
     "<meta name=\"twitter:card\" content=\"summary_large_image\" />\n" +
     "<meta name=\"twitter:title\" content=\"" + escapeHtml(ogTitle) + "\" />\n" +
     "<meta name=\"twitter:description\" content=\"" + escapeHtml(ogDescription) + "\" />\n" +
