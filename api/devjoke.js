@@ -16,10 +16,11 @@ function escapeHtml(str) {
 async function fetchSupabase(path) {
   try {
     const r = await fetch(SUPABASE_URL + path, {
-      headers: {
-        apikey: SUPABASE_ANON_KEY,
-        Authorization: "Bearer " + SUPABASE_ANON_KEY
-      }
+headers: {
+  apikey: SUPABASE_ANON_KEY,
+  Authorization: "Bearer " + SUPABASE_ANON_KEY,
+  "Accept": "application/json"
+}
     });
     if (!r.ok) return null;
     const arr = await r.json();
