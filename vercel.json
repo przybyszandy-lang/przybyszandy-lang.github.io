@@ -1,5 +1,6 @@
 {
   "rewrites": [
-    { "source": "/devjoke", "destination": "/api/devjoke" }
+    { "source": "/devjoke", "destination": "/api/devjoke" },
+    { "source": "/joke.html", "destination": "/api/devjoke" }
   ]
 }
