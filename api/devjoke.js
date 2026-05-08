@@ -46,6 +46,7 @@ module.exports = async function handler(req, res) {
     "&select=id,content,user_id,content_type,image_path"
   );
   if (jokeRows && jokeRows.length > 0) joke = jokeRows[0];
+  console.log("DEBUG jokeRows:", JSON.stringify(jokeRows));
 
   let displayName = null;
   if (joke && joke.user_id) {
