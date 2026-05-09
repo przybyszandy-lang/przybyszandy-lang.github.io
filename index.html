@@ -1680,15 +1680,15 @@
       function getShareUrl(jokeId) {
   return window.location.origin + "/joke.html?id=" + encodeURIComponent(jokeId);
 }
-
 async function onShareJoke(item) {
   const shareUrl = getShareUrl(item.id);
 
-  const shareText =
-    "Found this joke on Donkey App Comedy:\n\n" +
-    item.content.trim() +
-    "\n\nRead it here:\n" +
-    shareUrl;
+  const shareText = item.content_type === "meme"
+    ? "Check out this meme on Donkey App 😂\n" + shareUrl
+    : "Found this joke on Donkey App Comedy:\n\n" +
+      item.content.trim() +
+      "\n\nRead it here:\n" +
+      shareUrl;
 
   if (navigator.share) {
     try {
@@ -1863,6 +1863,15 @@ return promo;
           card.appendChild(recentLabel);
         }
 
+if (item.content_type === "meme" && item.image_path) {
+          const memeImg = document.createElement("img");
+          memeImg.src = "https://mknsvxajrvdlwqywvlrf.supabase.co/storage/v1/object/public/memes/" + item.image_path;
+          memeImg.alt = "Meme";
+          memeImg.loading = "lazy";
+          memeImg.style.cssText = "width:100%;border-radius:10px;display:block;margin-bottom:10px;";
+          card.appendChild(memeImg);
+        }
+
         const jokeText = document.createElement("div");
         jokeText.className = "jokeText";
         jokeText.textContent = item.content || "";
@@ -1934,8 +1943,9 @@ return promo;
         favBtn.setAttribute("aria-label", "Add to favourites");
         favBtn.textContent = favouriteIds.has(item.id) ? "♥" : "♡";
         favBtn.addEventListener("click", () => toggleFavourite(item.id));
-
-footerRight.appendChild(copyBtn);
+if (item.content_type !== "meme") {
+  footerRight.appendChild(copyBtn);
+}
 footerRight.appendChild(createShareButton(item));
 footerRight.appendChild(reportBtn);
 footerRight.appendChild(favBtn);
@@ -1968,7 +1978,7 @@ footerRight.appendChild(favBtn);
         loadingRecent = true;
 
         try {
-          const { data, error } = await client.rpc("get_recent_jokes_with_names", {
+const { data, error } = await client.rpc("get_recent_jokes_with_names_mixed", {
             p_language: normalizeFeedLanguage(currentLang),
             p_limit: RECENT_LIMIT
           });
@@ -2005,7 +2015,7 @@ footerRight.appendChild(favBtn);
         try {
           await loadRecentJokes();
 
-          const { data, error } = await client.rpc("get_jokes_feed_lang", {
+const { data, error } = await client.rpc("get_jokes_feed_mixed", {
             p_limit: PAGE_SIZE,
             p_after_created_at: null,
             p_after_id: null,
@@ -2049,7 +2059,7 @@ footerRight.appendChild(favBtn);
         feedLoading.classList.remove("hidden");
 
         try {
-          const { data, error } = await client.rpc("get_jokes_feed_lang", {
+const { data, error } = await client.rpc("get_jokes_feed_mixed", {
             p_limit: PAGE_SIZE,
             p_after_created_at: cursorCreatedAt,
             p_after_id: cursorId,
