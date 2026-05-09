@@ -605,9 +605,10 @@
       try {
         const { data, error } = await supabaseClient
           .from("jokes")
-          .select("id, content, language, created_at, user_id")
+          .select("id, content, language, created_at, user_id, content_type")
           .eq("is_visible", false)
           .eq("is_new", true)
+          .or("content_type.is.null,content_type.eq.joke")
           .order("created_at", { ascending: false })
           .limit(100);
 
