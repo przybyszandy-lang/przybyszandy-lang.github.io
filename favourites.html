@@ -1027,6 +1027,15 @@
         const card = document.createElement("article");
         card.className = "card";
 
+if (item.content_type === "meme" && item.image_path) {
+          const memeImg = document.createElement("img");
+          memeImg.src = "https://mknsvxajrvdlwqywvlrf.supabase.co/storage/v1/object/public/memes/" + item.image_path;
+          memeImg.alt = "Meme";
+          memeImg.loading = "lazy";
+          memeImg.style.cssText = "width:100%;border-radius:10px;margin-bottom:10px;display:block;";
+          card.appendChild(memeImg);
+        }
+
         const jokeText = document.createElement("div");
         jokeText.className = "jokeText";
         jokeText.textContent = item.content || "";
@@ -1144,39 +1153,12 @@
         }
 
         try {
-          const { data: jokesData, error: jokesError } = await client
-            .from("jokes")
-            .select("id, content, user_id")
-            .in("id", favouriteIds);
+const { data: jokesData, error: jokesError } = await client
+            .rpc("get_favourite_jokes_with_names_mixed", { p_ids: favouriteIds });
 
           if (jokesError) throw jokesError;
 
-          const jokesRows = Array.isArray(jokesData) ? jokesData : [];
-          const userIds = [...new Set(jokesRows.map((item) => item.user_id).filter(Boolean))];
-
-          let profileMap = new Map();
-
-          if (userIds.length) {
-            const { data: profilesData, error: profilesError } = await client
-              .from("public_profiles")
-              .select("id, display_name")
-              .in("id", userIds);
-
-            if (!profilesError && Array.isArray(profilesData)) {
-              profileMap = new Map(
-                profilesData.map((item) => [item.id, item.display_name || ""])
-              );
-            }
-          }
-
-          const orderMap = new Map(favouriteIds.map((id, index) => [id, index]));
-
-          allFavouriteJokes = jokesRows
-            .map((item) => ({
-              ...item,
-              display_name: item.user_id ? (profileMap.get(item.user_id) || "") : ""
-            }))
-            .sort((a, b) => (orderMap.get(a.id) ?? 999999) - (orderMap.get(b.id) ?? 999999));
+          allFavouriteJokes = Array.isArray(jokesData) ? jokesData : [];
 
           applySearchFilter();
         } catch (e) {
