@@ -1,1 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>DonkeyApp Admin — Add Meme</title>
 
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --error-bg: #fee2e2;
+      --error-text: #991b1b;
+      --info-bg: #fef3c7;
+      --info-text: #92400e;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .wrap { max-width: 700px; margin: 0 auto; }
+
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+
+    h1, h2, h3 { margin-top: 0; }
+
+    .muted { color: var(--muted); }
+
+    .hidden { display: none !important; }
+
+    .stack { display: flex; flex-direction: column; gap: 12px; }
+
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+
+    label {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+    }
+
+    input[type="email"],
+    input[type="text"],
+    textarea,
+    select {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+    }
+
+    textarea {
+      min-height: 80px;
+      resize: vertical;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    .file-drop {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 32px 20px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      background: #fafafa;
+      color: var(--muted);
+      font-size: 15px;
+    }
+
+    .file-drop:hover,
+    .file-drop.drag-over {
+      border-color: var(--accent);
+      background: #eff6ff;
+      color: var(--accent);
+    }
+
+    .file-drop input[type="file"] {
+      display: none;
+    }
+
+    .preview-wrap {
+      margin-top: 12px;
+      text-align: center;
+    }
+
+    .preview-wrap img {
+      max-width: 100%;
+      max-height: 400px;
+      border-radius: 10px;
+      border: 1px solid var(--border);
+      object-fit: contain;
+    }
+
+    .filename-label {
+      font-size: 13px;
+      color: var(--muted);
+      margin-top: 8px;
+    }
+
+    button,
+    a.button-link {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 18px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    button:hover,
+    a.button-link:hover { background: var(--accent-hover); }
+
+    button.secondary { background: #374151; }
+    button.secondary:hover { background: #1f2937; }
+
+    button.light,
+    a.button-link.light { background: #e5e7eb; color: #111827; }
+    button.light:hover,
+    a.button-link.light:hover { background: #d1d5db; }
+
+    button:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    .message {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.4;
+      margin-top: 12px;
+    }
+
+    .message.info { background: var(--info-bg); color: var(--info-text); }
+    .message.success { background: var(--ok-bg); color: var(--ok-text); }
+    .message.error { background: var(--error-bg); color: var(--error-text); }
+
+    .sql-box {
+      width: 100%;
+      min-height: 120px;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-family: Consolas, Monaco, monospace;
+      font-size: 13px;
+      background: #f9fafb;
+      color: var(--text);
+      resize: vertical;
+    }
+
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 4px;
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 12px; }
+      .card { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+
+    <div class="card" translate="no">
+      <div class="topbar">
+        <h1 style="margin-bottom: 0;">Add Meme</h1>
+        <a href="./" class="button-link light">Back to menu</a>
+      </div>
+      <p class="muted">Upload a meme image to Supabase Storage, then copy the generated SQL and run it in Supabase.</p>
+    </div>
+
+    <!-- LOGIN -->
+    <div id="auth-section" class="card" translate="no">
+      <h2>Admin Login</h2>
+      <div class="stack">
+        <label for="email-input">Admin email</label>
+        <input id="email-input" type="email" placeholder="andy@donkeyapp.com" autocomplete="email" />
+        <div class="row">
+          <button id="send-code-btn" type="button">Send code</button>
+        </div>
+        <div id="verify-block" class="hidden">
+          <div class="stack">
+            <label for="otp-input">One-time code</label>
+            <input id="otp-input" type="text" placeholder="Enter the code from your email" autocomplete="one-time-code" />
+            <div class="row">
+              <button id="verify-code-btn" type="button" onclick="verifyCode()">Verify code</button>
+            </div>
+          </div>
+        </div>
+        <div id="auth-message" class="hidden message info"></div>
+      </div>
+    </div>
+
+    <!-- MAIN TOOL -->
+    <div id="tool-section" class="hidden">
+
+      <div class="card" translate="no">
+        <div class="row" style="justify-content: space-between;">
+          <h2 style="margin-bottom: 0;">Upload meme</h2>
+          <button type="button" class="light" onclick="logout()">Logout</button>
+        </div>
+      </div>
+
+      <!-- STEP 1: Pick image -->
+      <div class="card" translate="no">
+        <h3>1. Choose image</h3>
+        <div class="file-drop" id="file-drop" onclick="document.getElementById('file-input').click()">
+          <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" />
+          Click to choose an image, or drag and drop here<br />
+          <span style="font-size: 13px;">JPG, PNG or WEBP — max 5 MB</span>
+        </div>
+        <div id="preview-wrap" class="preview-wrap hidden">
+          <img id="preview-img" src="" alt="Preview" />
+          <div id="filename-label" class="filename-label"></div>
+        </div>
+        <div id="pick-message" class="hidden message error"></div>
+      </div>
+
+      <!-- STEP 2: Details -->
+      <div class="card" translate="no">
+        <h3>2. Details</h3>
+        <div class="stack">
+          <div>
+            <label for="caption-input">Caption <span class="muted">(optional)</span></label>
+            <textarea id="caption-input" placeholder="Leave blank if the meme has no text caption"></textarea>
+          </div>
+          <div>
+            <label for="language-select">Language</label>
+            <select id="language-select">
+              <option value="English" selected>English</option>
+              <option value="Polski">Polski</option>
+              <option value="Deutsch">Deutsch</option>
+              <option value="Français">Français</option>
+              <option value="Español">Español</option>
+              <option value="Italiano">Italiano</option>
+              <option value="Nederlands">Nederlands</option>
+              <option value="Português">Português</option>
+              <option value="Svenska">Svenska</option>
+              <option value="Dansk">Dansk</option>
+              <option value="Suomi">Suomi</option>
+              <option value="Norsk">Norsk</option>
+              <option value="Čeština">Čeština</option>
+              <option value="Slovenčina">Slovenčina</option>
+              <option value="Magyar">Magyar</option>
+              <option value="Română">Română</option>
+              <option value="Hrvatski">Hrvatski</option>
+              <option value="Slovenščina">Slovenščina</option>
+              <option value="Eesti">Eesti</option>
+              <option value="Latviešu">Latviešu</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <!-- STEP 3: Upload -->
+      <div class="card" translate="no">
+        <h3>3. Upload image</h3>
+        <p class="muted">This uploads the image file to Supabase Storage in the <strong>memes/memes/</strong> folder. It does not touch the database.</p>
+        <div class="row">
+          <button type="button" id="upload-btn" onclick="uploadImage()">Upload image</button>
+        </div>
+        <div id="upload-message" class="hidden message info"></div>
+      </div>
+
+      <!-- STEP 4: SQL -->
+      <div class="card" translate="no" id="sql-section" style="display:none;">
+        <h3>4. Copy SQL</h3>
+        <p class="muted">Run this in Supabase SQL editor. It inserts the meme row. The meme will be hidden until approved.</p>
+        <textarea class="sql-box" id="sql-output" readonly></textarea>
+        <div class="row" style="margin-top: 12px;">
+          <button type="button" onclick="copySql()">Copy SQL</button>
+          <button type="button" class="light" onclick="resetForm()">Add another meme</button>
+        </div>
+        <div id="sql-message" class="hidden message info"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = "https://mknsvxajrvdlwqywvlrf.supabase.co";
+    const SUPABASE_KEY = "sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw";
+    const BUCKET = "memes";
+    const FOLDER = "memes";
+    const USER_ID = "1b01e76f-daa9-4c21-822b-2a87d390d9e8";
+
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let selectedFile = null;
+    let uploadedPath = null;
+
+    // --- Messages ---
+
+    function setMessage(id, type, text) {
+      const el = document.getElementById(id);
+      el.className = "message " + type;
+      el.textContent = text;
+      el.classList.remove("hidden");
+    }
+
+    function hideMessage(id) {
+      const el = document.getElementById(id);
+      el.classList.add("hidden");
+      el.textContent = "";
+    }
+
+    // --- File pick ---
+
+    document.getElementById("file-input").addEventListener("change", function () {
+      handleFile(this.files[0]);
+    });
+
+    const dropZone = document.getElementById("file-drop");
+
+    dropZone.addEventListener("dragover", function (e) {
+      e.preventDefault();
+      dropZone.classList.add("drag-over");
+    });
+
+    dropZone.addEventListener("dragleave", function () {
+      dropZone.classList.remove("drag-over");
+    });
+
+    dropZone.addEventListener("drop", function (e) {
+      e.preventDefault();
+      dropZone.classList.remove("drag-over");
+      const file = e.dataTransfer.files[0];
+      handleFile(file);
+    });
+
+    function handleFile(file) {
+      hideMessage("pick-message");
+
+      if (!file) return;
+
+      const allowed = ["image/jpeg", "image/png", "image/webp"];
+      if (!allowed.includes(file.type)) {
+        setMessage("pick-message", "error", "Only JPG, PNG, or WEBP files are allowed.");
+        return;
+      }
+
+      if (file.size > 5 * 1024 * 1024) {
+        setMessage("pick-message", "error", "File is too large. Maximum size is 5 MB.");
+        return;
+      }
+
+      selectedFile = file;
+      uploadedPath = null;
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        document.getElementById("preview-img").src = e.target.result;
+        document.getElementById("filename-label").textContent = file.name + " (" + (file.size / 1024).toFixed(0) + " KB)";
+        document.getElementById("preview-wrap").classList.remove("hidden");
+      };
+      reader.readAsDataURL(file);
+
+      // Hide SQL section if re-picking
+      document.getElementById("sql-section").style.display = "none";
+      document.getElementById("sql-output").value = "";
+      hideMessage("upload-message");
+    }
+
+    // --- Upload ---
+
+    async function uploadImage() {
+      hideMessage("upload-message");
+
+      if (!selectedFile) {
+        setMessage("upload-message", "error", "Please choose an image first.");
+        return;
+      }
+
+      const btn = document.getElementById("upload-btn");
+      btn.disabled = true;
+      btn.textContent = "Uploading...";
+
+      try {
+        // Build a unique filename: timestamp + original name
+        const timestamp = Date.now();
+        const safeName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+        const filePath = FOLDER + "/" + timestamp + "_" + safeName;
+
+        const { data, error } = await supabaseClient.storage
+          .from(BUCKET)
+          .upload(filePath, selectedFile, {
+            contentType: selectedFile.type,
+            upsert: false
+          });
+
+        if (error) {
+          setMessage("upload-message", "error", "Upload failed: " + (error.message || "Unknown error"));
+          return;
+        }
+
+        uploadedPath = filePath;
+        setMessage("upload-message", "success", "Uploaded successfully: " + filePath);
+        generateSql(filePath);
+
+      } catch (err) {
+        setMessage("upload-message", "error", "Unexpected error during upload.");
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Upload image";
+      }
+    }
+
+    // --- SQL generation ---
+
+    function generateSql(imagePath) {
+      const caption = document.getElementById("caption-input").value.trim();
+      const language = document.getElementById("language-select").value;
+
+      const contentValue = caption ? caption.replaceAll("'", "''") : "";
+      const languageValue = language.replaceAll("'", "''");
+      const imagePathValue = imagePath.replaceAll("'", "''");
+
+      const sql =
+        "INSERT INTO jokes (\n" +
+        "  id, created_at, content, is_new, is_visible, is_flagged,\n" +
+        "  rating_bad_count, rating_meh_count, rating_good_count, rating_great_count,\n" +
+        "  language, report_count, user_id, updated_at, content_type, image_path\n" +
+        ") VALUES (\n" +
+        "  gen_random_uuid(), NOW(), '" + contentValue + "', true, false, false,\n" +
+        "  0, 0, 0, 0,\n" +
+        "  '" + languageValue + "', 0, '" + USER_ID + "', NOW(), 'meme', '" + imagePathValue + "'\n" +
+        ");";
+
+      document.getElementById("sql-output").value = sql;
+      document.getElementById("sql-section").style.display = "block";
+    }
+
+    async function copySql() {
+      const sql = document.getElementById("sql-output").value;
+      if (!sql.trim()) {
+        setMessage("sql-message", "info", "No SQL to copy yet.");
+        return;
+      }
+      try {
+        await navigator.clipboard.writeText(sql);
+        setMessage("sql-message", "success", "SQL copied.");
+      } catch (err) {
+        setMessage("sql-message", "error", "Copy failed. Please copy manually.");
+      }
+    }
+
+    // --- Reset ---
+
+    function resetForm() {
+      selectedFile = null;
+      uploadedPath = null;
+
+      document.getElementById("file-input").value = "";
+      document.getElementById("preview-img").src = "";
+      document.getElementById("filename-label").textContent = "";
+      document.getElementById("preview-wrap").classList.add("hidden");
+      document.getElementById("caption-input").value = "";
+      document.getElementById("language-select").value = "English";
+      document.getElementById("sql-output").value = "";
+      document.getElementById("sql-section").style.display = "none";
+
+      hideMessage("pick-message");
+      hideMessage("upload-message");
+      hideMessage("sql-message");
+    }
+
+    // --- Auth ---
+
+    async function sendCode() {
+      hideMessage("auth-message");
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      if (!email) { setMessage("auth-message", "error", "Please enter your email first."); return; }
+
+      const btn = document.getElementById("send-code-btn");
+      btn.disabled = true;
+      btn.textContent = "Sending...";
+
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({ email });
+        if (error) { setMessage("auth-message", "error", error.message || "Failed to send code."); return; }
+        document.getElementById("verify-block").classList.remove("hidden");
+        setMessage("auth-message", "success", "Code sent. Check your email.");
+      } catch (err) {
+        setMessage("auth-message", "error", "Unexpected error while sending the code.");
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Send code";
+      }
+    }
+
+    async function verifyCode() {
+      hideMessage("auth-message");
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      const token = document.getElementById("otp-input").value.trim();
+      if (!email || !token) { setMessage("auth-message", "error", "Please enter your email and code."); return; }
+
+      const btn = document.getElementById("verify-code-btn");
+      btn.disabled = true;
+      btn.textContent = "Verifying...";
+
+      try {
+        const { data, error } = await supabaseClient.auth.verifyOtp({ email, token, type: "email" });
+        if (error || !data?.user) { setMessage("auth-message", "error", error?.message || "Code verification failed."); return; }
+
+        const isAdmin = await checkAdmin(data.user.id);
+        if (!isAdmin) { await supabaseClient.auth.signOut(); setMessage("auth-message", "error", "Access denied."); return; }
+
+        document.getElementById("auth-section").classList.add("hidden");
+        document.getElementById("tool-section").classList.remove("hidden");
+      } catch (err) {
+        setMessage("auth-message", "error", "Unexpected error. Check console.");
+        console.error(err);
+      } finally {
+        btn.disabled = false;
+        btn.textContent = "Verify code";
+      }
+    }
+
+    async function checkAdmin(userId) {
+      const { data, error } = await supabaseClient.from("profiles").select("is_admin").eq("id", userId).single();
+      return !error && data?.is_admin === true;
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      document.getElementById("tool-section").classList.add("hidden");
+      document.getElementById("auth-section").classList.remove("hidden");
+      document.getElementById("verify-block").classList.add("hidden");
+      document.getElementById("otp-input").value = "";
+      resetForm();
+      setMessage("auth-message", "info", "Logged out.");
+    }
+
+    async function restoreSession() {
+      const { data } = await supabaseClient.auth.getUser();
+      if (!data?.user) return;
+      const isAdmin = await checkAdmin(data.user.id);
+      if (!isAdmin) { await supabaseClient.auth.signOut(); return; }
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("tool-section").classList.remove("hidden");
+    }
+
+    restoreSession();
+    document.getElementById("send-code-btn").addEventListener("click", sendCode);
+  </script>
+</body>
+</html>
