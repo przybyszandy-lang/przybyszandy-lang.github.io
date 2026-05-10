@@ -63,7 +63,6 @@
 
     input[type="email"],
     input[type="text"],
-    textarea,
     select {
       width: 100%;
       padding: 12px;
@@ -72,12 +71,6 @@
       font-size: 16px;
       background: #fff;
       color: var(--text);
-    }
-
-    textarea {
-      min-height: 80px;
-      resize: vertical;
-      font-family: Arial, Helvetica, sans-serif;
     }
 
     .file-drop {
@@ -103,24 +96,92 @@
       display: none;
     }
 
-    .preview-wrap {
-      margin-top: 12px;
-      text-align: center;
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+      gap: 10px;
+      margin-top: 14px;
     }
 
-    .preview-wrap img {
-      max-width: 100%;
-      max-height: 400px;
-      border-radius: 10px;
+    .preview-item {
+      position: relative;
       border: 1px solid var(--border);
-      object-fit: contain;
+      border-radius: 8px;
+      overflow: hidden;
+      background: #f9fafb;
     }
 
-    .filename-label {
-      font-size: 13px;
-      color: var(--muted);
-      margin-top: 8px;
+    .preview-item img {
+      width: 100%;
+      height: 100px;
+      object-fit: cover;
+      display: block;
     }
+
+    .preview-item .preview-name {
+      font-size: 11px;
+      color: var(--muted);
+      padding: 4px 6px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .preview-item .remove-btn {
+      position: absolute;
+      top: 4px;
+      right: 4px;
+      background: rgba(0,0,0,0.55);
+      color: white;
+      border: 0;
+      border-radius: 50%;
+      width: 22px;
+      height: 22px;
+      font-size: 13px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      font-weight: bold;
+      line-height: 1;
+    }
+
+    .preview-item .remove-btn:hover {
+      background: rgba(185,28,28,0.85);
+    }
+
+    .upload-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 14px;
+    }
+
+    .upload-row:last-child {
+      border-bottom: 0;
+    }
+
+    .upload-row .fname {
+      flex: 1;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+
+    .upload-row .status {
+      font-size: 13px;
+      font-weight: 600;
+      min-width: 80px;
+      text-align: right;
+    }
+
+    .status-pending { color: var(--muted); }
+    .status-uploading { color: var(--accent); }
+    .status-done { color: var(--ok-text); }
+    .status-error { color: var(--error-text); }
 
     button,
     a.button-link {
@@ -138,9 +199,6 @@
 
     button:hover,
     a.button-link:hover { background: var(--accent-hover); }
-
-    button.secondary { background: #374151; }
-    button.secondary:hover { background: #1f2937; }
 
     button.light,
     a.button-link.light { background: #e5e7eb; color: #111827; }
@@ -163,7 +221,7 @@
 
     .sql-box {
       width: 100%;
-      min-height: 120px;
+      min-height: 160px;
       padding: 12px;
       border: 1px solid var(--border);
       border-radius: 10px;
@@ -194,10 +252,10 @@
 
     <div class="card" translate="no">
       <div class="topbar">
-        <h1 style="margin-bottom: 0;">Add Meme</h1>
+        <h1 style="margin-bottom: 0;">Add Memes</h1>
         <a href="./" class="button-link light">Back to menu</a>
       </div>
-      <p class="muted">Upload a meme image to Supabase Storage, then copy the generated SQL and run it in Supabase.</p>
+      <p class="muted">Upload multiple meme images to Supabase Storage, then copy the generated SQL and run it in Supabase.</p>
     </div>
 
     <!-- LOGIN -->
@@ -227,80 +285,70 @@
 
       <div class="card" translate="no">
         <div class="row" style="justify-content: space-between;">
-          <h2 style="margin-bottom: 0;">Upload meme</h2>
+          <h2 style="margin-bottom: 0;">Upload memes</h2>
           <button type="button" class="light" onclick="logout()">Logout</button>
         </div>
       </div>
 
-      <!-- STEP 1: Pick image -->
+      <!-- STEP 1: Pick images -->
       <div class="card" translate="no">
-        <h3>1. Choose image</h3>
+        <h3>1. Choose images</h3>
         <div class="file-drop" id="file-drop" onclick="document.getElementById('file-input').click()">
-          <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" />
-          Click to choose an image, or drag and drop here<br />
-          <span style="font-size: 13px;">JPG, PNG or WEBP — max 5 MB</span>
+          <input type="file" id="file-input" accept="image/jpeg,image/png,image/webp" multiple />
+          Click to choose images, or drag and drop here<br />
+          <span style="font-size: 13px;">JPG, PNG or WEBP — max 5 MB each — multiple files allowed</span>
         </div>
-        <div id="preview-wrap" class="preview-wrap hidden">
-          <img id="preview-img" src="" alt="Preview" />
-          <div id="filename-label" class="filename-label"></div>
-        </div>
+        <div id="preview-grid" class="preview-grid"></div>
         <div id="pick-message" class="hidden message error"></div>
       </div>
 
-      <!-- STEP 2: Details -->
+      <!-- STEP 2: Language -->
       <div class="card" translate="no">
-        <h3>2. Details</h3>
-        <div class="stack">
-          <div>
-            <label for="caption-input">Caption <span class="muted">(optional)</span></label>
-            <textarea id="caption-input" placeholder="Leave blank if the meme has no text caption"></textarea>
-          </div>
-          <div>
-            <label for="language-select">Language</label>
-            <select id="language-select">
-              <option value="English" selected>English</option>
-              <option value="Polski">Polski</option>
-              <option value="Deutsch">Deutsch</option>
-              <option value="Français">Français</option>
-              <option value="Español">Español</option>
-              <option value="Italiano">Italiano</option>
-              <option value="Nederlands">Nederlands</option>
-              <option value="Português">Português</option>
-              <option value="Svenska">Svenska</option>
-              <option value="Dansk">Dansk</option>
-              <option value="Suomi">Suomi</option>
-              <option value="Norsk">Norsk</option>
-              <option value="Čeština">Čeština</option>
-              <option value="Slovenčina">Slovenčina</option>
-              <option value="Magyar">Magyar</option>
-              <option value="Română">Română</option>
-              <option value="Hrvatski">Hrvatski</option>
-              <option value="Slovenščina">Slovenščina</option>
-              <option value="Eesti">Eesti</option>
-              <option value="Latviešu">Latviešu</option>
-            </select>
-          </div>
-        </div>
+        <h3>2. Language</h3>
+        <p class="muted">Applied to all uploaded memes.</p>
+        <select id="language-select">
+          <option value="English" selected>English</option>
+          <option value="Polski">Polski</option>
+          <option value="Deutsch">Deutsch</option>
+          <option value="Français">Français</option>
+          <option value="Español">Español</option>
+          <option value="Italiano">Italiano</option>
+          <option value="Nederlands">Nederlands</option>
+          <option value="Português">Português</option>
+          <option value="Svenska">Svenska</option>
+          <option value="Dansk">Dansk</option>
+          <option value="Suomi">Suomi</option>
+          <option value="Norsk">Norsk</option>
+          <option value="Čeština">Čeština</option>
+          <option value="Slovenčina">Slovenčina</option>
+          <option value="Magyar">Magyar</option>
+          <option value="Română">Română</option>
+          <option value="Hrvatski">Hrvatski</option>
+          <option value="Slovenščina">Slovenščina</option>
+          <option value="Eesti">Eesti</option>
+          <option value="Latviešu">Latviešu</option>
+        </select>
       </div>
 
       <!-- STEP 3: Upload -->
       <div class="card" translate="no">
-        <h3>3. Upload image</h3>
-        <p class="muted">This uploads the image file to Supabase Storage in the <strong>memes/memes/</strong> folder. It does not touch the database.</p>
+        <h3>3. Upload images</h3>
+        <p class="muted">Uploads all selected images to Supabase Storage. Does not touch the database.</p>
         <div class="row">
-          <button type="button" id="upload-btn" onclick="uploadImage()">Upload image</button>
+          <button type="button" id="upload-btn" onclick="uploadImages()">Upload all images</button>
         </div>
+        <div id="upload-list" style="margin-top: 14px;"></div>
         <div id="upload-message" class="hidden message info"></div>
       </div>
 
       <!-- STEP 4: SQL -->
-      <div class="card" translate="no" id="sql-section" style="display:none;">
+      <div class="card hidden" id="sql-section" translate="no">
         <h3>4. Copy SQL</h3>
-        <p class="muted">Run this in Supabase SQL editor. It inserts the meme row. The meme will be hidden until approved.</p>
+        <p class="muted">Run this in Supabase SQL editor. Inserts all meme rows in one statement. Memes will be hidden until approved.</p>
         <textarea class="sql-box" id="sql-output" readonly></textarea>
         <div class="row" style="margin-top: 12px;">
           <button type="button" onclick="copySql()">Copy SQL</button>
-          <button type="button" class="light" onclick="resetForm()">Add another meme</button>
+          <button type="button" class="light" onclick="resetForm()">Add more memes</button>
         </div>
         <div id="sql-message" class="hidden message info"></div>
       </div>
@@ -317,10 +365,8 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let selectedFile = null;
-    let uploadedPath = null;
-
-    // --- Messages ---
+    let selectedFiles = [];
+    let uploadedPaths = [];
 
     function setMessage(id, type, text) {
       const el = document.getElementById(id);
@@ -335,10 +381,8 @@
       el.textContent = "";
     }
 
-    // --- File pick ---
-
     document.getElementById("file-input").addEventListener("change", function () {
-      handleFile(this.files[0]);
+      handleFiles(Array.from(this.files));
     });
 
     const dropZone = document.getElementById("file-drop");
@@ -355,50 +399,73 @@
     dropZone.addEventListener("drop", function (e) {
       e.preventDefault();
       dropZone.classList.remove("drag-over");
-      const file = e.dataTransfer.files[0];
-      handleFile(file);
+      handleFiles(Array.from(e.dataTransfer.files));
     });
 
-    function handleFile(file) {
+    function handleFiles(files) {
       hideMessage("pick-message");
 
-      if (!file) return;
-
       const allowed = ["image/jpeg", "image/png", "image/webp"];
-      if (!allowed.includes(file.type)) {
-        setMessage("pick-message", "error", "Only JPG, PNG, or WEBP files are allowed.");
-        return;
+      let rejected = 0;
+
+      for (const file of files) {
+        if (!allowed.includes(file.type)) { rejected++; continue; }
+        if (file.size > 5 * 1024 * 1024) { rejected++; continue; }
+        if (selectedFiles.find(f => f.name === file.name)) continue;
+        selectedFiles.push(file);
       }
 
-      if (file.size > 5 * 1024 * 1024) {
-        setMessage("pick-message", "error", "File is too large. Maximum size is 5 MB.");
-        return;
+      if (rejected > 0) {
+        setMessage("pick-message", "error", rejected + " file(s) skipped — wrong type or over 5 MB.");
       }
 
-      selectedFile = file;
-      uploadedPath = null;
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        document.getElementById("preview-img").src = e.target.result;
-        document.getElementById("filename-label").textContent = file.name + " (" + (file.size / 1024).toFixed(0) + " KB)";
-        document.getElementById("preview-wrap").classList.remove("hidden");
-      };
-      reader.readAsDataURL(file);
-
-      // Hide SQL section if re-picking
-      document.getElementById("sql-section").style.display = "none";
+      renderPreviews();
+      uploadedPaths = [];
+      document.getElementById("sql-section").classList.add("hidden");
       document.getElementById("sql-output").value = "";
       hideMessage("upload-message");
+      document.getElementById("upload-list").innerHTML = "";
     }
 
-    // --- Upload ---
+    function renderPreviews() {
+      const grid = document.getElementById("preview-grid");
+      grid.innerHTML = "";
 
-    async function uploadImage() {
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const div = document.createElement("div");
+        div.className = "preview-item";
+
+        const img = document.createElement("img");
+        img.src = URL.createObjectURL(file);
+
+        const name = document.createElement("div");
+        name.className = "preview-name";
+        name.textContent = file.name;
+
+        const btn = document.createElement("button");
+        btn.className = "remove-btn";
+        btn.textContent = "\u00d7";
+        btn.onclick = (function(idx) {
+          return function(e) {
+            e.stopPropagation();
+            selectedFiles.splice(idx, 1);
+            renderPreviews();
+          };
+        })(i);
+
+        div.appendChild(img);
+        div.appendChild(name);
+        div.appendChild(btn);
+        grid.appendChild(div);
+      }
+    }
+
+    async function uploadImages() {
       hideMessage("upload-message");
 
-      if (!selectedFile) {
-        setMessage("upload-message", "error", "Please choose an image first.");
+      if (selectedFiles.length === 0) {
+        setMessage("upload-message", "error", "Please choose at least one image first.");
         return;
       }
 
@@ -406,60 +473,105 @@
       btn.disabled = true;
       btn.textContent = "Uploading...";
 
-      try {
-        // Build a unique filename: timestamp + original name
-        const timestamp = Date.now();
-        const safeName = selectedFile.name.replace(/[^a-zA-Z0-9._-]/g, "_");
-        const filePath = FOLDER + "/" + timestamp + "_" + safeName;
+      uploadedPaths = [];
 
-        const { data, error } = await supabaseClient.storage
-          .from(BUCKET)
-          .upload(filePath, selectedFile, {
-            contentType: selectedFile.type,
-            upsert: false
-          });
+      const listEl = document.getElementById("upload-list");
+      listEl.innerHTML = "";
 
-        if (error) {
-          setMessage("upload-message", "error", "Upload failed: " + (error.message || "Unknown error"));
-          return;
-        }
+      const statusEls = [];
+      for (const file of selectedFiles) {
+        const row = document.createElement("div");
+        row.className = "upload-row";
 
-        uploadedPath = filePath;
-        setMessage("upload-message", "success", "Uploaded successfully: " + filePath);
-        generateSql(filePath);
+        const fname = document.createElement("div");
+        fname.className = "fname";
+        fname.textContent = file.name;
 
-      } catch (err) {
-        setMessage("upload-message", "error", "Unexpected error during upload.");
-        console.error(err);
-      } finally {
-        btn.disabled = false;
-        btn.textContent = "Upload image";
+        const status = document.createElement("div");
+        status.className = "status status-pending";
+        status.textContent = "Waiting...";
+
+        row.appendChild(fname);
+        row.appendChild(status);
+        listEl.appendChild(row);
+        statusEls.push(status);
       }
+
+      let allOk = true;
+
+      for (let i = 0; i < selectedFiles.length; i++) {
+        const file = selectedFiles[i];
+        const statusEl = statusEls[i];
+
+        statusEl.textContent = "Uploading...";
+        statusEl.className = "status status-uploading";
+
+        try {
+          const timestamp = Date.now() + i;
+          const safeName = file.name.replace(/[^a-zA-Z0-9._-]/g, "_");
+          const filePath = FOLDER + "/" + timestamp + "_" + safeName;
+
+          const { data, error } = await supabaseClient.storage
+            .from(BUCKET)
+            .upload(filePath, file, {
+              contentType: file.type,
+              upsert: false
+            });
+
+          if (error) {
+            statusEl.textContent = "Failed";
+            statusEl.className = "status status-error";
+            allOk = false;
+            continue;
+          }
+
+          uploadedPaths.push(filePath);
+          statusEl.textContent = "Done \u2713";
+          statusEl.className = "status status-done";
+
+        } catch (err) {
+          statusEl.textContent = "Error";
+          statusEl.className = "status status-error";
+          allOk = false;
+        }
+      }
+
+      btn.disabled = false;
+      btn.textContent = "Upload all images";
+
+      if (uploadedPaths.length === 0) {
+        setMessage("upload-message", "error", "All uploads failed. Check your connection and try again.");
+        return;
+      }
+
+      if (!allOk) {
+        setMessage("upload-message", "info", uploadedPaths.length + " of " + selectedFiles.length + " uploaded. SQL generated for successful ones only.");
+      } else {
+        setMessage("upload-message", "success", "All " + uploadedPaths.length + " images uploaded successfully.");
+      }
+
+      generateSql();
     }
 
-    // --- SQL generation ---
+    function generateSql() {
+      const language = document.getElementById("language-select").value.replaceAll("'", "''");
 
-    function generateSql(imagePath) {
-      const caption = document.getElementById("caption-input").value.trim();
-      const language = document.getElementById("language-select").value;
-
-      const contentValue = caption ? caption.replaceAll("'", "''") : "";
-      const languageValue = language.replaceAll("'", "''");
-      const imagePathValue = imagePath.replaceAll("'", "''");
+      const rows = uploadedPaths.map(imagePath => {
+        const safeImagePath = imagePath.replaceAll("'", "''");
+        return "  (gen_random_uuid(), NOW(), '', true, false, false, 0, 0, 0, 0, '" + language + "', 0, '" + USER_ID + "', NOW(), 'meme', '" + safeImagePath + "')";
+      });
 
       const sql =
         "INSERT INTO jokes (\n" +
         "  id, created_at, content, is_new, is_visible, is_flagged,\n" +
         "  rating_bad_count, rating_meh_count, rating_good_count, rating_great_count,\n" +
         "  language, report_count, user_id, updated_at, content_type, image_path\n" +
-        ") VALUES (\n" +
-        "  gen_random_uuid(), NOW(), '" + contentValue + "', true, false, false,\n" +
-        "  0, 0, 0, 0,\n" +
-        "  '" + languageValue + "', 0, '" + USER_ID + "', NOW(), 'meme', '" + imagePathValue + "'\n" +
-        ");";
+        ") VALUES\n" +
+        rows.join(",\n") +
+        ";";
 
       document.getElementById("sql-output").value = sql;
-      document.getElementById("sql-section").style.display = "block";
+      document.getElementById("sql-section").classList.remove("hidden");
     }
 
     async function copySql() {
@@ -476,27 +588,19 @@
       }
     }
 
-    // --- Reset ---
-
     function resetForm() {
-      selectedFile = null;
-      uploadedPath = null;
-
+      selectedFiles = [];
+      uploadedPaths = [];
       document.getElementById("file-input").value = "";
-      document.getElementById("preview-img").src = "";
-      document.getElementById("filename-label").textContent = "";
-      document.getElementById("preview-wrap").classList.add("hidden");
-      document.getElementById("caption-input").value = "";
+      document.getElementById("preview-grid").innerHTML = "";
+      document.getElementById("upload-list").innerHTML = "";
       document.getElementById("language-select").value = "English";
       document.getElementById("sql-output").value = "";
-      document.getElementById("sql-section").style.display = "none";
-
+      document.getElementById("sql-section").classList.add("hidden");
       hideMessage("pick-message");
       hideMessage("upload-message");
       hideMessage("sql-message");
     }
-
-    // --- Auth ---
 
     async function sendCode() {
       hideMessage("auth-message");
