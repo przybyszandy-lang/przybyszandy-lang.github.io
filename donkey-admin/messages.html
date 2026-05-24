@@ -1,0 +1,327 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>DonkeyApp Admin — Messages</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1f2937;
+      --muted: #6b7280;
+      --border: #d1d5db;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --ok-bg: #dcfce7;
+      --ok-text: #166534;
+      --error-bg: #fee2e2;
+      --error-text: #991b1b;
+      --info-bg: #fef3c7;
+      --info-text: #92400e;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      padding: 24px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: Arial, Helvetica, sans-serif;
+    }
+    .wrap { max-width: 900px; margin: 0 auto; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    h1, h2 { margin-top: 0; }
+    .muted { color: var(--muted); }
+    .hidden { display: none !important; }
+    .stack { display: flex; flex-direction: column; gap: 12px; }
+    .row { display: flex; gap: 12px; flex-wrap: wrap; align-items: center; }
+    input[type="email"], input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      font-size: 16px;
+      background: #fff;
+      color: var(--text);
+    }
+    button {
+      border: 0;
+      border-radius: 10px;
+      padding: 12px 16px;
+      background: var(--accent);
+      color: white;
+      cursor: pointer;
+      font-size: 15px;
+      font-weight: 600;
+    }
+    button:hover { background: var(--accent-hover); }
+    button.light { background: #e5e7eb; color: #111827; }
+    button.light:hover { background: #d1d5db; }
+    .message {
+      border-radius: 10px;
+      padding: 12px 14px;
+      font-size: 14px;
+      line-height: 1.4;
+      margin-top: 12px;
+    }
+    .message.info { background: var(--info-bg); color: var(--info-text); }
+    .message.success { background: var(--ok-bg); color: var(--ok-text); }
+    .message.error { background: var(--error-bg); color: var(--error-text); }
+    .topbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .msg-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 14px;
+    }
+    .msg-header {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .msg-name { font-weight: 600; font-size: 15px; }
+    .msg-meta { font-size: 13px; color: var(--muted); }
+    .msg-reason {
+      display: inline-block;
+      font-size: 12px;
+      font-weight: 600;
+      background: var(--info-bg);
+      color: var(--info-text);
+      border-radius: 6px;
+      padding: 2px 8px;
+      margin-bottom: 10px;
+    }
+    .msg-body {
+      font-size: 15px;
+      line-height: 1.6;
+      white-space: pre-wrap;
+      border-top: 1px solid var(--border);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+    .msg-email {
+      font-size: 13px;
+      color: var(--accent);
+      margin-top: 6px;
+    }
+    .count-box { font-size: 14px; color: var(--muted); }
+    @media (max-width: 800px) {
+      body { padding: 12px; }
+      .card { padding: 14px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <h1>Contact Messages</h1>
+      <p class="muted">Messages submitted via the website contact form. Most recent first.</p>
+    </div>
+
+    <div id="auth-section" class="card">
+      <h2>Admin Login</h2>
+      <div class="stack">
+        <label for="email-input">Admin email</label>
+        <input id="email-input" type="email" placeholder="andy@donkeyapp.com" autocomplete="email" />
+        <div class="row">
+          <button id="send-code-btn" type="button">Send code</button>
+        </div>
+        <div id="verify-block" class="hidden">
+          <label for="otp-input">One-time code</label>
+          <input id="otp-input" type="text" placeholder="Enter the code from your email" autocomplete="one-time-code" />
+          <div class="row">
+            <button id="verify-code-btn" type="button">Verify code</button>
+          </div>
+        </div>
+        <div id="auth-message" class="hidden message info"></div>
+      </div>
+    </div>
+
+    <div id="messages-section" class="hidden">
+      <div class="card">
+        <div class="topbar">
+          <div>
+            <h2 style="margin-bottom:4px;">Messages</h2>
+            <div id="msg-count" class="count-box">Not loaded yet.</div>
+          </div>
+          <div class="row">
+            <button type="button" class="light" onclick="loadMessages()">Refresh</button>
+            <button type="button" class="light" onclick="logout()">Logout</button>
+            <a href="../index.html" style="border:0;border-radius:10px;padding:12px 16px;background:#e5e7eb;color:#111827;cursor:pointer;font-size:15px;font-weight:600;text-decoration:none;">← Back to menu</a>
+          </div>
+        </div>
+        <div id="messages-status" class="hidden message info"></div>
+      </div>
+
+      <div id="messages-list"></div>
+    </div>
+  </div>
+
+  <script>
+    const supabaseClient = window.supabase.createClient(
+      "https://mknsvxajrvdlwqywvlrf.supabase.co",
+      "sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw"
+    );
+
+    function setMessage(id, type, text) {
+      const el = document.getElementById(id);
+      el.className = "message " + type;
+      el.textContent = text;
+      el.classList.remove("hidden");
+    }
+
+    function hideMessage(id) {
+      const el = document.getElementById(id);
+      el.classList.add("hidden");
+      el.textContent = "";
+    }
+
+    function escapeHtml(v) {
+      return String(v ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;");
+    }
+
+    function formatDate(v) {
+      if (!v) return "";
+      const d = new Date(v);
+      return isNaN(d) ? v : d.toLocaleString("en-GB", {
+        year: "numeric", month: "short", day: "2-digit",
+        hour: "2-digit", minute: "2-digit"
+      });
+    }
+
+    async function sendCode() {
+      hideMessage("auth-message");
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      if (!email) { setMessage("auth-message", "error", "Please enter your email."); return; }
+      const btn = document.getElementById("send-code-btn");
+      btn.disabled = true; btn.textContent = "Sending...";
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({ email });
+        if (error) { setMessage("auth-message", "error", error.message || "Failed to send code."); return; }
+        document.getElementById("verify-block").classList.remove("hidden");
+        setMessage("auth-message", "success", "Code sent. Check your email.");
+      } catch (e) {
+        setMessage("auth-message", "error", "Unexpected error.");
+      } finally {
+        btn.disabled = false; btn.textContent = "Send code";
+      }
+    }
+
+    async function verifyCode() {
+      hideMessage("auth-message");
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      const token = document.getElementById("otp-input").value.trim();
+      if (!email || !token) { setMessage("auth-message", "error", "Enter email and code."); return; }
+      const btn = document.getElementById("verify-code-btn");
+      btn.disabled = true; btn.textContent = "Verifying...";
+      try {
+        const { data, error } = await supabaseClient.auth.verifyOtp({ email, token, type: "email" });
+        if (error || !data?.user) { setMessage("auth-message", "error", error?.message || "Verification failed."); return; }
+        const isAdmin = await checkAdmin(data.user.id);
+        if (!isAdmin) { await supabaseClient.auth.signOut(); setMessage("auth-message", "error", "Access denied."); return; }
+        showDashboard();
+      } catch (e) {
+        setMessage("auth-message", "error", "Unexpected error.");
+      } finally {
+        btn.disabled = false; btn.textContent = "Verify code";
+      }
+    }
+
+    async function checkAdmin(userId) {
+      const { data, error } = await supabaseClient.from("profiles").select("is_admin").eq("id", userId).single();
+      return !error && data?.is_admin === true;
+    }
+
+    function showDashboard() {
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("messages-section").classList.remove("hidden");
+      loadMessages();
+    }
+
+    async function loadMessages() {
+      hideMessage("messages-status");
+      const list = document.getElementById("messages-list");
+      const countBox = document.getElementById("msg-count");
+      list.innerHTML = "<p class='muted'>Loading…</p>";
+      countBox.textContent = "Loading…";
+
+      try {
+        const { data, error } = await supabaseClient
+          .from("contact_messages")
+          .select("id, created_at, name, email, reason, message")
+          .order("created_at", { ascending: false })
+          .limit(200);
+
+        if (error) throw error;
+
+        if (!data || data.length === 0) {
+          list.innerHTML = "<p class='muted'>No messages found.</p>";
+          countBox.textContent = "0 messages.";
+          return;
+        }
+
+        countBox.textContent = data.length + " message(s).";
+        list.innerHTML = data.map(m => `
+          <div class="msg-card">
+            <div class="msg-header">
+              <span class="msg-name">${escapeHtml(m.name)}</span>
+              <span class="msg-meta">${escapeHtml(formatDate(m.created_at))} &nbsp;·&nbsp; #${escapeHtml(m.id)}</span>
+            </div>
+            <div class="msg-reason">${escapeHtml(m.reason)}</div>
+            ${m.email ? `<div class="msg-email">✉ ${escapeHtml(m.email)}</div>` : ""}
+            <div class="msg-body">${escapeHtml(m.message)}</div>
+          </div>
+        `).join("");
+      } catch (e) {
+        list.innerHTML = "";
+        setMessage("messages-status", "error", e.message || "Failed to load messages.");
+        countBox.textContent = "Load failed.";
+      }
+    }
+
+    async function logout() {
+      await supabaseClient.auth.signOut();
+      document.getElementById("messages-section").classList.add("hidden");
+      document.getElementById("auth-section").classList.remove("hidden");
+      document.getElementById("verify-block").classList.add("hidden");
+      document.getElementById("otp-input").value = "";
+      hideMessage("messages-status");
+      setMessage("auth-message", "info", "Logged out.");
+    }
+
+    async function restoreSession() {
+      const { data } = await supabaseClient.auth.getUser();
+      if (!data?.user) return;
+      const isAdmin = await checkAdmin(data.user.id);
+      if (!isAdmin) { await supabaseClient.auth.signOut(); return; }
+      showDashboard();
+    }
+
+    restoreSession();
+    document.getElementById("send-code-btn").addEventListener("click", sendCode);
+    document.getElementById("verify-code-btn").addEventListener("click", verifyCode);
+  </script>
+</body>
+</html>
