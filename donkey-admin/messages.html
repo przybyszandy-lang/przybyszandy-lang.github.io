@@ -241,7 +241,9 @@
         if (error || !data?.user) { setMessage("auth-message", "error", error?.message || "Verification failed."); return; }
         const isAdmin = await checkAdmin(data.user.id);
         if (!isAdmin) { await supabaseClient.auth.signOut(); setMessage("auth-message", "error", "Access denied."); return; }
-        showDashboard();
+        document.getElementById("auth-section").classList.add("hidden");
+        document.getElementById("messages-section").classList.remove("hidden");
+        await loadMessages();
       } catch (e) {
         setMessage("auth-message", "error", "Unexpected error.");
       } finally {
@@ -254,10 +256,9 @@
       return !error && data?.is_admin === true;
     }
 
-    function showDashboard() {
+function showDashboard() {
       document.getElementById("auth-section").classList.add("hidden");
       document.getElementById("messages-section").classList.remove("hidden");
-      loadMessages();
     }
 
     async function loadMessages() {
@@ -316,7 +317,9 @@
       if (!data?.user) return;
       const isAdmin = await checkAdmin(data.user.id);
       if (!isAdmin) { await supabaseClient.auth.signOut(); return; }
-      showDashboard();
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("messages-section").classList.remove("hidden");
+      await loadMessages();
     }
 
     restoreSession();
