@@ -132,6 +132,29 @@
       padding: 0 6px 6px;
     }
 
+    .preview-item .desc-wrap {
+      padding: 0 6px 8px;
+      background: #fff;
+    }
+
+    .preview-item textarea {
+      width: 100%;
+      min-height: 64px;
+      margin-top: 6px;
+      padding: 6px;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      font-size: 13px;
+      font-family: inherit;
+      resize: vertical;
+    }
+
+    .preview-item .desc-count {
+      font-size: 11px;
+      color: var(--muted);
+      text-align: right;
+    }
+
     .preview-item .remove-btn {
       position: absolute;
       top: 4px;
@@ -302,6 +325,7 @@
           <li>Shrink every video first with HandBrake (free): preset <b>General → Fast 720p30</b>, format <b>MP4</b>, video codec <b>H.264</b>.</li>
           <li>Aim for <b>under 8 MB</b> per video (hard limit 25 MB). Smaller files save bandwidth on the free Supabase plan.</li>
           <li>A still preview picture is made automatically from the start of each video.</li>
+          <li>Optional description (max 100 characters) under each video. It shows on the video in the app, in Reel mode, in My Jokes, and is searchable.</li>
         </ul>
       </div>
 
@@ -382,7 +406,9 @@
 
     const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    // Each item: { file, duration, posterBlob, posterUrl }
+    const MAX_DESCRIPTION = 100;
+
+    // Each item: { file, duration, posterBlob, posterUrl, description }
     let selectedItems = [];
     let uploadedRows = [];
 
@@ -536,7 +562,7 @@
           warnings.push(file.name + " — " + formatMb(file.size) + " (allowed, but over the 8 MB target).");
         }
 
-        selectedItems.push({ file, duration: info.duration, posterBlob: info.posterBlob, posterUrl: info.posterUrl });
+        selectedItems.push({ file, duration: info.duration, posterBlob: info.posterBlob, posterUrl: info.posterUrl, description: "" });
       }
 
       if (problems.length > 0) {
@@ -585,9 +611,34 @@
           };
         })(i);
 
+        const descWrap = document.createElement("div");
+        descWrap.className = "desc-wrap";
+
+        const desc = document.createElement("textarea");
+        desc.maxLength = MAX_DESCRIPTION;
+        desc.placeholder = "Description (optional)";
+        desc.value = item.description || "";
+
+        const count = document.createElement("div");
+        count.className = "desc-count";
+        count.textContent = desc.value.length + " / " + MAX_DESCRIPTION;
+
+        desc.addEventListener("input", (function(idx, counter) {
+          return function() {
+            const value = this.value.slice(0, MAX_DESCRIPTION);
+            selectedItems[idx].description = value;
+            counter.textContent = value.length + " / " + MAX_DESCRIPTION;
+            if (uploadedRows.length > 0) generateSql();
+          };
+        })(i, count));
+
+        descWrap.appendChild(desc);
+        descWrap.appendChild(count);
+
         div.appendChild(img);
         div.appendChild(name);
         div.appendChild(meta);
+        div.appendChild(descWrap);
         div.appendChild(btn);
         grid.appendChild(div);
       }
@@ -673,7 +724,7 @@
             missingPosters++;
           }
 
-          uploadedRows.push({ videoPath, posterPath: savedPosterPath });
+          uploadedRows.push({ item, videoPath, posterPath: savedPosterPath });
           statusEl.textContent = "Done ✓";
           statusEl.className = "status status-done";
 
@@ -714,7 +765,8 @@
       const language = document.getElementById("language-select").value;
 
       const rows = uploadedRows.map(item => {
-        return "  (gen_random_uuid(), NOW(), '', false, true, false, 0, 0, 0, 0, " +
+        const description = (item.item.description || "").trim().slice(0, MAX_DESCRIPTION);
+        return "  (gen_random_uuid(), NOW(), " + sqlText(description) + ", false, true, false, 0, 0, 0, 0, " +
           sqlText(language) + ", 0, '" + USER_ID + "', NOW(), 'video', " +
           sqlText(item.posterPath) + ", " + sqlText(item.videoPath) + ")";
       });
