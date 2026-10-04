@@ -344,7 +344,7 @@
       <!-- STEP 4: SQL -->
       <div class="card hidden" id="sql-section" translate="no">
         <h3>4. Copy SQL</h3>
-        <p class="muted">Run this in Supabase SQL editor. Inserts all meme rows in one statement. Memes will be hidden until approved.</p>
+        <p class="muted">Run this in Supabase SQL editor. Inserts all meme rows in one statement. Memes are approved and live immediately.</p>
         <textarea class="sql-box" id="sql-output" readonly></textarea>
         <div class="row" style="margin-top: 12px;">
           <button type="button" onclick="copySql()">Copy SQL</button>
@@ -558,7 +558,7 @@
 
       const rows = uploadedPaths.map(imagePath => {
         const safeImagePath = imagePath.replaceAll("'", "''");
-        return "  (gen_random_uuid(), NOW(), '', true, false, false, 0, 0, 0, 0, '" + language + "', 0, '" + USER_ID + "', NOW(), 'meme', '" + safeImagePath + "')";
+        return "  (gen_random_uuid(), NOW(), '', false, true, false, 0, 0, 0, 0, '" + language + "', 0, '" + USER_ID + "', NOW(), 'meme', '" + safeImagePath + "')";
       });
 
       const sql =
