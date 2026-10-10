@@ -1,6 +1,7 @@
 const SUPABASE_URL = "https://mknsvxajrvdlwqywvlrf.supabase.co";
 const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1rbnN2eGFqcnZkbHdxeXd2bHJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU0NzE5ODIsImV4cCI6MjA4MTA0Nzk4Mn0.2urjAD5bb20Y73ZuWffeyfjDjoj7ISsowMRq9iYm-xo";
 const STORAGE_BASE = "https://mknsvxajrvdlwqywvlrf.supabase.co/storage/v1/object/public/memes/";
+const VIDEO_STORAGE_BASE = "https://mknsvxajrvdlwqywvlrf.supabase.co/storage/v1/object/public/videos/";
 const SITE_BASE = "https://www.donkeyapp.com";
 const FALLBACK_IMAGE = "https://donkeyapp.com/icon-512.png";
 
@@ -43,7 +44,7 @@ module.exports = async function handler(req, res) {
   let joke = null;
   const jokeRows = await fetchSupabase(
     "/rest/v1/jokes?id=eq." + encodeURIComponent(id) +
-    "&select=id,content,user_id,content_type,image_path"
+    "&select=id,content,user_id,content_type,image_path,video_path"
   );
   if (jokeRows && jokeRows.length > 0) joke = jokeRows[0];
 
@@ -60,17 +61,29 @@ module.exports = async function handler(req, res) {
 
   const found = !!joke;
   const isMeme = !!(joke && joke.content_type === "meme" && joke.image_path);
+  const isVideo = !!(joke && joke.content_type === "video" && joke.video_path);
   const memeImageUrl = isMeme ? STORAGE_BASE + joke.image_path : "";
-  const ogImage = isMeme ? memeImageUrl : FALLBACK_IMAGE;
-  const ogImageType = isMeme ? "image/jpeg" : "image/png";
-  const ogImageWidth = isMeme ? "1024" : "512";
-  const ogImageHeight = isMeme ? "1024" : "512";
-  const ogTitle = isMeme ? "Shared Meme | Donkey App Comedy" : "Shared Joke | Donkey App Comedy";
+  const videoUrl = isVideo ? VIDEO_STORAGE_BASE + joke.video_path : "";
+  const videoPosterUrl = (isVideo && joke.image_path) ? VIDEO_STORAGE_BASE + joke.image_path : "";
+  const ogImage = isMeme ? memeImageUrl : (videoPosterUrl || FALLBACK_IMAGE);
+  const ogImageType = (isMeme || videoPosterUrl) ? "image/jpeg" : "image/png";
+  const ogImageSizeTags = isVideo
+    ? ""
+    : '<meta property="og:image:width" content="' + (isMeme ? "1024" : "512") + '" />\n  ' +
+      '<meta property="og:image:height" content="' + (isMeme ? "1024" : "512") + '" />';
+  const ogVideoTags = isVideo
+    ? '<meta property="og:video" content="' + escapeHtml(videoUrl) + '" />\n  ' +
+      '<meta property="og:video:secure_url" content="' + escapeHtml(videoUrl) + '" />\n  ' +
+      '<meta property="og:video:type" content="video/mp4" />'
+    : "";
+  const ogTitle = isMeme ? "Shared Meme | Donkey App Comedy"
+    : (isVideo ? "Shared Video | Donkey App Comedy" : "Shared Joke | Donkey App Comedy");
   const content = (joke && joke.content) ? joke.content : "";
   const hasText = content && content.trim().length > 0;
   const description = hasText
     ? content.replace(/\s+/g, " ").slice(0, 200)
-    : (isMeme ? "Check out this meme on Donkey App Comedy." : "Read a shared joke from Donkey App Comedy.");
+    : (isMeme ? "Check out this meme on Donkey App Comedy."
+      : (isVideo ? "Check out this video on Donkey App Comedy." : "Read a shared joke from Donkey App Comedy."));
   const userId = (joke && joke.user_id) ? joke.user_id : "";
   const nameToShow = displayName && displayName.trim() ? displayName : "Anonymous";
 
@@ -79,7 +92,7 @@ module.exports = async function handler(req, res) {
   const pageUrl = proto + "://" + host + "/joke.html?id=" + encodeURIComponent(id);
 
   const jokeBootstrap = found
-    ? JSON.stringify({ id: joke.id, content: content, user_id: userId, isMeme: isMeme })
+    ? JSON.stringify({ id: joke.id, content: content, user_id: userId, isMeme: isMeme, isVideo: isVideo })
         .replace(/</g, "\\u003c")
     : "null";
 
@@ -101,6 +114,14 @@ module.exports = async function handler(req, res) {
     ? '<img src="' + escapeHtml(memeImageUrl) + '" alt="Meme" style="width:100%;border-radius:10px;display:block;margin-bottom:10px;" />'
     : '';
 
+  const videoMarkup = isVideo
+    ? '<div class="videoBox">' +
+        '<video src="' + escapeHtml(videoUrl) + '"' +
+        (videoPosterUrl ? ' poster="' + escapeHtml(videoPosterUrl) + '"' : '') +
+        ' controls playsinline preload="metadata" controlslist="nodownload"></video>' +
+      '</div>'
+    : '';
+
   const jokeTextMarkup = hasText
     ? '<div class="jokeText">' + escapeHtml(content) + '</div>'
     : '';
@@ -109,6 +130,7 @@ module.exports = async function handler(req, res) {
     '<article class="card pinnedCard" id="pinnedJokeCard">' +
       '<div class="pinnedLabel">📌 Shared with you</div>' +
       memeImgMarkup +
+      videoMarkup +
       jokeTextMarkup +
       addedByMarkup +
       '<div class="cardFooter">' +
@@ -142,8 +164,8 @@ module.exports = async function handler(req, res) {
   <meta property="og:image" content="${escapeHtml(ogImage)}" />
   <meta property="og:image:secure_url" content="${escapeHtml(ogImage)}" />
   <meta property="og:image:type" content="${ogImageType}" />
-  <meta property="og:image:width" content="${ogImageWidth}" />
-  <meta property="og:image:height" content="${ogImageHeight}" />
+  ${ogImageSizeTags}
+  ${ogVideoTags}
   <meta property="og:image:alt" content="Donkey App Comedy" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${escapeHtml(ogTitle)}" />
@@ -232,6 +254,8 @@ module.exports = async function handler(req, res) {
     .feedColumn { min-width:0; }
 
     /* ── Pinned card ── */
+    .videoBox { width:100%; aspect-ratio:4/5; max-height:80vh; background:#000; border-radius:10px; overflow:hidden; margin-bottom:10px; }
+    .videoBox video { width:100%; height:100%; display:block; object-fit:contain; background:#000; }
     .pinnedCard { border:2px solid #c9d8f7 !important; background:#f4f8ff !important; }
     .pinnedLabel { font-size:13px; font-weight:700; color:var(--link); margin-bottom:10px; letter-spacing:0.01em; }
 
@@ -801,7 +825,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
     renderVoteArea(ratingRow, pinned.id);
 
-    if (!pinned.isMeme) {
+    if (!pinned.isMeme && !pinned.isVideo) {
       var copyBtn = document.createElement("button"); copyBtn.type = "button"; copyBtn.className = "iconBtn"; copyBtn.title = "Copy joke"; copyBtn.innerHTML = buildCopySvg();
       copyBtn.addEventListener("click", function(){ onCopyJoke({ content: pinned.content, content_type: pinned.isMeme ? "meme" : "joke" }); });
       footerRight.appendChild(copyBtn);
@@ -812,6 +836,8 @@ document.addEventListener("DOMContentLoaded", function () {
       var shareUrl = window.__PINNED_URL__;
       var shareText = pinned.isMeme
         ? "Check out this meme on Donkey App 😂\\n" + shareUrl
+        : pinned.isVideo
+        ? "Check out this video on Donkey App 😂\\n" + shareUrl
         : "Found this joke on Donkey App Comedy:\\n\\n" + pinned.content.trim() + "\\n\\nRead it here:\\n" + shareUrl;
       if (navigator.share) {
         navigator.share({ title: "Donkey App Comedy", text: shareText }).catch(function(e){
