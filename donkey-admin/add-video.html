@@ -323,7 +323,7 @@
         <ul class="tips">
           <li>MP4 only, 90 seconds or shorter.</li>
           <li>Shrink every video first with HandBrake (free): preset <b>General → Fast 720p30</b>, format <b>MP4</b>, video codec <b>H.264</b>.</li>
-          <li>Aim for <b>under 20 MB</b> per video (hard limit 100 MB). Smaller files load faster and save bandwidth.</li>
+          <li>Aim for <b>under 20 MB</b> per video (hard limit 50 MB). Smaller files load faster and save bandwidth.</li>
           <li>A still preview picture is made automatically from the start of each video.</li>
           <li>Optional description (max 100 characters) under each video. It shows on the video in the app, in Reel mode, in My Jokes, and is searchable.</li>
         </ul>
@@ -335,7 +335,7 @@
         <div class="file-drop" id="file-drop" onclick="document.getElementById('file-input').click()">
           <input type="file" id="file-input" accept="video/mp4" multiple />
           Click to choose videos, or drag and drop here<br />
-          <span style="font-size: 13px;">MP4 — max 90 seconds — max 100 MB each — multiple files allowed</span>
+          <span style="font-size: 13px;">MP4 — max 90 seconds — max 50 MB each — multiple files allowed</span>
         </div>
         <div id="preview-grid" class="preview-grid"></div>
         <div id="pick-message" class="hidden message error"></div>
@@ -400,7 +400,7 @@
     const SUPABASE_KEY = "sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw";
     const BUCKET = "videos";
     const USER_ID = "1b01e76f-daa9-4c21-822b-2a87d390d9e8";
-    const MAX_BYTES = 100 * 1024 * 1024;
+    const MAX_BYTES = 50 * 1024 * 1024;
     const MAX_SECONDS = 90;
     const TARGET_BYTES = 20 * 1024 * 1024;
 
@@ -541,7 +541,7 @@
           continue;
         }
         if (file.size > MAX_BYTES) {
-          problems.push(file.name + " — " + formatMb(file.size) + ", over the 100 MB limit. Shrink it with HandBrake.");
+          problems.push(file.name + " — " + formatMb(file.size) + ", over the 50 MB limit. Shrink it with HandBrake.");
           continue;
         }
 
