@@ -142,6 +142,7 @@
           <p class="muted small" style="margin-top:4px;">
             <b>Trusted</b>: their uploads go live straight away (only people you have met and checked).
             <b>Blocked</b>: they cannot upload memes or videos at all.
+            <b>Blocked by</b>: how many app users have blocked this person (a sign of trouble).
             Search by email or name to find someone who has not uploaded yet.
           </p>
           <div class="row" style="margin-bottom:12px;">
@@ -154,10 +155,10 @@
                 <tr>
                   <th>Name</th><th>Email</th>
                   <th class="num">Waiting</th><th class="num">Approved</th><th class="num">Rejected</th>
-                  <th>Last upload</th><th>Trusted</th><th>Blocked</th>
+                  <th>Last upload</th><th class="num">Blocked by</th><th>Trusted</th><th>Blocked</th>
                 </tr>
               </thead>
-              <tbody id="uploadersBody"><tr><td colspan="8" class="muted">Not loaded yet.</td></tr></tbody>
+              <tbody id="uploadersBody"><tr><td colspan="9" class="muted">Not loaded yet.</td></tr></tbody>
             </table>
           </div>
         </div>
@@ -231,7 +232,7 @@
               <div class="meta">
                 <b>${esc(p.display_name)}</b> ${status}<br/>
                 ${esc(p.email || "no email")}<br/>
-                Before: ${p.approved_count} approved, ${p.rejected_count} rejected
+                Before: ${p.approved_count} approved, ${p.rejected_count} rejected${Number(p.blocked_by_count) > 0 ? ` · <b style="color:#b91c1c;">blocked by ${p.blocked_by_count} ${Number(p.blocked_by_count) === 1 ? "person" : "people"}</b>` : ""}
                 · <a class="small" href="/userID.html?userId=${esc(p.user_id)}" target="_blank" rel="noopener">profile</a>
               </div>
               <div class="actions">
@@ -271,13 +272,13 @@
     async function loadUploaders() {
       hideMsg("dash-message");
       const body = document.getElementById("uploadersBody");
-      body.innerHTML = '<tr><td colspan="8" class="muted">Loading…</td></tr>';
+      body.innerHTML = '<tr><td colspan="9" class="muted">Loading…</td></tr>';
       const q = document.getElementById("searchIn").value.trim();
       const { data, error } = await supabaseClient.rpc("admin_uploaders", { p_search: q || null });
       if (error) { body.innerHTML = ""; setMsg("dash-message", "error", error.message || "Could not load."); return; }
       uploaders = data || [];
       if (!uploaders.length) {
-        body.innerHTML = `<tr><td colspan="8" class="muted">${q ? "Nobody found." : "No uploaders yet."}</td></tr>`;
+        body.innerHTML = `<tr><td colspan="9" class="muted">${q ? "Nobody found." : "No uploaders yet."}</td></tr>`;
         return;
       }
       body.innerHTML = uploaders.map((u) => `
@@ -288,6 +289,7 @@
           <td class="num">${u.approved_count}</td>
           <td class="num">${u.rejected_count}</td>
           <td class="small">${esc(fmt(u.last_upload))}</td>
+          <td class="num">${Number(u.blocked_by_count) > 0 ? `<b style="color:#b91c1c;">${u.blocked_by_count}</b>` : "0"}</td>
           <td><label class="switch"><input type="checkbox" ${u.upload_trusted ? "checked" : ""} onchange="setUploader('${esc(u.user_id)}', 'trusted', this)" /> Trusted</label></td>
           <td><label class="switch"><input type="checkbox" ${u.uploads_blocked ? "checked" : ""} onchange="setUploader('${esc(u.user_id)}', 'blocked', this)" /> Blocked</label></td>
         </tr>`).join("");
