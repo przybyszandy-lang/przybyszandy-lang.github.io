@@ -1,0 +1,383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex,nofollow" />
+  <title>Review Uploads</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <style>
+    :root {
+      --bg: #f3f5f9; --card: #ffffff; --text: #1f2937; --muted: #6b7280; --border: #e2e6ee;
+      --accent: #2563eb; --accent-hover: #1d4ed8;
+      --ok: #16a34a; --ok-hover: #15803d; --bad: #dc2626; --bad-hover: #b91c1c;
+      --ok-bg: #dcfce7; --ok-text: #166534; --error-bg: #fee2e2; --error-text: #991b1b;
+      --info-bg: #fef3c7; --info-text: #92400e;
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 24px; background: var(--bg); color: var(--text); font-family: Arial, Helvetica, sans-serif; }
+    .wrap { max-width: 1180px; margin: 0 auto; }
+    .card { background: var(--card); border: 1px solid var(--border); border-radius: 14px; padding: 20px; margin-bottom: 18px; }
+    h1, h2, h3 { margin-top: 0; }
+    h2 { font-size: 19px; margin-bottom: 4px; }
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+    .hidden { display: none !important; }
+    .stack { display: flex; flex-direction: column; gap: 12px; }
+    .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+    .between { justify-content: space-between; }
+    input[type="email"], input[type="text"] {
+      width: 100%; padding: 10px 12px; border: 1px solid #d1d5db; border-radius: 10px; font-size: 15px; background: #fff; color: var(--text);
+    }
+    button, .btn {
+      border: 0; border-radius: 10px; padding: 10px 14px; background: var(--accent); color: #fff;
+      cursor: pointer; font-size: 14px; font-weight: 600; text-decoration: none; display: inline-block;
+    }
+    button:hover { background: var(--accent-hover); }
+    button:disabled { opacity: .5; cursor: default; }
+    button.light, .btn.light { background: #e5e7eb; color: #111827; }
+    button.light:hover, .btn.light:hover { background: #d1d5db; }
+    button.ok { background: var(--ok); } button.ok:hover { background: var(--ok-hover); }
+    button.bad { background: var(--bad); } button.bad:hover { background: var(--bad-hover); }
+    .message { border-radius: 10px; padding: 12px 14px; font-size: 14px; line-height: 1.4; margin-top: 12px; }
+    .message.info { background: var(--info-bg); color: var(--info-text); }
+    .message.success { background: var(--ok-bg); color: var(--ok-text); }
+    .message.error { background: var(--error-bg); color: var(--error-text); }
+
+    .seg { display: inline-flex; background: #eef1f6; border-radius: 10px; padding: 3px; gap: 2px; }
+    .seg button { background: transparent; color: #374151; padding: 8px 14px; font-size: 14px; }
+    .seg button.on { background: #fff; color: var(--accent); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+    .count { display: inline-block; min-width: 22px; padding: 1px 7px; margin-left: 4px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 12px; }
+
+    .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 16px; }
+    .item { background: #fff; border: 1px solid var(--border); border-radius: 14px; overflow: hidden; display: flex; flex-direction: column; }
+    .item.leaving { opacity: .35; pointer-events: none; transition: opacity .25s; }
+    .media { width: 100%; height: 360px; object-fit: contain; background: #000; display: block; }
+    .body { padding: 14px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+    .desc { font-size: 15px; line-height: 1.45; white-space: pre-wrap; word-break: break-word; }
+    .desc.empty { color: var(--muted); font-style: italic; }
+    .meta { font-size: 13px; color: var(--muted); line-height: 1.6; }
+    .pill { font-size: 11px; font-weight: 700; padding: 2px 8px; border-radius: 999px; text-transform: uppercase; }
+    .pill.meme { background: #fce7f3; color: #9d174d; }
+    .pill.video { background: #dcfce7; color: #166534; }
+    .pill.trusted { background: #dbeafe; color: #1e40af; }
+    .pill.blocked { background: #fee2e2; color: #991b1b; }
+    .actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: auto; padding-top: 6px; }
+    .actions .wide { grid-column: span 2; }
+    .actions button { padding: 12px; font-size: 15px; }
+    .linky { background: none; color: var(--accent); padding: 0; font-size: 13px; font-weight: 600; }
+    .linky:hover { background: none; text-decoration: underline; }
+
+    table { width: 100%; border-collapse: collapse; font-size: 14px; }
+    th, td { padding: 10px 8px; border-bottom: 1px solid var(--border); text-align: left; vertical-align: middle; }
+    th { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: .3px; }
+    td.num, th.num { text-align: right; }
+    .tableWrap { overflow-x: auto; }
+    .switch { display: inline-flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; }
+    .switch input { width: 18px; height: 18px; }
+
+    .toast { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: #111827; color: #fff; padding: 12px 18px; border-radius: 12px; font-size: 14px; z-index: 60; }
+
+    @media (max-width: 640px) {
+      body { padding: 10px; }
+      .card { padding: 14px; }
+      .grid { grid-template-columns: 1fr; }
+      .media { height: 300px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <div class="card">
+      <div class="row between">
+        <div>
+          <h1 style="margin-bottom:6px;">Review Uploads</h1>
+          <div class="muted">Memes and videos uploaded by users in the app. Nothing appears in the app until you approve it (except trusted uploaders).</div>
+        </div>
+        <div class="row" id="topButtons" style="display:none;">
+          <a href="./" class="btn light">← Back to menu</a>
+          <button type="button" class="light" onclick="logout()">Logout</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Login -->
+    <div id="auth-section" class="card">
+      <h2>Admin Login</h2>
+      <div class="stack">
+        <label for="email-input">Admin email</label>
+        <input id="email-input" type="email" placeholder="andy@donkeyapp.com" autocomplete="email" />
+        <div class="row"><button id="send-code-btn" type="button">Send code</button></div>
+        <div id="verify-block" class="hidden stack">
+          <label for="otp-input">One-time code</label>
+          <input id="otp-input" type="text" placeholder="Enter the code from your email" autocomplete="one-time-code" />
+          <div class="row"><button id="verify-code-btn" type="button">Verify code</button></div>
+        </div>
+        <div id="auth-message" class="hidden message info"></div>
+      </div>
+    </div>
+
+    <div id="dash" class="hidden">
+      <div class="card">
+        <div class="row between">
+          <div class="seg" id="tabs">
+            <button type="button" data-tab="pending" class="on">Waiting for approval <span class="count" id="pendingCount">0</span></button>
+            <button type="button" data-tab="uploaders">Uploaders</button>
+          </div>
+          <button type="button" class="light" id="refreshBtn">Refresh</button>
+        </div>
+        <div id="dash-message" class="hidden message info"></div>
+      </div>
+
+      <!-- Pending -->
+      <div id="tab-pending">
+        <div id="pendingEmpty" class="card hidden"><div class="muted">Nothing waiting for approval. 🎉</div></div>
+        <div class="grid" id="pendingGrid"></div>
+      </div>
+
+      <!-- Uploaders -->
+      <div id="tab-uploaders" class="hidden">
+        <div class="card">
+          <h2>Uploaders</h2>
+          <p class="muted small" style="margin-top:4px;">
+            <b>Trusted</b>: their uploads go live straight away (only people you have met and checked).
+            <b>Blocked</b>: they cannot upload memes or videos at all.
+            Search by email or name to find someone who has not uploaded yet.
+          </p>
+          <div class="row" style="margin-bottom:12px;">
+            <div style="flex:1; min-width:220px;"><input type="text" id="searchIn" placeholder="Email or name (leave empty to list uploaders)" /></div>
+            <button type="button" id="searchBtn">Search</button>
+          </div>
+          <div class="tableWrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Name</th><th>Email</th>
+                  <th class="num">Waiting</th><th class="num">Approved</th><th class="num">Rejected</th>
+                  <th>Last upload</th><th>Trusted</th><th>Blocked</th>
+                </tr>
+              </thead>
+              <tbody id="uploadersBody"><tr><td colspan="8" class="muted">Not loaded yet.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+
+  <script>
+    const SUPABASE_URL = "https://mknsvxajrvdlwqywvlrf.supabase.co";
+    const supabaseClient = window.supabase.createClient(SUPABASE_URL, "sb_publishable_i1L1dBbWF-c5ntUINgnUyQ_rWbxB_bw");
+    const MEMES_BASE = SUPABASE_URL + "/storage/v1/object/public/memes/";
+    const VIDEOS_BASE = SUPABASE_URL + "/storage/v1/object/public/videos/";
+
+    let pending = [];
+    let uploaders = [];
+
+    // ── Helpers ─────────────────────────────────────────────────────────
+    function esc(v) {
+      return String(v ?? "").replaceAll("&", "&amp;").replaceAll("<", "&lt;").replaceAll(">", "&gt;").replaceAll('"', "&quot;").replaceAll("'", "&#39;");
+    }
+    function setMsg(id, type, text) { const el = document.getElementById(id); el.className = "message " + type; el.textContent = text; }
+    function hideMsg(id) { const el = document.getElementById(id); el.className = "hidden message info"; el.textContent = ""; }
+    function fmt(v) {
+      if (!v) return "—";
+      const d = new Date(v);
+      return d.toLocaleString("en-GB", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" });
+    }
+    function ago(v) {
+      const mins = Math.round((Date.now() - new Date(v).getTime()) / 60000);
+      if (mins < 60) return mins + " min ago";
+      const h = Math.round(mins / 60);
+      if (h < 48) return h + " h ago";
+      return Math.round(h / 24) + " days ago";
+    }
+    let toastTimer = null;
+    function toast(text) {
+      const el = document.getElementById("toast");
+      el.textContent = text; el.classList.remove("hidden");
+      clearTimeout(toastTimer); toastTimer = setTimeout(() => el.classList.add("hidden"), 2500);
+    }
+
+    // ── Pending ─────────────────────────────────────────────────────────
+    async function loadPending() {
+      hideMsg("dash-message");
+      const { data, error } = await supabaseClient.rpc("admin_pending_uploads", { p_limit: 100 });
+      if (error) { setMsg("dash-message", "error", error.message || "Could not load uploads."); return; }
+      pending = data || [];
+      renderPending();
+    }
+
+    function renderPending() {
+      document.getElementById("pendingCount").textContent = pending.length;
+      document.getElementById("pendingEmpty").classList.toggle("hidden", pending.length > 0);
+      const grid = document.getElementById("pendingGrid");
+      grid.innerHTML = pending.map((p) => {
+        const media = p.content_type === "video"
+          ? `<video class="media" controls playsinline preload="none" poster="${esc(VIDEOS_BASE + (p.image_path || ""))}" src="${esc(VIDEOS_BASE + (p.video_path || ""))}"></video>`
+          : `<a href="${esc(MEMES_BASE + (p.image_path || ""))}" target="_blank" rel="noopener"><img class="media" loading="lazy" src="${esc(MEMES_BASE + (p.image_path || ""))}" alt="" /></a>`;
+        const desc = p.content && p.content.trim()
+          ? `<div class="desc" translate="yes">${esc(p.content)}</div>`
+          : `<div class="desc empty">No description</div>`;
+        const status = p.uploads_blocked ? '<span class="pill blocked">Blocked</span>' : (p.upload_trusted ? '<span class="pill trusted">Trusted</span>' : "");
+        return `
+          <div class="item" id="item-${esc(p.id)}">
+            ${media}
+            <div class="body">
+              <div class="row"><span class="pill ${esc(p.content_type)}">${esc(p.content_type)}</span> <span class="small muted">${esc(p.language)} · ${esc(ago(p.created_at))}</span></div>
+              ${desc}
+              <div class="meta">
+                <b>${esc(p.display_name)}</b> ${status}<br/>
+                ${esc(p.email || "no email")}<br/>
+                Before: ${p.approved_count} approved, ${p.rejected_count} rejected
+                · <a class="small" href="/userID.html?userId=${esc(p.user_id)}" target="_blank" rel="noopener">profile</a>
+              </div>
+              <div class="actions">
+                <button type="button" class="ok" onclick="review('${esc(p.id)}', true)">Approve</button>
+                <button type="button" class="bad" onclick="review('${esc(p.id)}', false)">Reject</button>
+                <button type="button" class="linky wide" onclick="blockFromCard('${esc(p.user_id)}', '${esc(p.display_name)}')">Block this uploader…</button>
+              </div>
+            </div>
+          </div>`;
+      }).join("");
+    }
+
+    async function review(id, approve) {
+      const card = document.getElementById("item-" + id);
+      card?.classList.add("leaving");
+      const { error } = await supabaseClient.rpc("admin_review_upload", { p_id: id, p_approve: approve });
+      if (error) {
+        card?.classList.remove("leaving");
+        setMsg("dash-message", "error", error.message || "Could not save.");
+        return;
+      }
+      pending = pending.filter((p) => p.id !== id);
+      renderPending();
+      toast(approve ? "Approved — now live in the app." : "Rejected — it stays hidden.");
+    }
+
+    async function blockFromCard(userId, name) {
+      if (!confirm(`Block ${name} from uploading memes and videos?\n\nTheir waiting uploads stay here — reject them separately.`)) return;
+      const { error } = await supabaseClient.rpc("admin_set_uploader", { p_user_id: userId, p_trusted: false, p_blocked: true });
+      if (error) { setMsg("dash-message", "error", error.message || "Could not save."); return; }
+      pending.forEach((p) => { if (p.user_id === userId) { p.uploads_blocked = true; p.upload_trusted = false; } });
+      renderPending();
+      toast(name + " is blocked from uploading.");
+    }
+
+    // ── Uploaders ───────────────────────────────────────────────────────
+    async function loadUploaders() {
+      hideMsg("dash-message");
+      const body = document.getElementById("uploadersBody");
+      body.innerHTML = '<tr><td colspan="8" class="muted">Loading…</td></tr>';
+      const q = document.getElementById("searchIn").value.trim();
+      const { data, error } = await supabaseClient.rpc("admin_uploaders", { p_search: q || null });
+      if (error) { body.innerHTML = ""; setMsg("dash-message", "error", error.message || "Could not load."); return; }
+      uploaders = data || [];
+      if (!uploaders.length) {
+        body.innerHTML = `<tr><td colspan="8" class="muted">${q ? "Nobody found." : "No uploaders yet."}</td></tr>`;
+        return;
+      }
+      body.innerHTML = uploaders.map((u) => `
+        <tr>
+          <td><a href="/userID.html?userId=${esc(u.user_id)}" target="_blank" rel="noopener">${esc(u.display_name)}</a></td>
+          <td class="small">${esc(u.email || "")}</td>
+          <td class="num">${u.pending_count}</td>
+          <td class="num">${u.approved_count}</td>
+          <td class="num">${u.rejected_count}</td>
+          <td class="small">${esc(fmt(u.last_upload))}</td>
+          <td><label class="switch"><input type="checkbox" ${u.upload_trusted ? "checked" : ""} onchange="setUploader('${esc(u.user_id)}', 'trusted', this)" /> Trusted</label></td>
+          <td><label class="switch"><input type="checkbox" ${u.uploads_blocked ? "checked" : ""} onchange="setUploader('${esc(u.user_id)}', 'blocked', this)" /> Blocked</label></td>
+        </tr>`).join("");
+    }
+
+    async function setUploader(userId, which, box) {
+      const u = uploaders.find((x) => x.user_id === userId);
+      if (!u) return;
+      let trusted = u.upload_trusted, blocked = u.uploads_blocked;
+      if (which === "trusted") {
+        trusted = box.checked;
+        if (trusted && !confirm(`Make ${u.display_name} a trusted uploader?\n\nEverything they upload will go live straight away, without your approval.`)) { box.checked = false; return; }
+        if (trusted) blocked = false;
+      } else {
+        blocked = box.checked;
+        if (blocked) trusted = false;
+      }
+      box.disabled = true;
+      const { error } = await supabaseClient.rpc("admin_set_uploader", { p_user_id: userId, p_trusted: trusted, p_blocked: blocked });
+      box.disabled = false;
+      if (error) { box.checked = !box.checked; setMsg("dash-message", "error", error.message || "Could not save."); return; }
+      u.upload_trusted = trusted; u.uploads_blocked = blocked;
+      await loadUploaders();
+      toast("Saved.");
+    }
+
+    // ── Tabs ────────────────────────────────────────────────────────────
+    let currentTab = "pending";
+    function showTab(tab) {
+      currentTab = tab;
+      document.querySelectorAll("#tabs button").forEach((b) => b.classList.toggle("on", b.dataset.tab === tab));
+      document.getElementById("tab-pending").classList.toggle("hidden", tab !== "pending");
+      document.getElementById("tab-uploaders").classList.toggle("hidden", tab !== "uploaders");
+      if (tab === "uploaders") loadUploaders();
+    }
+    document.querySelectorAll("#tabs button").forEach((b) => b.addEventListener("click", () => showTab(b.dataset.tab)));
+    document.getElementById("refreshBtn").addEventListener("click", () => (currentTab === "pending" ? loadPending() : loadUploaders()));
+    document.getElementById("searchBtn").addEventListener("click", loadUploaders);
+    document.getElementById("searchIn").addEventListener("keydown", (e) => { if (e.key === "Enter") loadUploaders(); });
+
+    // ── Login ───────────────────────────────────────────────────────────
+    async function checkAdmin(userId) {
+      const { data, error } = await supabaseClient.from("profiles").select("is_admin").eq("id", userId).single();
+      return !error && data?.is_admin === true;
+    }
+    function showDash() {
+      document.getElementById("auth-section").classList.add("hidden");
+      document.getElementById("dash").classList.remove("hidden");
+      document.getElementById("topButtons").style.display = "";
+      loadPending();
+    }
+    async function sendCode() {
+      hideMsg("auth-message");
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      if (!email) { setMsg("auth-message", "error", "Please enter your email."); return; }
+      const btn = document.getElementById("send-code-btn");
+      btn.disabled = true; btn.textContent = "Sending...";
+      try {
+        const { error } = await supabaseClient.auth.signInWithOtp({ email });
+        if (error) { setMsg("auth-message", "error", error.message || "Failed to send code."); return; }
+        document.getElementById("verify-block").classList.remove("hidden");
+        setMsg("auth-message", "success", "Code sent. Check your email.");
+      } catch (e) { setMsg("auth-message", "error", "Unexpected error."); }
+      finally { btn.disabled = false; btn.textContent = "Send code"; }
+    }
+    async function verifyCode() {
+      hideMsg("auth-message");
+      const email = document.getElementById("email-input").value.trim().toLowerCase();
+      const token = document.getElementById("otp-input").value.trim();
+      if (!email || !token) { setMsg("auth-message", "error", "Enter email and code."); return; }
+      const btn = document.getElementById("verify-code-btn");
+      btn.disabled = true; btn.textContent = "Verifying...";
+      try {
+        const { data, error } = await supabaseClient.auth.verifyOtp({ email, token, type: "email" });
+        if (error || !data?.user) { setMsg("auth-message", "error", error?.message || "Verification failed."); return; }
+        if (!(await checkAdmin(data.user.id))) { await supabaseClient.auth.signOut(); setMsg("auth-message", "error", "Access denied."); return; }
+        showDash();
+      } catch (e) { setMsg("auth-message", "error", "Unexpected error."); }
+      finally { btn.disabled = false; btn.textContent = "Verify code"; }
+    }
+    async function logout() { await supabaseClient.auth.signOut(); location.reload(); }
+    async function restoreSession() {
+      const { data } = await supabaseClient.auth.getUser();
+      if (!data?.user) return;
+      if (!(await checkAdmin(data.user.id))) { await supabaseClient.auth.signOut(); return; }
+      showDash();
+    }
+    document.getElementById("send-code-btn").addEventListener("click", sendCode);
+    document.getElementById("verify-code-btn").addEventListener("click", verifyCode);
+    restoreSession();
+  </script>
+</body>
+</html>
