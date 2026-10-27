@@ -1,0 +1,716 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Donkey App — Online Safety Risk Assessment</title>
+  <meta name="robots" content="noindex,nofollow" />
+  <meta name="googlebot" content="noindex,nofollow" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#0b3d91" />
+
+  <style>
+    :root {
+      --bg: #f5f7fb;
+      --card: #ffffff;
+      --text: #1e2430;
+      --muted: #5c667a;
+      --accent: #0b3d91;
+      --accent-2: #1f5fd1;
+      --border: #dfe5f0;
+      --shadow: 0 10px 30px rgba(11, 61, 145, 0.08);
+      --max: 1180px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      margin: 0;
+      font-family: Arial, Helvetica, sans-serif;
+      background: linear-gradient(180deg, #f7f9fd 0%, #eef3fb 100%);
+      color: var(--text);
+      line-height: 1.65;
+    }
+
+    a {
+      color: var(--accent);
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .topbar {
+      width: 100%;
+      background: #ffffffcc;
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .topbar-inner {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .brand img {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+    }
+
+    .nav {
+      display: flex;
+      gap: 18px;
+      flex-wrap: wrap;
+      font-size: 14px;
+    }
+
+    .hero {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 56px 20px 32px;
+    }
+
+    .hero-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+    }
+
+    .hero-grid {
+      display: grid;
+      grid-template-columns: 1fr 1.2fr;
+      gap: 0;
+    }
+
+    .hero-left {
+      background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
+      color: #fff;
+      padding: 40px 34px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+
+    .hero-left h1 {
+      margin: 0 0 14px;
+      font-size: 42px;
+      line-height: 1.1;
+    }
+
+    .hero-left p {
+      margin: 0 0 16px;
+      font-size: 17px;
+      color: rgba(255,255,255,0.92);
+    }
+
+    .badge-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 10px;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 9px 12px;
+      background: rgba(255,255,255,0.14);
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 999px;
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .hero-right {
+      padding: 40px 34px;
+    }
+
+    .hero-right h2 {
+      margin: 0 0 16px;
+      font-size: 30px;
+      line-height: 1.2;
+    }
+
+    .hero-right p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 0 20px 28px;
+    }
+
+    .section-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 24px;
+      box-shadow: var(--shadow);
+      padding: 34px;
+    }
+
+    .section h3 {
+      margin: 0 0 18px;
+      font-size: 28px;
+      line-height: 1.2;
+    }
+
+    .section p {
+      margin: 0 0 16px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section ul {
+      margin: 0 0 16px 20px;
+      color: var(--muted);
+      font-size: 16px;
+    }
+
+    .section li {
+      margin-bottom: 8px;
+    }
+
+    .quote-box {
+      background: linear-gradient(135deg, #eef4ff 0%, #f7fbff 100%);
+      border: 1px solid var(--border);
+      border-left: 5px solid var(--accent);
+      border-radius: 18px;
+      padding: 22px 24px;
+      margin-top: 10px;
+      font-size: 18px;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .mini-card {
+      background: #f9fbff;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 24px;
+      margin-top: 18px;
+    }
+
+    .mini-card h4 {
+      margin: 0 0 12px;
+      font-size: 20px;
+      color: var(--accent);
+    }
+
+    .mini-card p {
+      margin: 0;
+    }
+
+    .footer {
+      max-width: var(--max);
+      margin: 0 auto;
+      padding: 18px 20px 46px;
+    }
+
+    .footer-card {
+      background: #fff;
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 22px 24px;
+      box-shadow: var(--shadow);
+      text-align: center;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
+    .footer-links {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .hero-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .hero-left h1 {
+        font-size: 34px;
+      }
+
+      .hero-right h2,
+      .section h3 {
+        font-size: 24px;
+      }
+
+      .hero-left,
+      .hero-right,
+      .section-card {
+        padding: 28px 22px;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .brand {
+        font-size: 18px;
+      }
+
+      .nav {
+        gap: 10px;
+        font-size: 13px;
+      }
+
+      .hero {
+        padding-top: 28px;
+      }
+
+      .hero-left h1 {
+        font-size: 30px;
+      }
+    }
+
+    .ra table { width:100%; border-collapse:collapse; margin:0 0 16px; font-size:14px; }
+    .ra th, .ra td { border:1px solid var(--border); padding:8px 10px; text-align:left; vertical-align:top; }
+    .ra th { background:#eef3fb; }
+    .ra .tablewrap { overflow-x:auto; }
+    .ra h2 { color: var(--accent); margin-top:0; }
+  </style>
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-inner">
+      <div class="brand">
+        <img src="icon-192.png" alt="Donkey App logo" />
+        <span>Donkey App</span>
+      </div>
+
+      <nav class="nav">
+        <a href="index.html">Home</a>
+        <a href="favourites.html">Favourites</a>
+        <a href="privacy.html">Privacy</a>
+        <a href="terms.html">Terms</a>
+        <a href="guidelines.html">Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <section class="section">
+      <div class="section-card ra">
+        <h1 style="margin-top:0">Online Safety Risk Assessment</h1>
+        <p>Donkey App &middot; Last reviewed 27 October 2026 &middot; Provider: Andrzej Przybysz</p>
+        <p>Back to <a href="conditions.html">Terms and Conditions</a>.</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-card ra">
+<h2>About this document</h2>
+<p>This is Donkey App's written illegal content risk assessment, children's access assessment and children's risk assessment under the UK Online Safety Act 2023, following Ofcom's four-step method: understand the harms, assess the risk, decide measures, report and review.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Item</th>
+<th>Detail</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Service</td>
+<td>Donkey App (store name "Donkey App Comedy"): iOS and Android app, website donkeyapp.com</td>
+</tr>
+<tr>
+<td>Service type</td>
+<td>User-to-user service (users share jokes, memes, videos and profiles that other users see)</td>
+</tr>
+<tr>
+<td>Provider</td>
+<td>Andrzej Przybysz</td>
+</tr>
+<tr>
+<td>Contact for safety reports</td>
+<td><a href="mailto:andy@donkeyapp.com">andy@donkeyapp.com</a></td>
+</tr>
+<tr>
+<td>Last reviewed</td>
+<td>27 October 2026</td>
+</tr>
+<tr>
+<td>Next review</td>
+<td>By October 2027, or sooner before any significant change</td>
+</tr>
+</tbody>
+</table></div>
+<p>Ratings use Ofcom's levels: <strong>Negligible, Low, Medium, High</strong>. Each rating considers how likely the harm is on Donkey App and how serious it would be, after the measures in place.</p>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-card ra">
+<h2>Service description</h2>
+<p>Donkey App is a small comedy service where people read, rate and share jokes, memes and short videos. It has no private messaging, no live streaming and no comments.</p>
+<p><strong>How users can share content</strong></p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Feature</th>
+<th>Who can use it</th>
+<th>How it goes live</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Jokes (text)</td>
+<td>Anyone, account not needed (app or website)</td>
+<td>Only after it is approved by hand</td>
+</tr>
+<tr>
+<td>Memes (images)</td>
+<td>Signed-in users who confirm they are 18 or over, app only</td>
+<td>After approval; "trusted" uploaders (verified in person or by video call) go live straight away</td>
+</tr>
+<tr>
+<td>Videos (max 90 seconds)</td>
+<td>Same as memes</td>
+<td>Same as memes</td>
+</tr>
+<tr>
+<td>Profile: display name, picture, about me, website, social links, events</td>
+<td>Signed-in users</td>
+<td>Live straight away</td>
+</tr>
+<tr>
+<td>Following other users</td>
+<td>Signed-in users</td>
+<td>Live straight away; follower lists can be hidden by the owner</td>
+</tr>
+<tr>
+<td>Ratings (votes)</td>
+<td>Anyone</td>
+<td>Counts only; voters are not stored</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Users and ages</strong></p>
+<ul>
+<li>Minimum age 13; under-18s need a parent's or guardian's permission. Uploading memes and videos needs a declaration of being 18 or over.</li>
+<li>Age is self-declared, not verified.</li>
+</ul>
+<p><strong>Safety measures in place</strong></p>
+<ul>
+<li>Manual approval of every joke, meme and video (except trusted uploaders).</li>
+<li>Terms and Conditions with a zero-tolerance list: nudity or sexual content, anything involving children, violence and self-harm, hate, harassment, people shown without consent, others' material, deepfakes, illegal content, spam.</li>
+<li>Report button on every post.</li>
+<li>Block a user or hide a post; blocked users' posts disappear from all feeds.</li>
+<li>Accounts can be stopped from uploading; limit of 20 uploads per person per 24 hours.</li>
+<li>Account deletion within 72 hours; Contact Us form and email for complaints.</li>
+</ul>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-card ra">
+<h2>Illegal content risk assessment</h2>
+<p>Overall risk is <strong>Low</strong>: there is no private messaging, all jokes, memes and videos are checked by hand before going live, and the user base is small.</p>
+<p><strong>Risk factors that apply:</strong> image and video upload, user profiles, user connections (following), links to other sites, posts by unregistered users (jokes), and users aged 13–17. <strong>Risk factors that do not apply:</strong> private messaging, group chat, livestreaming, anonymous direct contact, payments between users, user-generated search, encrypted messaging.</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Kind of illegal harm</th>
+<th>Risk</th>
+<th>Why</th>
+<th>Main measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Child sexual abuse material (CSAM)</td>
+<td>Low</td>
+<td>Images and videos are possible, but every upload is checked before going live</td>
+<td>Manual approval; uploads 18+ only; zero tolerance; ban and report to the police / IWF</td>
+</tr>
+<tr>
+<td>Grooming of children</td>
+<td>Low</td>
+<td>No private messages; following shows only public content</td>
+<td>No messaging; blocking; reporting</td>
+</tr>
+<tr>
+<td>Terrorism</td>
+<td>Negligible</td>
+<td>Comedy service, approval before publication</td>
+<td>Manual approval; removal and ban</td>
+</tr>
+<tr>
+<td>Hate offences</td>
+<td>Medium</td>
+<td>Jokes about race, religion and similar are the most likely illegal content on a comedy service</td>
+<td>Manual approval; Guidelines; reporting; removal</td>
+</tr>
+<tr>
+<td>Harassment, stalking, threats, abuse</td>
+<td>Low</td>
+<td>Possible through jokes or profiles aimed at a named person; no messaging</td>
+<td>Approval; blocking; reporting; removal</td>
+</tr>
+<tr>
+<td>Controlling or coercive behaviour</td>
+<td>Negligible</td>
+<td>No private contact features</td>
+<td>Reporting</td>
+</tr>
+<tr>
+<td>Intimate image abuse (incl. deepfakes)</td>
+<td>Low</td>
+<td>Possible through memes or videos</td>
+<td>Approval; consent declaration on uploads; zero tolerance</td>
+</tr>
+<tr>
+<td>Extreme pornography</td>
+<td>Low</td>
+<td>Possible through uploads</td>
+<td>Approval; zero tolerance</td>
+</tr>
+<tr>
+<td>Sexual exploitation of adults</td>
+<td>Negligible</td>
+<td>No contact or payment features</td>
+<td>Reporting</td>
+</tr>
+<tr>
+<td>Human trafficking</td>
+<td>Negligible</td>
+<td>No contact, marketplace or payment features</td>
+<td>Reporting</td>
+</tr>
+<tr>
+<td>Unlawful immigration</td>
+<td>Negligible</td>
+<td>Not relevant to the service</td>
+<td>Reporting</td>
+</tr>
+<tr>
+<td>Fraud and financial services</td>
+<td>Low</td>
+<td>Spam links in profiles or descriptions</td>
+<td>Approval of posts; reporting; removal of spam accounts</td>
+</tr>
+<tr>
+<td>Proceeds of crime</td>
+<td>Negligible</td>
+<td>No payments between users</td>
+<td>None needed</td>
+</tr>
+<tr>
+<td>Drugs and psychoactive substances</td>
+<td>Low</td>
+<td>Profile links or memes could advertise sales</td>
+<td>Approval; reporting; removal</td>
+</tr>
+<tr>
+<td>Firearms, knives, weapons</td>
+<td>Negligible</td>
+<td>Very unlikely</td>
+<td>Approval; reporting</td>
+</tr>
+<tr>
+<td>Encouraging or assisting suicide</td>
+<td>Low</td>
+<td>Possible in memes or videos; serious if it happens</td>
+<td>Approval; zero tolerance</td>
+</tr>
+<tr>
+<td>Foreign interference</td>
+<td>Negligible</td>
+<td>Not a political service</td>
+<td>Approval</td>
+</tr>
+<tr>
+<td>Animal cruelty</td>
+<td>Low</td>
+<td>Videos could show it as "funny"</td>
+<td>Approval; zero tolerance</td>
+</tr>
+<tr>
+<td>Other offences (threatening or false communications, epilepsy trolling, cyberflashing)</td>
+<td>Low</td>
+<td>Flashing videos possible; no private images</td>
+<td>Approval; reporting</td>
+</tr>
+</tbody>
+</table></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-card ra">
+<h2>Children's access assessment</h2>
+<p>Conclusion: <strong>Donkey App is likely to be accessed by children</strong>, so a children's risk assessment is carried out below.</p>
+<ol>
+<li><strong>Is it possible for children to use the service?</strong> Yes. Users from 13 are allowed, and there is no highly effective age check.</li>
+<li><strong>Does the child user condition apply?</strong> Yes. A free comedy app with memes and short videos appeals to teenagers, and 13–17-year-olds are allowed.</li>
+</ol>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-card ra">
+<h2>Children's risk assessment</h2>
+<p>Overall risk to children is <strong>Medium</strong>, driven by adult humour and bullying-style jokes, not by dangerous content. The main protection is that every joke, meme and video is checked before children can see it.</p>
+<p><strong>Primary priority content</strong> (children must be prevented from seeing it)</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Harm</th>
+<th>Risk</th>
+<th>Why</th>
+<th>Main measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Pornography</td>
+<td>Low</td>
+<td>Banned and checked before publication</td>
+<td>Manual approval; zero tolerance</td>
+</tr>
+<tr>
+<td>Suicide content</td>
+<td>Low</td>
+<td>Dark humour could promote it; checked before publication</td>
+<td>Approval; Guidelines; removal on report</td>
+</tr>
+<tr>
+<td>Self-harm content</td>
+<td>Low</td>
+<td>Same as suicide</td>
+<td>Approval; Guidelines</td>
+</tr>
+<tr>
+<td>Eating disorder content</td>
+<td>Low</td>
+<td>Body-shaming memes possible</td>
+<td>Approval; Guidelines</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Priority content</strong> (children must be protected from it in an age-appropriate way)</p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Harm</th>
+<th>Risk</th>
+<th>Why</th>
+<th>Main measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Abuse and hate</td>
+<td>Medium</td>
+<td>Jokes about groups are a core comedy risk</td>
+<td>Approval; Guidelines; reporting</td>
+</tr>
+<tr>
+<td>Bullying</td>
+<td>Medium</td>
+<td>Jokes or memes mocking a real, named person</td>
+<td>Approval; ban on showing people without consent; blocking; reporting</td>
+</tr>
+<tr>
+<td>Violent content</td>
+<td>Low</td>
+<td>Fight or accident "fail" videos</td>
+<td>Approval; zero tolerance for real violence</td>
+</tr>
+<tr>
+<td>Harmful substances (drugs, alcohol)</td>
+<td>Low</td>
+<td>Drug and drink jokes are common; promotion is rare</td>
+<td>Approval; removal of promotion</td>
+</tr>
+<tr>
+<td>Dangerous stunts and challenges</td>
+<td>Medium</td>
+<td>Prank and stunt videos are popular and copied by teenagers</td>
+<td>Approval; dangerous stunts rejected</td>
+</tr>
+</tbody>
+</table></div>
+<p><strong>Other content harmful to children</strong></p>
+<div class="tablewrap"><table>
+<thead>
+<tr>
+<th>Harm</th>
+<th>Risk</th>
+<th>Why</th>
+<th>Main measures</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Crude sexual humour (not pornography)</td>
+<td>Medium</td>
+<td>Common in adult comedy</td>
+<td>Approval</td>
+</tr>
+<tr>
+<td>Contact from unknown adults</td>
+<td>Low</td>
+<td>No messaging; following is the only connection</td>
+<td>No messaging; blocking; reporting</td>
+</tr>
+</tbody>
+</table></div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-card ra">
+<h2>Reporting, complaints and records</h2>
+<p>Reports and complaints are handled by the provider personally, aiming to act within 48 hours, and on illegal content involving children within 24 hours.</p>
+<ul>
+<li><strong>How to report:</strong> the Report button on every post, the Contact Us page, or email <a href="mailto:andy@donkeyapp.com">andy@donkeyapp.com</a>.</li>
+<li><strong>What happens:</strong> the report is reviewed; illegal or banned content is removed and the account can be blocked. Child sexual abuse material is reported to the police and the Internet Watch Foundation (IWF).</li>
+<li><strong>Appeals:</strong> if you think your post was wrongly removed or your account wrongly blocked, complain through Contact Us and you will get a reply.</li>
+<li><strong>Records:</strong> this assessment and a log of serious reports and actions are kept and reviewed at least once a year and before any significant change to the service.</li>
+</ul>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-card">
+      <div>© 2026 Donkey App. Comedy first.</div>
+      <div class="footer-links">
+        <a href="index.html">Home</a>
+        <a href="privacy.html">Privacy Policy</a>
+        <a href="terms.html">Terms &amp; Conditions</a>
+        <a href="guidelines.html">Community Guidelines</a>
+        <a href="contact.html">Contact</a>
+      </div>
+    </div>
+  </footer>
+</body>
+</html>
