@@ -265,7 +265,7 @@
   <div class="wrap">
     <div class="card" translate="no">
       <h1>DonkeyApp Admin Moderation</h1>
-      <p class="muted">OTP login only. This page generates SQL for moderation decisions. It does not update the database directly.</p>
+      <p class="muted">OTP login only. Choose a decision for each joke, then press Save decisions.</p>
     </div>
 
     <div id="auth-section" class="card" translate="no">
@@ -301,14 +301,13 @@
 
           <div class="topbar-actions">
             <button type="button" class="light" onclick="loadPendingJokes()">Refresh jokes</button>
-            <button type="button" onclick="generateSql()">Generate SQL</button>
-            <button type="button" class="secondary" onclick="copySql()">Copy SQL</button>
+            <button type="button" id="save-btn" onclick="saveDecisions()">Save decisions</button>
             <button type="button" class="light" onclick="logout()">Logout</button>
           </div>
         </div>
 
         <div class="message info" translate="no">
-          Translation note: joke text is marked as translatable for browser translation. Admin labels and SQL are not.
+          Translation note: joke text is marked as translatable for browser translation. Admin labels are not.
         </div>
 
         <div id="dashboard-message" class="hidden message info" translate="no"></div>
@@ -335,11 +334,6 @@
         </div>
       </div>
 
-      <div class="card" translate="no">
-        <h3>Generated SQL</h3>
-        <p class="muted">Only rows with Approve, Reject, or Spam selected will appear here.</p>
-        <textarea id="sql-output" readonly placeholder="Generated SQL will appear here..."></textarea>
-      </div>
     </div>
   </div>
 
@@ -586,11 +580,9 @@
 
       const tbody = document.getElementById("jokes-body");
       const countBox = document.getElementById("pending-count");
-      const sqlBox = document.getElementById("sql-output");
 
       tbody.innerHTML = '<tr><td colspan="7" class="muted">Loading pending jokes...</td></tr>';
       countBox.textContent = "Loading...";
-      sqlBox.value = "";
 
       pendingJokes.length = 0;
       comparisonJokes = [];
@@ -741,68 +733,37 @@
       decisionMap[id] = value;
     }
 
-    function generateSql() {
-      const sqlLines = [];
-
-      for (const row of pendingJokes) {
-        const decision = decisionMap[row.id];
-        if (!decision) continue;
-
-        if (decision === "approve") {
-          sqlLines.push(
-            "update public.jokes",
-            "set is_visible = true,",
-            "    is_new = false,",
-            "    updated_at = now()",
-            "where id = '" + row.id + "';",
-            ""
-          );
-        }
-
-        if (decision === "reject") {
-          sqlLines.push(
-            "update public.jokes",
-            "set is_visible = false,",
-            "    is_new = false,",
-            "    updated_at = now()",
-            "where id = '" + row.id + "';",
-            ""
-          );
-        }
-
-        if (decision === "spam") {
-          sqlLines.push(
-            "delete from public.jokes",
-            "where id = '" + row.id + "';",
-            ""
-          );
-        }
-      }
-
-      const output = sqlLines.join("\n").trim();
-      document.getElementById("sql-output").value = output;
-
-      if (output) {
-        setMessage("dashboard-message", "success", "SQL generated.");
-      } else {
-        setMessage("dashboard-message", "info", "No decisions selected yet, so no SQL was generated.");
-      }
-    }
-
-    async function copySql() {
-      const sql = document.getElementById("sql-output").value;
-
-      if (!sql.trim()) {
-        setMessage("dashboard-message", "info", "There is no SQL to copy yet.");
+    // Saves the chosen decisions straight to the database (admin-only, checked by the database)
+    async function saveDecisions() {
+      const chosen = pendingJokes.filter((row) => decisionMap[row.id]);
+      if (!chosen.length) {
+        setMessage("dashboard-message", "info", "No decisions selected yet.");
         return;
       }
+      const count = (d) => chosen.filter((r) => decisionMap[r.id] === d).length;
+      const summary = "Approve: " + count("approve") + "\nReject: " + count("reject") + "\nSpam (deleted for good): " + count("spam");
+      if (!confirm("Save these decisions?\n\n" + summary)) return;
 
-      try {
-        await navigator.clipboard.writeText(sql);
-        setMessage("dashboard-message", "success", "SQL copied.");
-      } catch (err) {
-        setMessage("dashboard-message", "error", "Copy failed. Please copy the SQL manually.");
+      const btn = document.getElementById("save-btn");
+      btn.disabled = true;
+      btn.textContent = "Saving...";
+      const failed = [];
+      let done = 0;
+      for (const row of chosen) {
+        const { error } = await supabaseClient.rpc("admin_moderate_joke", { p_id: row.id, p_decision: decisionMap[row.id] });
+        if (error) failed.push((row.content || "").slice(0, 40) + "… — " + error.message);
+        else {
+          done++;
+          const i = pendingJokes.indexOf(row);
+          if (i >= 0) pendingJokes.splice(i, 1);
+        }
       }
+      btn.disabled = false;
+      btn.textContent = "Save decisions";
+      renderJokes();
+      document.getElementById("pending-count").textContent = pendingJokes.length + " pending joke(s) left.";
+      if (failed.length) setMessage("dashboard-message", "error", done + " saved. " + failed.length + " failed: " + failed.join(" | "));
+      else setMessage("dashboard-message", "success", done + " decision(s) saved.");
     }
 
     async function logout() {
@@ -812,7 +773,6 @@
       document.getElementById("auth-section").classList.remove("hidden");
       document.getElementById("verify-block").classList.add("hidden");
       document.getElementById("otp-input").value = "";
-      document.getElementById("sql-output").value = "";
       document.getElementById("jokes-body").innerHTML = '<tr><td colspan="7" class="muted">No data loaded yet.</td></tr>';
       document.getElementById("pending-count").textContent = "Not loaded yet.";
 
